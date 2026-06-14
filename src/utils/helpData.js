@@ -119,6 +119,8 @@ const helpCategories = [
     commands: [
       { name: 'ask', usage: '/ask <prompt>', description: 'Ask AI any question', perms: 'Everyone', cooldown: '10s' },
       { name: 'createimage', usage: '/createimage <prompt>', description: 'Generate an AI image', perms: 'Everyone', cooldown: '30s' },
+      { name: 'summarize', usage: '/summarize <url>', description: 'Summarize a YouTube video with AI', perms: 'Everyone', cooldown: '30s' },
+      { name: 'translate', usage: '/translate <text> <language>', description: 'Translate text to any language', perms: 'Everyone', cooldown: '10s' },
     ]
   },
   { name: 'Utilities',  emoji: '🔧',  description: 'General purpose tools for everyday use',

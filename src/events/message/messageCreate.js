@@ -23,6 +23,9 @@ module.exports = {
     let config;
     try {
       config = await GuildConfig.findOne({ guildId });
+      if (!config) {
+        config = await GuildConfig.create({ guildId });
+      }
     } catch (err) {
       return;
     }
@@ -34,23 +37,19 @@ module.exports = {
       attachments: [...message.attachments.values()],
     });
 
-    if (config) {
-      try {
-        await handleAFK(message, userId, guildId, config);
-        await handleMentionAFK(message, client);
-      } catch (err) {}
-    }
+    try {
+      await handleAFK(message, userId, guildId, config);
+      await handleMentionAFK(message, client);
+    } catch (err) {}
 
     try {
       const xpService = require('../../services/xpService');
       await xpService.addXp(userId, guildId, message);
     } catch (err) {}
 
-    if (config) {
-      try {
-        await handleSticky(message, guildId, channelId, client);
-      } catch (err) {}
-    }
+    try {
+      await handleSticky(message, guildId, channelId, client);
+    } catch (err) {}
 
     try {
       await handleCounting(message, guildId, channelId);
@@ -60,17 +59,17 @@ module.exports = {
       await handleBump(message, guildId);
     } catch (err) {}
 
-    if (config) {
-      try {
-        if (config.aiChannel && channelId === config.aiChannel && !message.content.startsWith(...(config.prefix || ['.']))) {
-          await handleAIChannel(message);
-        }
-      } catch (err) {}
+    try {
+      const prefixArray = config.prefix || ['.'];
+      const startsWithPrefix = prefixArray.some(p => message.content.startsWith(p));
+      if (config.aiChannel && channelId === config.aiChannel && !startsWithPrefix) {
+        await handleAIChannel(message);
+      }
+    } catch (err) {}
 
-      try {
-        await handlePrefixCommand(message, config, client);
-      } catch (err) {}
-    }
+    try {
+      await handlePrefixCommand(message, config, client);
+    } catch (err) {}
   },
 };
 

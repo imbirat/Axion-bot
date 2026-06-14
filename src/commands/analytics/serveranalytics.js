@@ -2,7 +2,7 @@ const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName('serverstats')
+    .setName('serveranalytics')
     .setDescription('Show server growth statistics'),
   category: 'Analytics',
   usage: '/serverstats',

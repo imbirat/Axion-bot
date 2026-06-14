@@ -3,7 +3,7 @@ const xpService = require('../../services/xpService');
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName('leaderboard')
+    .setName('xpleaderboard')
     .setDescription('View the top 10 users by XP'),
   category: 'Leveling',
   usage: '/leaderboard',

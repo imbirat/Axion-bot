@@ -16,7 +16,7 @@ function getLevelColor(level) {
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName('profile')
+    .setName('xpprofile')
     .setDescription('View your XP profile')
     .addUserOption(option =>
       option.setName('user')

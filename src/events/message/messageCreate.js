@@ -62,6 +62,12 @@ module.exports = {
 
     if (config) {
       try {
+        if (config.aiChannel && channelId === config.aiChannel && !message.content.startsWith(...(config.prefix || ['.']))) {
+          await handleAIChannel(message);
+        }
+      } catch (err) {}
+
+      try {
         await handlePrefixCommand(message, config, client);
       } catch (err) {}
     }
@@ -160,6 +166,20 @@ async function handleBump(message, guildId) {
       const bumpService = require('../../services/bumpService');
       await bumpService.recordBump(guildId, message.channel.id);
     } catch (err) {}
+  }
+}
+
+async function handleAIChannel(message) {
+  try {
+    const geminiService = require('../../services/geminiService');
+    await message.channel.sendTyping();
+    const response = await geminiService.ask(message.content);
+    const chunks = response.match(/.{1,1900}/gs) || [response];
+    for (const chunk of chunks) {
+      await message.reply(chunk);
+    }
+  } catch (error) {
+    await message.reply('❌ AI request failed. Check GEMINI_API_KEY.');
   }
 }
 

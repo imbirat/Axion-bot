@@ -203,6 +203,7 @@ const helpCategories = [
       { name: 'config', usage: '/config', description: 'View server configuration', perms: ['ManageGuild'], cooldown: 10 },
       { name: 'config prefix', usage: '/config prefix <prefix>', description: 'Set custom prefix', perms: ['ManageGuild'], cooldown: 30 },
       { name: 'config language', usage: '/config language <language>', description: 'Set server language', perms: ['ManageGuild'], cooldown: 30 },
+      { name: 'setaichannel', usage: '/setaichannel <#channel>', description: 'Set AI auto-respond channel', perms: ['Administrator'], cooldown: 5 },
     ],
   },
   {

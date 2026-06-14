@@ -32,6 +32,7 @@ const guildConfigSchema = new mongoose.Schema({
   ticketCount: { type: Number, default: 0 },
   ticketBlacklist: [{ type: String }],
   reportChannel: { type: String },
+  aiChannel: { type: String },
   language: { type: String, default: 'en' }
 }, { timestamps: true });
 

@@ -1,5 +1,5 @@
 const { Events, ActivityType } = require('discord.js');
-const { loadComponents } = require('../../handlers/componentHandler');
+const { loadComponents, deployCommands } = require('../../handlers/commandHandler');
 const logger = require('../../utils/logger');
 
 module.exports = {
@@ -10,6 +10,12 @@ module.exports = {
     logger.success(`Ready! Logged in as ${client.user.tag}`);
 
     loadComponents();
+
+    try {
+      await deployCommands(client);
+    } catch (err) {
+      logger.warn('Could not deploy commands:', err.message);
+    }
 
     try {
       const schedulerService = require('../../services/schedulerService');

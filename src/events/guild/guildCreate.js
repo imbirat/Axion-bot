@@ -1,6 +1,5 @@
 const { Events, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const GuildConfig = require('../../models/GuildConfig');
-const { deployCommands } = require('../../handlers/commandHandler');
 const logger = require('../../utils/logger');
 
 module.exports = {
@@ -47,13 +46,6 @@ module.exports = {
       }
     } catch (err) {
       logger.warn(`Could not DM owner of guild ${guild.id}`);
-    }
-
-    try {
-      client.commands = client.commands || new (require('discord.js').Collection)();
-      await deployCommands(client);
-    } catch (err) {
-      logger.error(`Error deploying commands for guild ${guild.id}:`, err);
     }
   },
 };

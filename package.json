@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
-    "deploy": "node src/deploy.js"
+    "deploy": "node src/deploy.js",
+    "deploy:global": "node src/deploy.js"
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",

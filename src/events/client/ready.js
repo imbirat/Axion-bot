@@ -1,19 +1,15 @@
-const { Events, REST, Routes, ActivityType } = require('discord.js');
-const GuildConfig = require('../../models/GuildConfig');
-const { deployCommands } = require('../../handlers/commandHandler');
+const { Events, ActivityType } = require('discord.js');
 const { loadComponents } = require('../../handlers/componentHandler');
 const logger = require('../../utils/logger');
 
 module.exports = {
-  name: Events.ClientReady,
+  name: 'clientReady',
   once: true,
   async execute(client) {
     client.user.setActivity('/help | Axion', { type: ActivityType.Playing });
     logger.success(`Ready! Logged in as ${client.user.tag}`);
 
     loadComponents();
-
-    await deployCommands(client);
 
     try {
       const schedulerService = require('../../services/schedulerService');

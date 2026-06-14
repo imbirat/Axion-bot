@@ -27,7 +27,7 @@ module.exports = {
         config = await GuildConfig.create({ guildId });
       }
     } catch (err) {
-      return;
+      config = { guildId, prefix: ['.'] };
     }
 
     snipeCache.set(channelId, {

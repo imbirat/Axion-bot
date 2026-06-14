@@ -15,19 +15,11 @@ const helpCategories = [
       { name: 'clear',      usage: '/clear <amount> [user]',       description: 'Bulk delete messages',                    perms: 'Administrator',    cooldown: '5s' },
     ]
   },
-  { name: 'Anti-Nuke',  emoji: '🛡️',  description: 'Protect your server from raids and nukes',
+  { name: 'Security',  emoji: '🛡️',  description: 'Anti-nuke, auto-moderation, and audit logging',
     commands: [
       { name: 'antinuke', usage: '/antinuke <config|enable|disable>', description: 'Manage anti-nuke protection', perms: 'Administrator', cooldown: '5s' },
-    ]
-  },
-  { name: 'Logging',    emoji: '📋',  description: 'Track events and changes in your server',
-    commands: [
-      { name: 'logging', usage: '/logging <enable|disable>', description: 'Toggle server logging', perms: 'Administrator', cooldown: '5s' },
-    ]
-  },
-  { name: 'Auto-Mod',   emoji: '🤖',  description: 'Automatically moderate messages and behaviour',
-    commands: [
       { name: 'automod', usage: '/automod <config|enable|disable>', description: 'Manage auto-moderation', perms: 'Administrator', cooldown: '5s' },
+      { name: 'logging', usage: '/logging <enable|disable>', description: 'Toggle server logging', perms: 'Administrator', cooldown: '5s' },
     ]
   },
   { name: 'Welcome / Farewell', emoji: '👋', description: 'Greet new members and farewell those who leave',
@@ -74,8 +66,9 @@ const helpCategories = [
       { name: 'verify', usage: '/verify <start|setup|role|mode|message|log|check|all|reset|unverify>', description: 'Complete verification system', perms: 'Administrator', cooldown: '3s' },
     ]
   },
-  { name: 'Reaction Roles', emoji: '🔁', description: 'Button and reaction-based role assignment',
+  { name: 'Role Management', emoji: '👤', description: 'Auto-roles, reaction roles, and button roles',
     commands: [
+      { name: 'autorole', usage: '/autorole <add|remove|list>', description: 'Manage auto-roles', perms: 'Manage Roles', cooldown: '5s' },
       { name: 'reactionrole', usage: '/reactionrole', description: 'Create reaction role panels', perms: 'Manage Roles', cooldown: '5s' },
       { name: 'buttonrole', usage: '/buttonrole', description: 'Create button role panels', perms: 'Manage Roles', cooldown: '5s' },
     ]
@@ -151,76 +144,35 @@ const helpCategories = [
       { name: 'setaichannel', usage: '/setaichannel <channel>', description: 'Set AI auto-respond channel', perms: 'Administrator', cooldown: '5s' },
     ]
   },
-  { name: 'Birthday',   emoji: '🎂',  description: 'Birthday announcements and tracking',
-    commands: [
-      { name: 'birthday', usage: '/birthday <set|remove|list|channel>', description: 'Manage birthdays', perms: 'Everyone', cooldown: '5s' },
-    ]
-  },
-  { name: 'Quotes',     emoji: '💭',  description: 'Save and recall memorable quotes',
-    commands: [
-      { name: 'quote', usage: '/quote <add|random|list>', description: 'Manage saved quotes', perms: 'Everyone', cooldown: '5s' },
-    ]
-  },
-  { name: 'Sticky Msg', emoji: '📌',  description: 'Keep important messages pinned at the bottom',
-    commands: [
-      { name: 'sticky', usage: '/sticky <set|remove>', description: 'Manage sticky messages', perms: 'Administrator', cooldown: '5s' },
-    ]
-  },
-  { name: 'Adv. Polls', emoji: '📣',  description: 'Advanced polls with time limits and role gates',
-    commands: [
-      { name: 'advancedpoll', usage: '/advancedpoll <create|end|results>', description: 'Advanced polls', perms: 'Manage Messages', cooldown: '5s' },
-    ]
-  },
-  { name: 'Auto-Roles', emoji: '👤',  description: 'Automatically assign roles on member join',
-    commands: [
-      { name: 'autorole', usage: '/autorole <add|remove|list>', description: 'Manage auto-roles', perms: 'Manage Roles', cooldown: '5s' },
-    ]
-  },
   { name: 'Notifications', emoji: '🔔', description: 'YouTube and Twitch live notifications',
     commands: [
       { name: 'notification', usage: '/notification <youtube|twitch> <add|remove|list>', description: 'Manage video/live notifications', perms: 'Administrator', cooldown: '5s' },
     ]
   },
-  { name: 'Starboard', emoji: '⭐', description: 'Highlight popular messages with star reactions',
-    commands: [
-      { name: 'starboard', usage: '/starboard <config|setup|disable>', description: 'Manage starboard', perms: 'Administrator', cooldown: '5s' },
-    ]
-  },
-  { name: 'Custom Commands', emoji: '🔨', description: 'Create server-specific custom commands',
-    commands: [
-      { name: 'customcmd', usage: '/customcmd <add|edit|list|remove>', description: 'Manage custom commands', perms: 'Administrator', cooldown: '5s' },
-    ]
-  },
-  { name: 'Temp VC', emoji: '🔊', description: 'Temporary voice channel management',
-    commands: [
-      { name: 'tempvc', usage: '/tempvc <setup|config>', description: 'Manage temporary voice channels', perms: 'Administrator', cooldown: '5s' },
-    ]
-  },
-  { name: 'Counting', emoji: '🔢', description: 'Counting channel game for your server',
-    commands: [
-      { name: 'counting', usage: '/counting <setup|reset|stats>', description: 'Manage counting channels', perms: 'Administrator', cooldown: '5s' },
-    ]
-  },
-  { name: 'Reports', emoji: '📝', description: 'User report system with mod review',
+  { name: 'Server Management', emoji: '📋', description: 'Reports, scheduled messages, bump reminders, and stats',
     commands: [
       { name: 'report', usage: '/report <user> <reason>', description: 'Report a user to staff', perms: 'Everyone', cooldown: '30s' },
       { name: 'reportsetup', usage: '/reportsetup <channel>', description: 'Set up the report system', perms: 'Administrator', cooldown: '5s' },
       { name: 'reports', usage: '/reports', description: 'View pending reports', perms: 'Manage Messages', cooldown: '5s' },
-    ]
-  },
-  { name: 'Scheduler', emoji: '📅', description: 'Schedule one-time or recurring messages',
-    commands: [
       { name: 'schedule', usage: '/schedule <create|cancel|list>', description: 'Manage scheduled messages', perms: 'Manage Messages', cooldown: '5s' },
-    ]
-  },
-  { name: 'Bump', emoji: '📢', description: 'Server bump reminder system',
-    commands: [
       { name: 'bumper', usage: '/bumper <setup|disable>', description: 'Manage bump reminders', perms: 'Administrator', cooldown: '5s' },
+      { name: 'serverstats', usage: '/serverstats <setup|add|remove>', description: 'Manage server stats channels', perms: 'Administrator', cooldown: '5s' },
     ]
   },
-  { name: 'Server Stats', emoji: '📈', description: 'Automatic server stats in channel names',
+  { name: 'Server Features', emoji: '✨', description: 'Starboard, temp VC, counting, sticky, and more',
     commands: [
-      { name: 'serverstats', usage: '/serverstats <setup|add|remove>', description: 'Manage server stats channels', perms: 'Administrator', cooldown: '5s' },
+      { name: 'starboard', usage: '/starboard <config|setup|disable>', description: 'Manage starboard', perms: 'Administrator', cooldown: '5s' },
+      { name: 'sticky', usage: '/sticky <set|remove>', description: 'Manage sticky messages', perms: 'Administrator', cooldown: '5s' },
+      { name: 'customcmd', usage: '/customcmd <add|edit|list|remove>', description: 'Manage custom commands', perms: 'Administrator', cooldown: '5s' },
+      { name: 'tempvc', usage: '/tempvc <setup|config>', description: 'Manage temporary voice channels', perms: 'Administrator', cooldown: '5s' },
+      { name: 'counting', usage: '/counting <setup|reset|stats>', description: 'Manage counting channels', perms: 'Administrator', cooldown: '5s' },
+      { name: 'advancedpoll', usage: '/advancedpoll <create|end|results>', description: 'Advanced polls with time limits', perms: 'Manage Messages', cooldown: '5s' },
+    ]
+  },
+  { name: 'Community', emoji: '💭',  description: 'Birthdays, quotes, and community features',
+    commands: [
+      { name: 'birthday', usage: '/birthday <set|remove|list|channel>', description: 'Manage birthdays', perms: 'Everyone', cooldown: '5s' },
+      { name: 'quote', usage: '/quote <add|random|list>', description: 'Manage saved quotes', perms: 'Everyone', cooldown: '5s' },
     ]
   },
 ];

@@ -1,4 +1,4 @@
-const { Events, EmbedBuilder } = require('discord.js');
+const { Events, MessageFlags } = require('discord.js');
 const { handleComponent } = require('../../handlers/componentHandler');
 const { hasPermission } = require('../../utils/permissions');
 const logger = require('../../utils/logger');
@@ -10,7 +10,7 @@ module.exports = {
     if (interaction.isChatInputCommand()) {
       const command = client.commands.get(interaction.commandName);
       if (!command) {
-        return interaction.reply({ content: 'Command not found.', ephemeral: true });
+        return interaction.reply({ content: 'Command not found.', flags: MessageFlags.Ephemeral });
       }
 
       if (command.permissions) {
@@ -18,7 +18,7 @@ module.exports = {
         if (missing.length > 0) {
           return interaction.reply({
             content: `You need the following permissions: ${missing.join(', ')}`,
-            ephemeral: true,
+            flags: MessageFlags.Ephemeral,
           });
         }
       }
@@ -36,7 +36,7 @@ module.exports = {
           const timeLeft = Math.round((expirationTime - now) / 1000);
           return interaction.reply({
             content: `Please wait ${timeLeft}s before using this command again.`,
-            ephemeral: true,
+            flags: MessageFlags.Ephemeral,
           });
         }
       }
@@ -48,7 +48,7 @@ module.exports = {
         await command.execute(interaction, client);
       } catch (error) {
         logger.error(`Error executing command ${interaction.commandName}:`, error);
-        const reply = { content: 'There was an error executing this command.', ephemeral: true };
+        const reply = { content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral };
         if (interaction.replied || interaction.deferred) {
           await interaction.followUp(reply).catch(() => {});
         } else {
@@ -64,7 +64,7 @@ module.exports = {
       } catch (error) {
         logger.error('Component handler error:', error);
         if (!interaction.replied && !interaction.deferred) {
-          await interaction.reply({ content: 'There was an error handling this interaction.', ephemeral: true }).catch(() => {});
+          await interaction.reply({ content: 'There was an error handling this interaction.', flags: MessageFlags.Ephemeral }).catch(() => {});
         }
       }
       return;

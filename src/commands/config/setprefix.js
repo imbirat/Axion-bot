@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
+const { SlashCommandBuilder, PermissionFlagsBits, MessageFlags } = require('discord.js');
 const GuildConfig = require('../../models/GuildConfig');
 
 module.exports = {
@@ -20,17 +20,23 @@ module.exports = {
       const prefix = interaction.options.getString('prefix');
       const validPrefixes = ['.', '/', '?', '!', ','];
       if (!validPrefixes.includes(prefix)) {
-        return interaction.reply({ content: 'Invalid prefix. Valid prefixes: ., /, ?, !, ,', ephemeral: true });
+        return interaction.reply({ content: 'Invalid prefix. Valid prefixes: ., /, ?, !, ,', flags: MessageFlags.Ephemeral });
       }
+      await interaction.deferReply();
       await GuildConfig.findOneAndUpdate(
         { guildId: interaction.guild.id },
         { $set: { prefix: [prefix, '/'] } },
         { upsert: true }
       );
-      await interaction.reply({ content: `✅ Prefix set to ${prefix}` });
+      await interaction.editReply({ content: `✅ Prefix set to ${prefix}` });
     } catch (error) {
       console.error('setprefix command error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      const reply = { content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral };
+      if (interaction.deferred) {
+        await interaction.editReply(reply).catch(() => {});
+      } else {
+        await interaction.reply(reply).catch(() => {});
+      }
     }
   },
   async prefixExecute(message, args, client) {

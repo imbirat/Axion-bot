@@ -54,7 +54,7 @@ function buildMainPage(client, guild, page) {
           .setCustomId('help_select_category')
           .setPlaceholder('Select a category...')
           .addOptions(
-            helpCategories.map(c =>
+            slice.map(c =>
               new StringSelectMenuOptionBuilder()
                 .setLabel(c.name)
                 .setValue(c.name)
@@ -215,7 +215,7 @@ function deleteSession(userId, messageId) {
 async function handleHelpInteraction(interaction) {
   const session = getSession(interaction.user.id, interaction.message.id);
   if (!session || session.userId !== interaction.user.id) {
-    return interaction.reply({ content: '❌ This menu is not for you.', ephemeral: true });
+    return interaction.reply({ content: '❌ This menu is not for you.', flags: MessageFlags.Ephemeral });
   }
   await interaction.deferUpdate();
   const { customId } = interaction;

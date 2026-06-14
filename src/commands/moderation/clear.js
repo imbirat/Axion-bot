@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 const { t } = require('../../utils/i18n');
 
 module.exports = {
@@ -24,6 +24,7 @@ module.exports = {
   cooldown: 5,
   async execute(interaction, client) {
     try {
+      await interaction.deferReply();
       const amount = interaction.options.getInteger('amount');
       const targetUser = interaction.options.getUser('user');
 
@@ -43,11 +44,16 @@ module.exports = {
         count
       });
 
-      const msg = await interaction.reply({ content: reply, fetchReply: true });
-      setTimeout(() => msg.delete().catch(() => {}), 5000);
+      await interaction.editReply({ content: reply });
+      interaction.fetchReply().then(msg => setTimeout(() => msg.delete().catch(() => {}), 5000)).catch(() => {});
     } catch (error) {
       console.error('clear command error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      const errReply = { content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral };
+      if (interaction.deferred) {
+        await interaction.editReply(errReply).catch(() => {});
+      } else {
+        await interaction.reply(errReply).catch(() => {});
+      }
     }
   },
   async prefixExecute(message, args, client) {

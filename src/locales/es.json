@@ -1,0 +1,89 @@
+{
+  "errors": {
+    "no_permission": "❌ No tienes permiso para usar este comando.",
+    "no_admin": "❌ Necesitas permiso de Administrador.",
+    "user_not_found": "❌ Usuario no encontrado.",
+    "generic": "❌ Ocurrió un error. Inténtalo de nuevo.",
+    "invalid_input": "❌ Entrada inválida.",
+    "not_in_guild": "❌ Este comando solo se puede usar en un servidor."
+  },
+  "moderation": {
+    "banned": "✅ **{user}** ha sido baneado. Razón: {reason}",
+    "kicked": "✅ **{user}** ha sido expulsado. Razón: {reason}",
+    "warned": "⚠️ **{user}** ha sido advertido. Razón: {reason}",
+    "muted": "🔇 **{user}** ha sido silenciado por {duration}.",
+    "unmuted": "🔈 **{user}** ha sido desilenciado.",
+    "locked": "🔒 Canal bloqueado.",
+    "unlocked": "🔓 Canal desbloqueado.",
+    "jailed": "🔒 **{user}** ha sido encarcelado.",
+    "unjailed": "🔓 **{user}** ha sido liberado.",
+    "nickname_set": "✅ Apodo cambiado.",
+    "slowmode_set": "✅ Slowmode establecido a {seconds}s.",
+    "cleared": "✅ {count} mensajes eliminados."
+  },
+  "economy": {
+    "daily_claimed": "✅ ¡Reclamaste tus **{amount}** monedas diarias!",
+    "daily_cooldown": "⏰ Ya reclamaste tu recompensa diaria. Vuelve en **{time}**.",
+    "work_earned": "💼 Trabajaste y ganaste **{amount}** monedas!",
+    "work_cooldown": "⏰ Necesitas descansar. Vuelve en **{time}**.",
+    "insufficient_funds": "❌ No tienes suficientes monedas.",
+    "gave": "✅ Le diste **{amount}** monedas a **{user}**.",
+    "deposited": "✅ Depositaste **{amount}** monedas en tu banco.",
+    "robbed_success": "🦹 ¡Robaste a **{user}** y obtuviste **{amount}** monedas!",
+    "robbed_fail": "🚔 ¡Te atraparon! Pagaste **{amount}** monedas de multa.",
+    "coinflip_win": "🪙 Salió **{side}**! ¡Ganaste **{amount}** monedas!",
+    "coinflip_lose": "🪙 Salió **{side}**! Perdiste **{amount}** monedas."
+  },
+  "leveling": {
+    "level_up": "🎉 ¡{user} alcanzó el **Nivel {level}**!",
+    "xp_added": "✅ {amount} XP añadidos a {user}.",
+    "xp_removed": "✅ {amount} XP eliminados de {user}.",
+    "profile_title": "Perfil de XP",
+    "leaderboard_title": "Clasificación de XP"
+  },
+  "starboard": {
+    "setup_done": "⭐ ¡Starboard configurado! Canal: {channel}, Umbral: {threshold}.",
+    "disabled": "⭐ Starboard desactivado."
+  },
+  "counting": {
+    "ruined": "❌ ¡{user} arruinó la cuenta en **{count}**! La cuenta se reinicia a 0.",
+    "milestone": "🎉 ¡La cuenta ha alcanzado **{count}**! ¡Bien hecho!",
+    "setup_done": "✅ Canal de conteo establecido en {channel}. ¡Empieza a contar desde 1!"
+  },
+  "bumper": {
+    "time_to_bump": "⏰ ¡Hora de hacer bump!",
+    "bump_detected": "✅ ¡Bump detectado! Te recordaré en 2 horas.",
+    "setup_done": "✅ ¡Recordatorio de bump configurado! Te recordaré cada 2 horas."
+  },
+  "reports": {
+    "submitted": "✅ Tu reporte ha sido enviado anónimamente.",
+    "resolved": "✅ Reporte marcado como resuelto por {mod}.",
+    "dismissed": "❌ Reporte descartado por {mod}.",
+    "setup_done": "✅ Canal de reportes establecido en {channel}."
+  },
+  "scheduler": {
+    "scheduled": "✅ Mensaje programado para {time} en {channel}.",
+    "cancelled": "✅ Mensaje programado cancelado.",
+    "not_found": "❌ No se encontró ningún mensaje programado con ese ID."
+  },
+  "verification": {
+    "setup_done": "✅ Verificación configurada.",
+    "already_verified": "✅ Ya estás verificado.",
+    "verified": "✅ ¡Has sido verificado! Bienvenido al servidor.",
+    "captcha_sent": "📧 Revisa tus mensajes directos para el código captcha."
+  },
+  "ticket": {
+    "created": "✅ Ticket creado: {channel}",
+    "closed": "🔒 Ticket cerrado por {moderator}.",
+    "claimed": "👤 Ticket reclamado por {user}.",
+    "already_open": "❌ Ya tienes un ticket abierto."
+  },
+  "config": {
+    "channel_set": "✅ Canal de {type} establecido en {channel}.",
+    "prefix_set": "✅ Prefijo establecido a {prefix}.",
+    "language_set": "✅ Idioma del servidor establecido a **{language}**."
+  },
+  "antinuke": { "enabled": "✅ Anti-Nuke activado.", "disabled": "✅ Anti-Nuke desactivado." },
+  "automod": { "enabled": "✅ Auto-Mod activado.", "disabled": "✅ Auto-Mod desactivado." },
+  "logging": { "enabled": "✅ Registro activado en {channel}.", "disabled": "✅ Registro desactivado." }
+}

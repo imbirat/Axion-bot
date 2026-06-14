@@ -1,0 +1,80 @@
+{
+  "errors": {
+    "no_permission": "❌ Vous n'avez pas la permission d'utiliser cette commande.",
+    "no_admin": "❌ Vous avez besoin de la permission Administrateur.",
+    "user_not_found": "❌ Utilisateur introuvable.",
+    "generic": "❌ Une erreur s'est produite. Veuillez réessayer.",
+    "invalid_input": "❌ Entrée invalide.",
+    "not_in_guild": "❌ Cette commande ne peut être utilisée que dans un serveur."
+  },
+  "moderation": {
+    "banned": "✅ **{user}** a été banni. Raison : {reason}",
+    "kicked": "✅ **{user}** a été expulsé. Raison : {reason}",
+    "warned": "⚠️ **{user}** a été averti. Raison : {reason}",
+    "muted": "🔇 **{user}** a été rendu muet pour {duration}.",
+    "unmuted": "🔈 **{user}** n'est plus muet.",
+    "locked": "🔒 Salon verrouillé.",
+    "unlocked": "🔓 Salon déverrouillé.",
+    "jailed": "🔒 **{user}** a été emprisonné.",
+    "unjailed": "🔓 **{user}** a été libéré.",
+    "nickname_set": "✅ Surnom modifié.",
+    "slowmode_set": "✅ Mode lent défini à {seconds}s.",
+    "cleared": "✅ {count} messages supprimés."
+  },
+  "economy": {
+    "daily_claimed": "✅ Vous avez réclamé vos **{amount}** pièces quotidiennes !",
+    "daily_cooldown": "⏰ Vous avez déjà réclamé votre récompense. Revenez dans **{time}**.",
+    "work_earned": "💼 Vous avez travaillé et gagné **{amount}** pièces !",
+    "insufficient_funds": "❌ Vous n'avez pas assez de pièces.",
+    "gave": "✅ Vous avez donné **{amount}** pièces à **{user}**.",
+    "deposited": "✅ **{amount}** pièces déposées dans votre banque.",
+    "coinflip_win": "🪙 C'est **{side}** ! Vous avez gagné **{amount}** pièces !",
+    "coinflip_lose": "🪙 C'est **{side}** ! Vous avez perdu **{amount}** pièces."
+  },
+  "leveling": {
+    "level_up": "🎉 {user} a atteint le **Niveau {level}** !",
+    "xp_added": "✅ {amount} XP ajoutés à {user}.",
+    "xp_removed": "✅ {amount} XP retirés de {user}."
+  },
+  "starboard": {
+    "setup_done": "⭐ Starboard configuré ! Salon : {channel}, Seuil : {threshold}.",
+    "disabled": "⭐ Starboard désactivé."
+  },
+  "counting": {
+    "ruined": "❌ {user} a ruiné le compte à **{count}** ! Le compte revient à 0.",
+    "milestone": "🎉 Le compte a atteint **{count}** ! Bien joué !"
+  },
+  "bumper": {
+    "time_to_bump": "⏰ Il est temps de faire un bump !",
+    "bump_detected": "✅ Bump détecté ! Je vous rappellerai dans 2 heures."
+  },
+  "reports": {
+    "submitted": "✅ Votre signalement a été envoyé anonymement.",
+    "resolved": "✅ Signalement résolu par {mod}.",
+    "dismissed": "❌ Signalement rejeté par {mod}."
+  },
+  "scheduler": {
+    "scheduled": "✅ Message programmé pour {time} dans {channel}.",
+    "cancelled": "✅ Message programmé annulé.",
+    "not_found": "❌ Aucun message programmé trouvé avec cet ID."
+  },
+  "verification": {
+    "setup_done": "✅ Vérification configurée.",
+    "already_verified": "✅ Vous êtes déjà vérifié.",
+    "verified": "✅ Vous avez été vérifié ! Bienvenue sur le serveur."
+  },
+  "ticket": {
+    "created": "✅ Ticket créé : {channel}",
+    "closed": "🔒 Ticket fermé par {moderator}.",
+    "claimed": "👤 Ticket réclamé par {user}.",
+    "already_open": "❌ Vous avez déjà un ticket ouvert."
+  },
+  "config": {
+    "channel_set": "✅ Salon {type} défini sur {channel}.",
+    "prefix_set": "✅ Préfixe défini sur {prefix}.",
+    "language_set": "✅ Langue du serveur définie sur **{language}**."
+  },
+  "antinuke": { "enabled": "✅ Anti-Nuke activé.", "disabled": "✅ Anti-Nuke désactivé." },
+  "automod": { "enabled": "✅ Auto-Mod activé.", "disabled": "✅ Auto-Mod désactivé." },
+  "logging": { "enabled": "✅ Journalisation activée dans {channel}.", "disabled": "✅ Journalisation désactivée." }
+}

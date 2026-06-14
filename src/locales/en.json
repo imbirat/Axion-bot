@@ -1,0 +1,123 @@
+{
+  "errors": {
+    "no_permission": "❌ You don't have permission to use this command.",
+    "no_admin": "❌ You need Administrator permission.",
+    "user_not_found": "❌ User not found.",
+    "generic": "❌ An error occurred. Please try again.",
+    "invalid_input": "❌ Invalid input provided.",
+    "not_in_guild": "❌ This command can only be used in a server."
+  },
+  "moderation": {
+    "banned": "✅ **{user}** has been banned. Reason: {reason}",
+    "kicked": "✅ **{user}** has been kicked. Reason: {reason}",
+    "warned": "⚠️ **{user}** has been warned. Reason: {reason}",
+    "muted": "🔇 **{user}** has been muted for {duration}.",
+    "unmuted": "🔈 **{user}** has been unmuted.",
+    "locked": "🔒 Channel locked.",
+    "unlocked": "🔓 Channel unlocked.",
+    "jailed": "🔒 **{user}** has been jailed.",
+    "unjailed": "🔓 **{user}** has been unjailed.",
+    "nickname_set": "✅ Nickname changed.",
+    "slowmode_set": "✅ Slowmode set to {seconds}s.",
+    "cleared": "✅ Cleared {count} messages."
+  },
+  "economy": {
+    "daily_claimed": "✅ You claimed your daily **{amount}** coins!",
+    "daily_cooldown": "⏰ You already claimed your daily. Come back in **{time}**.",
+    "work_earned": "💼 You worked and earned **{amount}** coins!",
+    "work_cooldown": "⏰ You need to rest. Come back in **{time}**.",
+    "insufficient_funds": "❌ You don't have enough coins.",
+    "gave": "✅ You gave **{amount}** coins to **{user}**.",
+    "deposited": "✅ Deposited **{amount}** coins to your bank.",
+    "robbed_success": "🦹 You robbed **{user}** and got **{amount}** coins!",
+    "robbed_fail": "🚔 You got caught! You paid **{amount}** coins as a fine.",
+    "coinflip_win": "🪙 It's **{side}**! You won **{amount}** coins!",
+    "coinflip_lose": "🪙 It's **{side}**! You lost **{amount}** coins."
+  },
+  "leveling": {
+    "level_up": "🎉 {user} just reached **Level {level}**!",
+    "xp_added": "✅ Added {amount} XP to {user}.",
+    "xp_removed": "✅ Removed {amount} XP from {user}.",
+    "profile_title": "XP Profile",
+    "leaderboard_title": "XP Leaderboard"
+  },
+  "starboard": {
+    "setup_done": "⭐ Starboard configured! Channel: {channel}, Threshold: {threshold}.",
+    "disabled": "⭐ Starboard disabled.",
+    "emoji_set": "⭐ Starboard emoji set to {emoji}."
+  },
+  "counting": {
+    "ruined": "❌ {user} ruined it at **{count}**! The count resets to 0.",
+    "milestone": "🎉 The count has reached **{count}**! Well done!",
+    "setup_done": "✅ Counting channel set to {channel}. Start counting from 1!",
+    "reset_done": "✅ Count reset to 0."
+  },
+  "bumper": {
+    "time_to_bump": "⏰ Time to Bump!",
+    "bump_detected": "✅ Bump detected! I'll remind you in 2 hours.",
+    "setup_done": "✅ Bump reminder configured! I'll remind you every 2 hours.",
+    "disabled": "✅ Bump reminders disabled."
+  },
+  "reports": {
+    "submitted": "✅ Your report has been submitted anonymously.",
+    "resolved": "✅ Report marked as resolved by {mod}.",
+    "dismissed": "❌ Report dismissed by {mod}.",
+    "setup_done": "✅ Report channel set to {channel}."
+  },
+  "scheduler": {
+    "scheduled": "✅ Message scheduled for {time} in {channel}.",
+    "cancelled": "✅ Scheduled message cancelled.",
+    "not_found": "❌ No scheduled message found with that ID."
+  },
+  "verification": {
+    "setup_done": "✅ Verification setup complete.",
+    "already_verified": "✅ You are already verified.",
+    "verified": "✅ You have been verified! Welcome to the server.",
+    "role_updated": "✅ Verify role updated.",
+    "log_channel_set": "✅ Verify log channel set.",
+    "mode_set": "✅ Verify mode set to {mode}.",
+    "message_updated": "✅ Verify message updated.",
+    "settings_reset": "✅ Verification settings reset.",
+    "all_verified": "✅ Verified {count} members.",
+    "unverified": "✅ Removed verify role from {user}.",
+    "is_verified": "✅ {user} is verified.",
+    "not_verified": "❌ {user} is not verified.",
+    "captcha_sent": "📧 Please check your DMs for a captcha code.",
+    "captcha_correct": "✅ Captcha correct! You are now verified.",
+    "captcha_wrong": "❌ Wrong captcha code. {attempts} attempts remaining.",
+    "captcha_expired": "❌ Captcha expired. Please run /verify again."
+  },
+  "ticket": {
+    "created": "✅ Ticket created: {channel}",
+    "closed": "🔒 Ticket closed by {moderator}.",
+    "claimed": "👤 Ticket claimed by {user}.",
+    "unclaimed": "👤 Ticket unclaimed.",
+    "reopened": "🔓 Ticket reopened.",
+    "added": "✅ Added {user} to the ticket.",
+    "removed": "✅ Removed {user} from the ticket.",
+    "renamed": "✅ Ticket renamed to {name}.",
+    "blacklisted": "✅ {user} has been blacklisted from creating tickets.",
+    "unblacklisted": "✅ {user} has been unblacklisted.",
+    "already_open": "❌ You already have an open ticket.",
+    "blacklisted_user": "❌ You are blacklisted from creating tickets."
+  },
+  "config": {
+    "channel_set": "✅ {type} channel set to {channel}.",
+    "prefix_set": "✅ Prefix set to {prefix}.",
+    "language_set": "✅ Server language set to **{language}**.",
+    "message_updated": "✅ {type} message updated."
+  },
+  "antinuke": {
+    "enabled": "✅ Anti-Nuke enabled.",
+    "disabled": "✅ Anti-Nuke disabled."
+  },
+  "automod": {
+    "enabled": "✅ Auto-Mod enabled.",
+    "disabled": "✅ Auto-Mod disabled."
+  },
+  "logging": {
+    "enabled": "✅ Logging enabled in {channel}.",
+    "disabled": "✅ Logging disabled.",
+    "no_channel": "❌ Please set a logging channel first using /setchannel logging."
+  }
+}

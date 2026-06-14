@@ -1,297 +1,226 @@
 const helpCategories = [
-  {
-    name: 'Moderation',
-    emoji: '🛡️',
-    description: 'Server moderation commands',
+  { name: 'Moderation',      emoji: '⚔️',  description: 'Keep your server safe and well-managed',
     commands: [
-      { name: 'ban', usage: '/ban <user> [reason]', description: 'Ban a member from the server', perms: ['BanMembers'], cooldown: 5 },
-      { name: 'kick', usage: '/kick <user> [reason]', description: 'Kick a member from the server', perms: ['KickMembers'], cooldown: 5 },
-      { name: 'mute', usage: '/mute <user> <duration> [reason]', description: 'Timeout a member', perms: ['ModerateMembers'], cooldown: 5 },
-      { name: 'unmute', usage: '/unmute <user>', description: 'Remove timeout from a member', perms: ['ModerateMembers'], cooldown: 5 },
-      { name: 'warn', usage: '/warn <user> [reason]', description: 'Warn a member', perms: ['ModerateMembers'], cooldown: 5 },
-      { name: 'warnings', usage: '/warnings <user>', description: 'View warnings for a member', perms: ['ModerateMembers'], cooldown: 3 },
-      { name: 'clear', usage: '/clear [amount]', description: 'Bulk delete messages', perms: ['ManageMessages'], cooldown: 5 },
-      { name: 'lock', usage: '/lock [channel]', description: 'Lock a channel', perms: ['ManageChannels'], cooldown: 3 },
-      { name: 'unlock', usage: '/unlock [channel]', description: 'Unlock a channel', perms: ['ManageChannels'], cooldown: 3 },
-    ],
+      { name: 'ban',        usage: '/ban <user> [reason]',         description: 'Ban a member from the server',            perms: 'Ban Members',      cooldown: '5s' },
+      { name: 'kick',       usage: '/kick <user> [reason]',        description: 'Kick a member from the server',           perms: 'Kick Members',     cooldown: '5s' },
+      { name: 'warn',       usage: '/warn <user> <reason>',        description: 'Warn a member (stored in DB)',            perms: 'Moderate Members', cooldown: '3s' },
+      { name: 'mute',       usage: '/mute <user> [time] [reason]', description: 'Mute a member',                           perms: 'Moderate Members', cooldown: '5s' },
+      { name: 'unmute',     usage: '/unmute <user>',               description: 'Unmute a member',                         perms: 'Moderate Members', cooldown: '3s' },
+      { name: 'lock',       usage: '/lock [channel]',              description: 'Lock a channel',                          perms: 'Manage Channels',  cooldown: '3s' },
+      { name: 'unlock',     usage: '/unlock [channel]',            description: 'Unlock a channel',                        perms: 'Manage Channels',  cooldown: '3s' },
+      { name: 'jail',       usage: '/jail <user> [reason]',        description: 'Jail a member',                           perms: 'Administrator',    cooldown: '5s' },
+      { name: 'unjail',     usage: '/unjail <user>',               description: 'Release a jailed member',                 perms: 'Administrator',    cooldown: '3s' },
+      { name: 'nickname',   usage: '/nickname <user> <name>',      description: 'Change a member\'s nickname',             perms: 'Manage Nicknames', cooldown: '3s' },
+      { name: 'slowmode',   usage: '/slowmode <seconds>',          description: 'Set channel slowmode',                    perms: 'Manage Channels',  cooldown: '3s' },
+      { name: 'clear',      usage: '/clear <amount> [user]',       description: 'Bulk delete messages',                    perms: 'Administrator',    cooldown: '5s' },
+    ]
   },
-  {
-    name: 'Anti-Nuke',
-    emoji: '💣',
-    description: 'Protection against server raids and nukes',
+  { name: 'Anti-Nuke',  emoji: '🛡️',  description: 'Protect your server from raids and nukes',
     commands: [
-      { name: 'antinuke', usage: '/antinuke <action>', description: 'Configure anti-nuke protection', perms: ['Administrator'], cooldown: 10 },
-      { name: 'antiraid', usage: '/antiraid <action>', description: 'Toggle raid mode', perms: ['Administrator'], cooldown: 10 },
-      { name: 'whitelist', usage: '/whitelist <action> <user>', description: 'Manage anti-nuke whitelist', perms: ['Administrator'], cooldown: 5 },
-    ],
+      { name: 'antinuke', usage: '/antinuke <config|enable|disable>', description: 'Manage anti-nuke protection', perms: 'Administrator', cooldown: '5s' },
+    ]
   },
-  {
-    name: 'Logging',
-    emoji: '📜',
-    description: 'Server event logging commands',
+  { name: 'Logging',    emoji: '📋',  description: 'Track events and changes in your server',
     commands: [
-      { name: 'log set', usage: '/log set <type> <channel>', description: 'Set a logging channel', perms: ['ManageGuild'], cooldown: 10 },
-      { name: 'log remove', usage: '/log remove <type>', description: 'Remove a logging channel', perms: ['ManageGuild'], cooldown: 10 },
-      { name: 'log list', usage: '/log list', description: 'List all logging channels', perms: ['ManageGuild'], cooldown: 5 },
-    ],
+      { name: 'logging', usage: '/logging <enable|disable>', description: 'Toggle server logging', perms: 'Administrator', cooldown: '5s' },
+    ]
   },
-  {
-    name: 'Auto-Mod',
-    emoji: '🤖',
-    description: 'Automatic moderation commands',
+  { name: 'Auto-Mod',   emoji: '🤖',  description: 'Automatically moderate messages and behaviour',
     commands: [
-      { name: 'automod', usage: '/automod <rule> <action>', description: 'Configure auto-mod rules', perms: ['ManageGuild'], cooldown: 10 },
-      { name: 'automod list', usage: '/automod list', description: 'List active auto-mod rules', perms: ['ManageGuild'], cooldown: 5 },
-    ],
+      { name: 'automod', usage: '/automod <config|enable|disable>', description: 'Manage auto-moderation', perms: 'Administrator', cooldown: '5s' },
+    ]
   },
-  {
-    name: 'Welcome/Farewell',
-    emoji: '👋',
-    description: 'Welcome and farewell message commands',
+  { name: 'Welcome / Farewell', emoji: '👋', description: 'Greet new members and farewell those who leave',
     commands: [
-      { name: 'welcome set', usage: '/welcome set <channel> [message]', description: 'Set welcome channel and message', perms: ['ManageGuild'], cooldown: 10 },
-      { name: 'welcome test', usage: '/welcome test', description: 'Test welcome message', perms: ['ManageGuild'], cooldown: 10 },
-      { name: 'farewell set', usage: '/farewell set <channel> [message]', description: 'Set farewell channel and message', perms: ['ManageGuild'], cooldown: 10 },
-      { name: 'farewell test', usage: '/farewell test', description: 'Test farewell message', perms: ['ManageGuild'], cooldown: 10 },
-    ],
+      { name: 'setchannel', usage: '/setchannel <type> <channel>', description: 'Set welcome/farewell channel', perms: 'Administrator', cooldown: '5s' },
+      { name: 'setcustommessage', usage: '/setcustommessage <type> <message>', description: 'Set custom welcome/farewell message', perms: 'Administrator', cooldown: '5s' },
+    ]
   },
-  {
-    name: 'Leveling',
-    emoji: '📈',
-    description: 'Leveling and XP commands',
+  { name: 'Leveling',   emoji: '⭐',  description: 'XP system — earn levels through activity',
     commands: [
-      { name: 'rank', usage: '/rank [user]', description: 'Check your or another user\'s rank', perms: [], cooldown: 5 },
-      { name: 'leaderboard', usage: '/leaderboard', description: 'View server level leaderboard', perms: [], cooldown: 10 },
-      { name: 'level config', usage: '/level config', description: 'Configure leveling settings', perms: ['ManageGuild'], cooldown: 10 },
-      { name: 'level reward', usage: '/level reward <level> <role>', description: 'Set role rewards for levels', perms: ['ManageGuild'], cooldown: 10 },
-    ],
+      { name: 'addxp', usage: '/addxp <user> <amount>', description: 'Add XP to a user', perms: 'Administrator', cooldown: '5s' },
+      { name: 'removexp', usage: '/removexp <user> <amount>', description: 'Remove XP from a user', perms: 'Administrator', cooldown: '5s' },
+      { name: 'xpleaderboard', usage: '/xpleaderboard', description: 'View XP leaderboard', perms: 'Everyone', cooldown: '5s' },
+      { name: 'xpprofile', usage: '/xpprofile [user]', description: 'View XP profile card', perms: 'Everyone', cooldown: '3s' },
+    ]
   },
-  {
-    name: 'Economy',
-    emoji: '💰',
-    description: 'Economy and currency commands',
+  { name: 'Economy',    emoji: '💰',  description: 'Coins, banking, gambling and more',
     commands: [
-      { name: 'balance', usage: '/balance [user]', description: 'Check your or another user\'s balance', perms: [], cooldown: 3 },
-      { name: 'daily', usage: '/daily', description: 'Claim your daily reward', perms: [], cooldown: 86400 },
-      { name: 'weekly', usage: '/weekly', description: 'Claim your weekly reward', perms: [], cooldown: 604800 },
-      { name: 'pay', usage: '/pay <user> <amount>', description: 'Transfer coins to another user', perms: [], cooldown: 5 },
-      { name: 'shop', usage: '/shop', description: 'View the server shop', perms: [], cooldown: 3 },
-      { name: 'buy', usage: '/buy <item>', description: 'Buy an item from the shop', perms: [], cooldown: 5 },
-      { name: 'work', usage: '/work', description: 'Work to earn coins', perms: [], cooldown: 3600 },
-      { name: 'gamble', usage: '/gamble <amount>', description: 'Gamble your coins', perms: [], cooldown: 10 },
-    ],
+      { name: 'daily', usage: '/daily', description: 'Claim daily coins', perms: 'Everyone', cooldown: '24h' },
+      { name: 'bank', usage: '/bank', description: 'View and manage your bank account', perms: 'Everyone', cooldown: '3s' },
+      { name: 'deposit', usage: '/deposit <amount>', description: 'Deposit coins into your bank', perms: 'Everyone', cooldown: '3s' },
+      { name: 'withdraw', usage: '/withdraw <amount>', description: 'Withdraw coins from your bank', perms: 'Everyone', cooldown: '3s' },
+      { name: 'give', usage: '/give <user> <amount>', description: 'Give coins to another user', perms: 'Everyone', cooldown: '5s' },
+      { name: 'rob', usage: '/rob <user>', description: 'Try to rob another user', perms: 'Everyone', cooldown: '60s' },
+      { name: 'work', usage: '/work', description: 'Work to earn coins', perms: 'Everyone', cooldown: '30m' },
+      { name: 'fish', usage: '/fish', description: 'Go fishing for coins', perms: 'Everyone', cooldown: '30s' },
+      { name: 'coinflip', usage: '/coinflip <bet>', description: 'Bet on a coin flip', perms: 'Everyone', cooldown: '3s' },
+      { name: 'leaderboard', usage: '/leaderboard', description: 'View economy leaderboard', perms: 'Everyone', cooldown: '5s' },
+      { name: 'profile', usage: '/profile [user]', description: 'View economy profile', perms: 'Everyone', cooldown: '3s' },
+    ]
   },
-  {
-    name: 'Giveaway',
-    emoji: '🎉',
-    description: 'Giveaway management commands',
+  { name: 'Giveaway',   emoji: '🎉',  description: 'Host giveaways with role and invite requirements',
     commands: [
-      { name: 'giveaway start', usage: '/giveaway start <duration> <winners> <prize>', description: 'Start a giveaway', perms: ['ManageGuild'], cooldown: 30 },
-      { name: 'giveaway end', usage: '/giveaway end <message_id>', description: 'End a giveaway early', perms: ['ManageGuild'], cooldown: 10 },
-      { name: 'giveaway reroll', usage: '/giveaway reroll <message_id>', description: 'Reroll a giveaway winner', perms: ['ManageGuild'], cooldown: 10 },
-    ],
+      { name: 'giveaway', usage: '/giveaway <start|end|reroll>', description: 'Manage giveaways', perms: 'Administrator', cooldown: '5s' },
+    ]
   },
-  {
-    name: 'Ticket System',
-    emoji: '🎫',
-    description: 'Ticket management commands',
+  { name: 'Ticket System', emoji: '🎫', description: 'Full support ticket system with transcripts',
     commands: [
-      { name: 'ticket setup', usage: '/ticket setup <channel>', description: 'Set up the ticket panel', perms: ['ManageGuild'], cooldown: 30 },
-      { name: 'ticket close', usage: '/ticket close', description: 'Close a ticket', perms: [], cooldown: 5 },
-      { name: 'ticket add', usage: '/ticket add <user>', description: 'Add a user to a ticket', perms: [], cooldown: 3 },
-      { name: 'ticket remove', usage: '/ticket remove <user>', description: 'Remove a user from a ticket', perms: [], cooldown: 3 },
-    ],
+      { name: 'ticket', usage: '/ticket <setup|add|close|claim|unclaim|reopen|rename|blacklist|unblacklist|stats|transcript>', description: 'Complete ticket management', perms: 'Manage Channels', cooldown: '3s' },
+    ]
   },
-  {
-    name: 'Verification',
-    emoji: '✅',
-    description: 'Member verification commands',
+  { name: 'Verification',  emoji: '✅', description: 'Button, captcha, or reaction verification',
     commands: [
-      { name: 'verify setup', usage: '/verify setup <channel> <role>', description: 'Set up verification system', perms: ['ManageGuild'], cooldown: 30 },
-      { name: 'verify config', usage: '/verify config', description: 'Configure verification settings', perms: ['ManageGuild'], cooldown: 10 },
-    ],
+      { name: 'verify', usage: '/verify <start|setup|role|mode|message|log|check|all|reset|unverify>', description: 'Complete verification system', perms: 'Administrator', cooldown: '3s' },
+    ]
   },
-  {
-    name: 'Reaction Roles',
-    emoji: '😊',
-    description: 'Reaction role commands',
+  { name: 'Reaction Roles', emoji: '🔁', description: 'Button and reaction-based role assignment',
     commands: [
-      { name: 'rr create', usage: '/rr create <channel> <message_id> <emoji> <role>', description: 'Create a reaction role', perms: ['ManageRoles'], cooldown: 10 },
-      { name: 'rr remove', usage: '/rr remove <message_id> <emoji>', description: 'Remove a reaction role', perms: ['ManageRoles'], cooldown: 10 },
-      { name: 'rr list', usage: '/rr list', description: 'List all reaction roles', perms: ['ManageRoles'], cooldown: 5 },
-    ],
+      { name: 'reactionrole', usage: '/reactionrole', description: 'Create reaction role panels', perms: 'Manage Roles', cooldown: '5s' },
+      { name: 'buttonrole', usage: '/buttonrole', description: 'Create button role panels', perms: 'Manage Roles', cooldown: '5s' },
+    ]
   },
-  {
-    name: 'Analytics',
-    emoji: '📊',
-    description: 'Server analytics commands',
+  { name: 'Analytics',  emoji: '📊',  description: 'Invite tracking, activity stats, server growth',
     commands: [
-      { name: 'analytics', usage: '/analytics', description: 'View server analytics', perms: ['ManageGuild'], cooldown: 30 },
-      { name: 'analytics members', usage: '/analytics members', description: 'View member analytics', perms: ['ManageGuild'], cooldown: 30 },
-    ],
+      { name: 'activity', usage: '/activity [user]', description: 'View user activity stats', perms: 'Everyone', cooldown: '5s' },
+      { name: 'invites', usage: '/invites [user]', description: 'View invite tracker stats', perms: 'Everyone', cooldown: '5s' },
+      { name: 'serveranalytics', usage: '/serveranalytics', description: 'View server growth stats', perms: 'Everyone', cooldown: '10s' },
+    ]
   },
-  {
-    name: 'Fun',
-    emoji: '🎮',
-    description: 'Fun and entertainment commands',
+  { name: 'Fun',        emoji: '🎮',  description: 'Games and entertainment for your community',
     commands: [
-      { name: '8ball', usage: '/8ball <question>', description: 'Ask the magic 8-ball a question', perms: [], cooldown: 3 },
-      { name: 'meme', usage: '/meme', description: 'Get a random meme', perms: [], cooldown: 3 },
-      { name: 'joke', usage: '/joke', description: 'Get a random joke', perms: [], cooldown: 3 },
-      { name: 'roast', usage: '/roast [user]', description: 'Roast someone', perms: [], cooldown: 5 },
-      { name: 'dice', usage: '/dice [sides]', description: 'Roll a dice', perms: [], cooldown: 2 },
-      { name: 'flip', usage: '/flip', description: 'Flip a coin', perms: [], cooldown: 2 },
-    ],
+      { name: '8ball', usage: '/8ball <question>', description: 'Ask the magic 8-ball a question', perms: 'Everyone', cooldown: '3s' },
+      { name: 'coinflip', usage: '/coinflip', description: 'Flip a coin', perms: 'Everyone', cooldown: '2s' },
+      { name: 'guessnumber', usage: '/guessnumber', description: 'Guess a number between 1-10', perms: 'Everyone', cooldown: '5s' },
+      { name: 'meme', usage: '/meme', description: 'Get a random meme', perms: 'Everyone', cooldown: '3s' },
+      { name: 'truth', usage: '/truth', description: 'Get a random truth question', perms: 'Everyone', cooldown: '3s' },
+      { name: 'dare', usage: '/dare', description: 'Get a random dare', perms: 'Everyone', cooldown: '3s' },
+    ]
   },
-  {
-    name: 'Anime',
-    emoji: '🎌',
-    description: 'Anime-related commands',
+  { name: 'Anime',      emoji: '🎌',  description: 'Anime, manga, waifu and character lookups',
     commands: [
-      { name: 'anime', usage: '/anime <query>', description: 'Search for an anime', perms: [], cooldown: 5 },
-      { name: 'manga', usage: '/manga <query>', description: 'Search for a manga', perms: [], cooldown: 5 },
-      { name: 'animequote', usage: '/animequote', description: 'Get a random anime quote', perms: [], cooldown: 3 },
-    ],
+      { name: 'anime', usage: '/anime <query>', description: 'Search for an anime', perms: 'Everyone', cooldown: '5s' },
+      { name: 'manga', usage: '/manga <query>', description: 'Search for a manga', perms: 'Everyone', cooldown: '5s' },
+      { name: 'animequote', usage: '/animequote', description: 'Get a random anime quote', perms: 'Everyone', cooldown: '3s' },
+      { name: 'animerandom', usage: '/animerandom', description: 'Get a random anime recommendation', perms: 'Everyone', cooldown: '5s' },
+      { name: 'character', usage: '/character <name>', description: 'Search for an anime character', perms: 'Everyone', cooldown: '5s' },
+      { name: 'waifu', usage: '/waifu', description: 'Get a random waifu image', perms: 'Everyone', cooldown: '3s' },
+      { name: 'movierecommend', usage: '/movierecommend', description: 'Get a movie recommendation', perms: 'Everyone', cooldown: '5s' },
+    ]
   },
-  {
-    name: 'Social',
-    emoji: '👥',
-    description: 'Social interaction commands',
+  { name: 'Social',     emoji: '💬',  description: 'Confessions, truth or dare, matchmaking and more',
     commands: [
-      { name: 'hug', usage: '/hug <user>', description: 'Hug someone', perms: [], cooldown: 3 },
-      { name: 'kiss', usage: '/kiss <user>', description: 'Kiss someone', perms: [], cooldown: 3 },
-      { name: 'slap', usage: '/slap <user>', description: 'Slap someone', perms: [], cooldown: 3 },
-      { name: 'pat', usage: '/pat <user>', description: 'Pat someone', perms: [], cooldown: 3 },
-      { name: 'cuddle', usage: '/cuddle <user>', description: 'Cuddle someone', perms: [], cooldown: 3 },
-    ],
+      { name: 'confess', usage: '/confess <message>', description: 'Send an anonymous confession', perms: 'Everyone', cooldown: '30s' },
+      { name: 'dailyquestion', usage: '/dailyquestion', description: 'Get the daily question', perms: 'Everyone', cooldown: '3s' },
+      { name: 'matchmaking', usage: '/matchmaking', description: 'Find your match in the server', perms: 'Everyone', cooldown: '10s' },
+    ]
   },
-  {
-    name: 'AI',
-    emoji: '🧠',
-    description: 'AI-powered commands',
+  { name: 'AI',         emoji: '🧠',  description: 'Ask questions and generate images using Gemini AI',
     commands: [
-      { name: 'ask', usage: '/ask <prompt>', description: 'Ask AI a question', perms: [], cooldown: 10 },
-      { name: 'chat', usage: '/chat <message>', description: 'Chat with AI', perms: [], cooldown: 5 },
-      { name: 'imagine', usage: '/imagine <prompt>', description: 'Generate an image with AI', perms: [], cooldown: 30 },
-    ],
+      { name: 'ask', usage: '/ask <prompt>', description: 'Ask AI any question', perms: 'Everyone', cooldown: '10s' },
+      { name: 'createimage', usage: '/createimage <prompt>', description: 'Generate an AI image', perms: 'Everyone', cooldown: '30s' },
+    ]
   },
-  {
-    name: 'Utilities',
-    emoji: '🔧',
-    description: 'General utility commands',
+  { name: 'Utilities',  emoji: '🔧',  description: 'General purpose tools for everyday use',
     commands: [
-      { name: 'ping', usage: '/ping', description: 'Check bot latency', perms: [], cooldown: 3 },
-      { name: 'uptime', usage: '/uptime', description: 'Check bot uptime', perms: [], cooldown: 5 },
-      { name: 'help', usage: '/help [category]', description: 'Display help menu', perms: [], cooldown: 3 },
-      { name: 'invite', usage: '/invite', description: 'Get bot invite link', perms: [], cooldown: 10 },
-      { name: 'vote', usage: '/vote', description: 'Vote for the bot', perms: [], cooldown: 60 },
-      { name: 'serverinfo', usage: '/serverinfo', description: 'View server information', perms: [], cooldown: 5 },
-      { name: 'userinfo', usage: '/userinfo [user]', description: 'View user information', perms: [], cooldown: 5 },
-      { name: 'roleinfo', usage: '/roleinfo <role>', description: 'View role information', perms: [], cooldown: 5 },
-      { name: 'emojiinfo', usage: '/emojiinfo <emoji>', description: 'View emoji information', perms: [], cooldown: 5 },
-      { name: 'avatar', usage: '/avatar [user]', description: 'View user avatar', perms: [], cooldown: 3 },
-      { name: 'banner', usage: '/banner [user]', description: 'View user banner', perms: [], cooldown: 3 },
-      { name: 'snipe', usage: '/snipe', description: 'Snipe the last deleted message', perms: [], cooldown: 5 },
-      { name: 'editsnipe', usage: '/editsnipe', description: 'Snipe the last edited message', perms: [], cooldown: 5 },
-    ],
+      { name: 'ping', usage: '/ping', description: 'Check bot latency', perms: 'Everyone', cooldown: '3s' },
+      { name: 'help', usage: '/help [category]', description: 'Display interactive help menu', perms: 'Everyone', cooldown: '3s' },
+      { name: 'botinfo', usage: '/botinfo', description: 'View bot information', perms: 'Everyone', cooldown: '5s' },
+      { name: 'serverinfo', usage: '/serverinfo', description: 'View server information', perms: 'Everyone', cooldown: '5s' },
+      { name: 'userinfo', usage: '/userinfo [user]', description: 'View user information', perms: 'Everyone', cooldown: '5s' },
+      { name: 'avatar', usage: '/avatar [user]', description: 'View a user\'s avatar', perms: 'Everyone', cooldown: '3s' },
+      { name: 'banner', usage: '/banner [user]', description: 'View a user\'s banner', perms: 'Everyone', cooldown: '3s' },
+      { name: 'membercount', usage: '/membercount', description: 'View server member count', perms: 'Everyone', cooldown: '5s' },
+      { name: 'roleall', usage: '/roleall <role>', description: 'Assign a role to all members', perms: 'Administrator', cooldown: '30s' },
+      { name: 'giverole', usage: '/giverole <user> <role>', description: 'Give a role to a user', perms: 'Manage Roles', cooldown: '3s' },
+      { name: 'poll', usage: '/poll <question>', description: 'Create a quick yes/no poll', perms: 'Everyone', cooldown: '5s' },
+      { name: 'reminder', usage: '/reminder <time> <text>', description: 'Set a reminder', perms: 'Everyone', cooldown: '10s' },
+      { name: 'snipe', usage: '/snipe', description: 'View the last deleted message', perms: 'Everyone', cooldown: '5s' },
+      { name: 'afk', usage: '/afk [reason]', description: 'Set your AFK status', perms: 'Everyone', cooldown: '10s' },
+      { name: 'afkend', usage: '/afkend', description: 'Remove your AFK status', perms: 'Everyone', cooldown: '3s' },
+    ]
   },
-  {
-    name: 'Config',
-    emoji: '⚙️',
-    description: 'Bot configuration commands',
+  { name: 'Config',     emoji: '⚙️',  description: 'Configure Axion for your server',
     commands: [
-      { name: 'config', usage: '/config', description: 'View server configuration', perms: ['ManageGuild'], cooldown: 10 },
-      { name: 'config prefix', usage: '/config prefix <prefix>', description: 'Set custom prefix', perms: ['ManageGuild'], cooldown: 30 },
-      { name: 'config language', usage: '/config language <language>', description: 'Set server language', perms: ['ManageGuild'], cooldown: 30 },
-      { name: 'setaichannel', usage: '/setaichannel <#channel>', description: 'Set AI auto-respond channel', perms: ['Administrator'], cooldown: 5 },
-    ],
+      { name: 'setprefix', usage: '/setprefix <prefix>', description: 'Set the command prefix', perms: 'Administrator', cooldown: '5s' },
+      { name: 'setlanguage', usage: '/setlanguage <language>', description: 'Set server language', perms: 'Administrator', cooldown: '5s' },
+      { name: 'setchannel', usage: '/setchannel <type> <channel>', description: 'Set feature channels', perms: 'Administrator', cooldown: '5s' },
+      { name: 'setcustommessage', usage: '/setcustommessage <type> <message>', description: 'Set custom event messages', perms: 'Administrator', cooldown: '5s' },
+      { name: 'setaichannel', usage: '/setaichannel <channel>', description: 'Set AI auto-respond channel', perms: 'Administrator', cooldown: '5s' },
+    ]
   },
-  {
-    name: 'Birthday',
-    emoji: '🎂',
-    description: 'Birthday tracking commands',
+  { name: 'Birthday',   emoji: '🎂',  description: 'Birthday announcements and tracking',
     commands: [
-      { name: 'birthday set', usage: '/birthday set <date>', description: 'Set your birthday', perms: [], cooldown: 60 },
-      { name: 'birthday remove', usage: '/birthday remove', description: 'Remove your birthday', perms: [], cooldown: 60 },
-      { name: 'birthday list', usage: '/birthday list', description: 'View upcoming birthdays', perms: [], cooldown: 10 },
-      { name: 'birthday channel', usage: '/birthday channel <channel>', description: 'Set birthday announcement channel', perms: ['ManageGuild'], cooldown: 30 },
-    ],
+      { name: 'birthday', usage: '/birthday <set|remove|list|channel>', description: 'Manage birthdays', perms: 'Everyone', cooldown: '5s' },
+    ]
   },
-  {
-    name: 'Quotes',
-    emoji: '💬',
-    description: 'Quote management commands',
+  { name: 'Quotes',     emoji: '💭',  description: 'Save and recall memorable quotes',
     commands: [
-      { name: 'quote add', usage: '/quote add <message_link>', description: 'Save a message as a quote', perms: [], cooldown: 5 },
-      { name: 'quote random', usage: '/quote random', description: 'Get a random saved quote', perms: [], cooldown: 3 },
-      { name: 'quote list', usage: '/quote list', description: 'List all saved quotes', perms: [], cooldown: 5 },
-    ],
+      { name: 'quote', usage: '/quote <add|random|list>', description: 'Manage saved quotes', perms: 'Everyone', cooldown: '5s' },
+    ]
   },
-  {
-    name: 'Sticky Msg',
-    emoji: '📌',
-    description: 'Sticky message commands',
+  { name: 'Sticky Msg', emoji: '📌',  description: 'Keep important messages pinned at the bottom',
     commands: [
-      { name: 'sticky add', usage: '/sticky add <channel> <message>', description: 'Set a sticky message in a channel', perms: ['ManageMessages'], cooldown: 10 },
-      { name: 'sticky remove', usage: '/sticky remove <channel>', description: 'Remove a sticky message', perms: ['ManageMessages'], cooldown: 10 },
-      { name: 'sticky list', usage: '/sticky list', description: 'List all sticky messages', perms: ['ManageMessages'], cooldown: 5 },
-    ],
+      { name: 'sticky', usage: '/sticky <set|remove>', description: 'Manage sticky messages', perms: 'Administrator', cooldown: '5s' },
+    ]
   },
-  {
-    name: 'Adv. Polls',
-    emoji: '📊',
-    description: 'Advanced poll commands',
+  { name: 'Adv. Polls', emoji: '📣',  description: 'Advanced polls with time limits and role gates',
     commands: [
-      { name: 'poll', usage: '/poll <question> <option1> <option2> [options...]', description: 'Create a multi-choice poll', perms: ['ManageMessages'], cooldown: 10 },
-      { name: 'quickpoll', usage: '/quickpoll <question>', description: 'Create a quick yes/no poll', perms: ['ManageMessages'], cooldown: 10 },
-    ],
+      { name: 'advancedpoll', usage: '/advancedpoll <create|end|results>', description: 'Advanced polls', perms: 'Manage Messages', cooldown: '5s' },
+    ]
   },
-  {
-    name: 'Auto-Roles',
-    emoji: '🎭',
-    description: 'Automatic role assignment commands',
+  { name: 'Auto-Roles', emoji: '👤',  description: 'Automatically assign roles on member join',
     commands: [
-      { name: 'autorole add', usage: '/autorole add <role>', description: 'Add a role to auto-assign on join', perms: ['ManageRoles'], cooldown: 10 },
-      { name: 'autorole remove', usage: '/autorole remove <role>', description: 'Remove an auto-assign role', perms: ['ManageRoles'], cooldown: 10 },
-      { name: 'autorole list', usage: '/autorole list', description: 'List auto-assigned roles', perms: ['ManageRoles'], cooldown: 5 },
-    ],
+      { name: 'autorole', usage: '/autorole <add|remove|list>', description: 'Manage auto-roles', perms: 'Manage Roles', cooldown: '5s' },
+    ]
   },
-  {
-    name: 'AFK',
-    emoji: '🌙',
-    description: 'AFK status commands',
+  { name: 'Notifications', emoji: '🔔', description: 'YouTube and Twitch live notifications',
     commands: [
-      { name: 'afk', usage: '/afk [reason]', description: 'Set your AFK status', perms: [], cooldown: 10 },
-      { name: 'afk remove', usage: '/afk remove', description: 'Remove your AFK status', perms: [], cooldown: 3 },
-    ],
+      { name: 'notification', usage: '/notification <youtube|twitch> <add|remove|list>', description: 'Manage video/live notifications', perms: 'Administrator', cooldown: '5s' },
+    ]
   },
-  {
-    name: 'Notifications',
-    emoji: '🔔',
-    description: 'YouTube and Twitch notification commands',
+  { name: 'Starboard', emoji: '⭐', description: 'Highlight popular messages with star reactions',
     commands: [
-      { name: 'notification youtube add', usage: '/notification youtube add <channel-id> <#channel> [message]', description: 'Watch a YouTube channel for new videos', perms: ['Administrator'], cooldown: 5 },
-      { name: 'notification youtube remove', usage: '/notification youtube remove <channel-id>', description: 'Stop watching a YouTube channel', perms: ['Administrator'], cooldown: 5 },
-      { name: 'notification youtube list', usage: '/notification youtube list', description: 'List all YouTube notifications', perms: ['Administrator'], cooldown: 5 },
-      { name: 'notification twitch add', usage: '/notification twitch add <channel-name> <#channel> [message]', description: 'Watch a Twitch channel for going live', perms: ['Administrator'], cooldown: 5 },
-      { name: 'notification twitch remove', usage: '/notification twitch remove <channel-name>', description: 'Stop watching a Twitch channel', perms: ['Administrator'], cooldown: 5 },
-      { name: 'notification twitch list', usage: '/notification twitch list', description: 'List all Twitch notifications', perms: ['Administrator'], cooldown: 5 },
-    ],
+      { name: 'starboard', usage: '/starboard <config|setup|disable>', description: 'Manage starboard', perms: 'Administrator', cooldown: '5s' },
+    ]
+  },
+  { name: 'Custom Commands', emoji: '🔨', description: 'Create server-specific custom commands',
+    commands: [
+      { name: 'customcmd', usage: '/customcmd <add|edit|list|remove>', description: 'Manage custom commands', perms: 'Administrator', cooldown: '5s' },
+    ]
+  },
+  { name: 'Temp VC', emoji: '🔊', description: 'Temporary voice channel management',
+    commands: [
+      { name: 'tempvc', usage: '/tempvc <setup|config>', description: 'Manage temporary voice channels', perms: 'Administrator', cooldown: '5s' },
+    ]
+  },
+  { name: 'Counting', emoji: '🔢', description: 'Counting channel game for your server',
+    commands: [
+      { name: 'counting', usage: '/counting <setup|reset|stats>', description: 'Manage counting channels', perms: 'Administrator', cooldown: '5s' },
+    ]
+  },
+  { name: 'Reports', emoji: '📝', description: 'User report system with mod review',
+    commands: [
+      { name: 'report', usage: '/report <user> <reason>', description: 'Report a user to staff', perms: 'Everyone', cooldown: '30s' },
+      { name: 'reportsetup', usage: '/reportsetup <channel>', description: 'Set up the report system', perms: 'Administrator', cooldown: '5s' },
+      { name: 'reports', usage: '/reports', description: 'View pending reports', perms: 'Manage Messages', cooldown: '5s' },
+    ]
+  },
+  { name: 'Scheduler', emoji: '📅', description: 'Schedule one-time or recurring messages',
+    commands: [
+      { name: 'schedule', usage: '/schedule <create|cancel|list>', description: 'Manage scheduled messages', perms: 'Manage Messages', cooldown: '5s' },
+    ]
+  },
+  { name: 'Bump', emoji: '📢', description: 'Server bump reminder system',
+    commands: [
+      { name: 'bumper', usage: '/bumper <setup|disable>', description: 'Manage bump reminders', perms: 'Administrator', cooldown: '5s' },
+    ]
+  },
+  { name: 'Server Stats', emoji: '📈', description: 'Automatic server stats in channel names',
+    commands: [
+      { name: 'serverstats', usage: '/serverstats <setup|add|remove>', description: 'Manage server stats channels', perms: 'Administrator', cooldown: '5s' },
+    ]
   },
 ];
 
-function flatCommands() {
-  const flat = [];
-  for (const category of helpCategories) {
-    for (const command of category.commands) {
-      flat.push({
-        ...command,
-        category: category.name,
-        categoryEmoji: category.emoji,
-      });
-    }
-  }
-  return flat;
-}
-
-module.exports = { helpCategories, flatCommands };
+module.exports = helpCategories;

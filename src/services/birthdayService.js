@@ -1,4 +1,5 @@
 const { EmbedBuilder } = require('discord.js');
+const cron = require('node-cron');
 const Birthday = require('../models/Birthday');
 const GuildConfig = require('../models/GuildConfig');
 
@@ -76,4 +77,11 @@ async function announceBirthdays(client) {
   }
 }
 
-module.exports = { setBirthday, checkBirthday, listBirthdays, announceBirthdays };
+function startCron(client) {
+  cron.schedule('0 * * * *', () => {
+    announceBirthdays(client).catch(() => {});
+  });
+  console.log('[Birthday] Cron started (every hour)');
+}
+
+module.exports = { setBirthday, checkBirthday, listBirthdays, announceBirthdays, startCron };

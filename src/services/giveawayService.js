@@ -1,4 +1,5 @@
 const { EmbedBuilder } = require('discord.js');
+const cron = require('node-cron');
 const Giveaway = require('../models/Giveaway');
 
 const activeTimers = new Map();
@@ -172,4 +173,11 @@ function isBlacklisted(userId, giveaway) {
   return false;
 }
 
-module.exports = { startGiveaway, endGiveaway, rerollGiveaway, checkExpiredGiveaways, scheduleEnd };
+function startCron(client) {
+  cron.schedule('* * * * *', () => {
+    checkExpiredGiveaways(client).catch(() => {});
+  });
+  console.log('[Giveaway] Cron started (every minute)');
+}
+
+module.exports = { startGiveaway, endGiveaway, rerollGiveaway, checkExpiredGiveaways, scheduleEnd, startCron };

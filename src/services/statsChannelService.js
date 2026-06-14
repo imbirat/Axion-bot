@@ -1,3 +1,4 @@
+const cron = require('node-cron');
 const ServerStats = require('../models/ServerStats');
 
 async function updateStatsChannels(client) {
@@ -53,4 +54,11 @@ function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-module.exports = { updateStatsChannels };
+function startCron(client) {
+  cron.schedule('*/5 * * * *', () => {
+    updateStatsChannels(client).catch(() => {});
+  });
+  console.log('[StatsChannel] Cron started (every 5 minutes)');
+}
+
+module.exports = { updateStatsChannels, startCron };

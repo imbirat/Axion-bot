@@ -85,7 +85,7 @@ module.exports = {
             .setFooter({ text: `Page ${p + 1}/${totalPages}` });
           pages.push(embed);
         }
-        let msg = await interaction.reply({ embeds: [pages[0]], fetchReply: true });
+        let msg = (await interaction.reply({ embeds: [pages[0]], withResponse: true })).resource.message;
         if (totalPages > 1) {
           await msg.react('⬅️');
           await msg.react('➡️');

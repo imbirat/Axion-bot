@@ -43,10 +43,10 @@ module.exports = {
         if (!category) {
           return interaction.reply({ content: `Category "${categoryName}" not found.`, flags: MessageFlags.Ephemeral });
         }
-        const reply = await interaction.reply({ ...buildCategoryPage(category, 0, false), fetchReply: true });
+        const reply = (await interaction.reply({ ...buildCategoryPage(category, 0, false), withResponse: true })).resource.message;
         setSession(interaction.user.id, reply.id, { userId: interaction.user.id, categoryName: category.name, page: 0, sorted: false });
       } else {
-        const reply = await interaction.reply({ ...buildMainPage(interaction.client, interaction.guild, 0), fetchReply: true });
+        const reply = (await interaction.reply({ ...buildMainPage(interaction.client, interaction.guild, 0), withResponse: true })).resource.message;
         setSession(interaction.user.id, reply.id, { userId: interaction.user.id, categoryName: null, page: 0, mainPage: 0, sorted: false });
       }
     } catch (error) {

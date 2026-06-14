@@ -59,7 +59,7 @@ module.exports = {
         new ButtonBuilder().setCustomId('next').setLabel('▶').setStyle(ButtonStyle.Secondary).setDisabled(totalPages <= 1)
       );
 
-      const msg = await interaction.reply({ embeds: [buildEmbed(page)], components: [row], flags: MessageFlags.Ephemeral, fetchReply: true });
+      const msg = (await interaction.reply({ embeds: [buildEmbed(page)], components: [row], flags: MessageFlags.Ephemeral, withResponse: true })).resource.message;
 
       const collector = msg.createMessageComponentCollector({ time: 60000, filter: i => i.user.id === interaction.user.id });
 

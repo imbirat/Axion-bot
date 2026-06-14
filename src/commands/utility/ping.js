@@ -11,7 +11,7 @@ module.exports = {
   cooldown: 3,
   async execute(interaction, client) {
     try {
-      const sent = await interaction.reply({ content: 'Pinging...', fetchReply: true });
+      const sent = (await interaction.reply({ content: 'Pinging...', withResponse: true })).resource.message;
       const roundtrip = sent.createdTimestamp - interaction.createdTimestamp;
 
       const embed = new EmbedBuilder()

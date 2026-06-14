@@ -25,7 +25,7 @@ module.exports = {
         .setFooter({ text: `Poll by ${interaction.user.tag}` })
         .setTimestamp();
 
-      const poll = await interaction.reply({ embeds: [embed], fetchReply: true });
+      const poll = (await interaction.reply({ embeds: [embed], withResponse: true })).resource.message;
       await poll.react('👍');
       await poll.react('👎');
     } catch (error) {

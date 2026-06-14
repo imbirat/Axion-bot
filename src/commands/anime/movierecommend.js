@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder , MessageFlags} = require('discord.js');
 const axios = require('axios');
 
 module.exports = {
@@ -14,7 +14,7 @@ module.exports = {
     try {
       const { data } = await axios.get('https://api.jikan.moe/v4/anime?type=movie&order_by=score&sort=desc&limit=25');
       if (!data.data || !data.data.length) {
-        return interaction.reply({ content: 'Could not find any anime movies right now.', ephemeral: true });
+        return interaction.reply({ content: 'Could not find any anime movies right now.', flags: MessageFlags.Ephemeral });
       }
       const movie = data.data[Math.floor(Math.random() * data.data.length)];
       const synopsis = movie.synopsis ? (movie.synopsis.length > 500 ? movie.synopsis.substring(0, 500) + '...' : movie.synopsis) : 'No synopsis available.';
@@ -32,7 +32,7 @@ module.exports = {
       await interaction.reply({ embeds: [embed] });
     } catch (error) {
       console.error('movierecommend command error:', error);
-      await interaction.reply({ content: 'Could not fetch a movie recommendation right now.', ephemeral: true });
+      await interaction.reply({ content: 'Could not fetch a movie recommendation right now.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

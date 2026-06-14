@@ -69,7 +69,9 @@ module.exports = {
 
     try {
       await handlePrefixCommand(message, config, client);
-    } catch (err) {}
+    } catch (err) {
+      logger.error(`Prefix command error from ${message.author.tag}:`, err);
+    }
   },
 };
 

@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder , MessageFlags} = require('discord.js');
 const ticketService = require('../../services/ticketService');
 const GuildConfig = require('../../models/GuildConfig');
 const Ticket = require('../../models/Ticket');
@@ -67,7 +67,7 @@ module.exports = {
       switch (sub) {
         case 'setup': {
           const channel = interaction.options.getChannel('channel');
-          const { ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+          const { ActionRowBuilder, ButtonBuilder, ButtonStyle , MessageFlags} = require('discord.js');
           const row = new ActionRowBuilder().addComponents(
             new ButtonBuilder()
               .setCustomId('ticket_create')
@@ -86,30 +86,30 @@ module.exports = {
             { $set: { ticketChannel: channel.id } },
             { upsert: true }
           );
-          await interaction.reply({ content: '✅ Ticket panel has been posted.', ephemeral: true });
+          await interaction.reply({ content: '✅ Ticket panel has been posted.', flags: MessageFlags.Ephemeral });
           break;
         }
         case 'add': {
           const user = interaction.options.getUser('user');
           const result = await ticketService.addUserToTicket(interaction, user);
-          if (result.error) return interaction.reply({ content: result.error, ephemeral: true });
-          await interaction.reply({ content: `✅ Added ${user}.`, ephemeral: true });
+          if (result.error) return interaction.reply({ content: result.error, flags: MessageFlags.Ephemeral });
+          await interaction.reply({ content: `✅ Added ${user}.`, flags: MessageFlags.Ephemeral });
           break;
         }
         case 'close': {
           const ticket = await Ticket.findOne({ channelId: interaction.channel.id });
-          if (!ticket) return interaction.reply({ content: 'This is not a ticket channel.', ephemeral: true });
+          if (!ticket) return interaction.reply({ content: 'This is not a ticket channel.', flags: MessageFlags.Ephemeral });
           const guildConfig = await GuildConfig.findOne({ guildId: interaction.guild.id });
           const isOwner = ticket.userId === interaction.user.id;
           const isSupport = guildConfig?.ticketSupportRole && interaction.member.roles.cache.has(guildConfig.ticketSupportRole);
           const isAdmin = interaction.member.permissions.has(PermissionFlagsBits.Administrator);
           if (!isOwner && !isSupport && !isAdmin) {
-            return interaction.reply({ content: 'You do not have permission to close this ticket.', ephemeral: true });
+            return interaction.reply({ content: 'You do not have permission to close this ticket.', flags: MessageFlags.Ephemeral });
           }
           const reason = interaction.options.getString('reason');
           const result = await ticketService.closeTicket(interaction, reason);
-          if (result.error) return interaction.reply({ content: result.error, ephemeral: true });
-          await interaction.reply({ content: '✅ Ticket closed.', ephemeral: true });
+          if (result.error) return interaction.reply({ content: result.error, flags: MessageFlags.Ephemeral });
+          await interaction.reply({ content: '✅ Ticket closed.', flags: MessageFlags.Ephemeral });
           break;
         }
         case 'claim': {
@@ -118,12 +118,12 @@ module.exports = {
             const hasRole = interaction.member.roles.cache.has(guildConfig.ticketSupportRole);
             const isAdmin = interaction.member.permissions.has(PermissionFlagsBits.Administrator);
             if (!hasRole && !isAdmin) {
-              return interaction.reply({ content: 'You do not have permission to claim tickets.', ephemeral: true });
+              return interaction.reply({ content: 'You do not have permission to claim tickets.', flags: MessageFlags.Ephemeral });
             }
           }
           const result = await ticketService.claimTicket(interaction);
-          if (result.error) return interaction.reply({ content: result.error, ephemeral: true });
-          await interaction.reply({ content: '✅ Ticket claimed.', ephemeral: true });
+          if (result.error) return interaction.reply({ content: result.error, flags: MessageFlags.Ephemeral });
+          await interaction.reply({ content: '✅ Ticket claimed.', flags: MessageFlags.Ephemeral });
           break;
         }
         case 'unclaim': {
@@ -132,12 +132,12 @@ module.exports = {
             const hasRole = interaction.member.roles.cache.has(guildConfig2.ticketSupportRole);
             const isAdmin = interaction.member.permissions.has(PermissionFlagsBits.Administrator);
             if (!hasRole && !isAdmin) {
-              return interaction.reply({ content: 'You do not have permission to unclaim tickets.', ephemeral: true });
+              return interaction.reply({ content: 'You do not have permission to unclaim tickets.', flags: MessageFlags.Ephemeral });
             }
           }
           const result2 = await ticketService.unclaimTicket(interaction);
-          if (result2.error) return interaction.reply({ content: result2.error, ephemeral: true });
-          await interaction.reply({ content: '✅ Ticket unclaimed.', ephemeral: true });
+          if (result2.error) return interaction.reply({ content: result2.error, flags: MessageFlags.Ephemeral });
+          await interaction.reply({ content: '✅ Ticket unclaimed.', flags: MessageFlags.Ephemeral });
           break;
         }
         case 'reopen': {
@@ -146,12 +146,12 @@ module.exports = {
             const hasRole = interaction.member.roles.cache.has(guildConfig3.ticketSupportRole);
             const isAdmin = interaction.member.permissions.has(PermissionFlagsBits.Administrator);
             if (!hasRole && !isAdmin) {
-              return interaction.reply({ content: 'You do not have permission to reopen tickets.', ephemeral: true });
+              return interaction.reply({ content: 'You do not have permission to reopen tickets.', flags: MessageFlags.Ephemeral });
             }
           }
           const result3 = await ticketService.reopenTicket(interaction);
-          if (result3.error) return interaction.reply({ content: result3.error, ephemeral: true });
-          await interaction.reply({ content: '✅ Ticket reopened.', ephemeral: true });
+          if (result3.error) return interaction.reply({ content: result3.error, flags: MessageFlags.Ephemeral });
+          await interaction.reply({ content: '✅ Ticket reopened.', flags: MessageFlags.Ephemeral });
           break;
         }
         case 'rename': {
@@ -160,40 +160,40 @@ module.exports = {
             const hasRole = interaction.member.roles.cache.has(guildConfig4.ticketSupportRole);
             const isAdmin = interaction.member.permissions.has(PermissionFlagsBits.Administrator);
             if (!hasRole && !isAdmin) {
-              return interaction.reply({ content: 'You do not have permission to rename tickets.', ephemeral: true });
+              return interaction.reply({ content: 'You do not have permission to rename tickets.', flags: MessageFlags.Ephemeral });
             }
           }
           const newName = interaction.options.getString('name');
           const result4 = await ticketService.renameTicket(interaction, newName);
-          if (result4.error) return interaction.reply({ content: result4.error, ephemeral: true });
-          await interaction.reply({ content: `✅ Ticket renamed to ${newName}.`, ephemeral: true });
+          if (result4.error) return interaction.reply({ content: result4.error, flags: MessageFlags.Ephemeral });
+          await interaction.reply({ content: `✅ Ticket renamed to ${newName}.`, flags: MessageFlags.Ephemeral });
           break;
         }
         case 'blacklist': {
           const user = interaction.options.getUser('user');
           const guildConfig5 = await GuildConfig.findOne({ guildId: interaction.guild.id });
-          if (!guildConfig5) return interaction.reply({ content: 'Server config not found.', ephemeral: true });
+          if (!guildConfig5) return interaction.reply({ content: 'Server config not found.', flags: MessageFlags.Ephemeral });
           if (!guildConfig5.ticketBlacklist) guildConfig5.ticketBlacklist = [];
           if (guildConfig5.ticketBlacklist.includes(user.id)) {
-            return interaction.reply({ content: `${user} is already blacklisted.`, ephemeral: true });
+            return interaction.reply({ content: `${user} is already blacklisted.`, flags: MessageFlags.Ephemeral });
           }
           guildConfig5.ticketBlacklist.push(user.id);
           await guildConfig5.save();
-          await interaction.reply({ content: `✅ ${user} blacklisted.`, ephemeral: true });
+          await interaction.reply({ content: `✅ ${user} blacklisted.`, flags: MessageFlags.Ephemeral });
           break;
         }
         case 'unblacklist': {
           const user2 = interaction.options.getUser('user');
           const guildConfig6 = await GuildConfig.findOne({ guildId: interaction.guild.id });
-          if (!guildConfig6) return interaction.reply({ content: 'Server config not found.', ephemeral: true });
+          if (!guildConfig6) return interaction.reply({ content: 'Server config not found.', flags: MessageFlags.Ephemeral });
           if (!guildConfig6.ticketBlacklist) guildConfig6.ticketBlacklist = [];
           const index = guildConfig6.ticketBlacklist.indexOf(user2.id);
           if (index === -1) {
-            return interaction.reply({ content: `${user2} is not blacklisted.`, ephemeral: true });
+            return interaction.reply({ content: `${user2} is not blacklisted.`, flags: MessageFlags.Ephemeral });
           }
           guildConfig6.ticketBlacklist.splice(index, 1);
           await guildConfig6.save();
-          await interaction.reply({ content: `✅ ${user2} unblacklisted.`, ephemeral: true });
+          await interaction.reply({ content: `✅ ${user2} unblacklisted.`, flags: MessageFlags.Ephemeral });
           break;
         }
         case 'stats': {
@@ -228,10 +228,10 @@ module.exports = {
             const hasRole = interaction.member.roles.cache.has(guildConfig7.ticketSupportRole);
             const isAdmin = interaction.member.permissions.has(PermissionFlagsBits.Administrator);
             if (!hasRole && !isAdmin) {
-              return interaction.reply({ content: 'You do not have permission to view transcripts.', ephemeral: true });
+              return interaction.reply({ content: 'You do not have permission to view transcripts.', flags: MessageFlags.Ephemeral });
             }
           }
-          await interaction.deferReply({ ephemeral: true });
+          await interaction.deferReply({ flags: MessageFlags.Ephemeral });
           const html = await transcriptService.generateTranscript(interaction.channel);
           const buffer = Buffer.from(html, 'utf-8');
           try {
@@ -247,7 +247,7 @@ module.exports = {
       }
     } catch (error) {
       console.error(`ticket ${sub} error:`, error);
-      await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {
@@ -258,7 +258,7 @@ module.exports = {
         case 'setup': {
           const channel = message.mentions.channels.first();
           if (!channel) return message.reply('Usage: ticket setup <#channel>');
-          const { ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+          const { ActionRowBuilder, ButtonBuilder, ButtonStyle , MessageFlags} = require('discord.js');
           const row = new ActionRowBuilder().addComponents(
             new ButtonBuilder()
               .setCustomId('ticket_create')

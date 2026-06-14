@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits , MessageFlags} = require('discord.js');
 const CountingChannel = require('../../models/CountingChannel');
 
 module.exports = {
@@ -37,7 +37,7 @@ module.exports = {
           { upsert: true }
         );
 
-        await interaction.reply({ content: `✅ Counting channel set to ${channel}. Start counting from 1!`, ephemeral: true });
+        await interaction.reply({ content: `✅ Counting channel set to ${channel}. Start counting from 1!`, flags: MessageFlags.Ephemeral });
         return;
       }
 
@@ -47,14 +47,14 @@ module.exports = {
           { $set: { currentCount: 0 } }
         );
 
-        await interaction.reply({ content: '✅ Count reset to 0.', ephemeral: true });
+        await interaction.reply({ content: '✅ Count reset to 0.', flags: MessageFlags.Ephemeral });
         return;
       }
 
       if (sub === 'stats') {
         const data = await CountingChannel.findOne({ guildId: interaction.guild.id });
         if (!data) {
-          return interaction.reply({ content: 'Counting is not set up yet.', ephemeral: true });
+          return interaction.reply({ content: 'Counting is not set up yet.', flags: MessageFlags.Ephemeral });
         }
 
         let lastUser = 'None';
@@ -78,7 +78,7 @@ module.exports = {
       }
     } catch (error) {
       console.error('counting error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

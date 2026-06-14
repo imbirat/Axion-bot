@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder , MessageFlags} = require('discord.js');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -14,7 +14,7 @@ module.exports = {
       const members = await interaction.guild.members.fetch();
       const nonBot = members.filter(m => !m.user.bot).map(m => m.user);
       if (nonBot.length < 2) {
-        return interaction.reply({ content: 'Not enough members to matchmake! Need at least 2 non-bot members.', ephemeral: true });
+        return interaction.reply({ content: 'Not enough members to matchmake! Need at least 2 non-bot members.', flags: MessageFlags.Ephemeral });
       }
       const shuffled = nonBot.sort(() => Math.random() - 0.5);
       const user1 = shuffled[0];
@@ -23,7 +23,7 @@ module.exports = {
       await interaction.reply(`💘 **${user1} × ${user2}** - love meter: **${loveMeter}%**`);
     } catch (error) {
       console.error('matchmaking command error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

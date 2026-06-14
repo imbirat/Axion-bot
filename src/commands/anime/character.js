@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder , MessageFlags} = require('discord.js');
 const axios = require('axios');
 
 module.exports = {
@@ -19,7 +19,7 @@ module.exports = {
       const name = interaction.options.getString('name');
       const { data } = await axios.get(`https://api.jikan.moe/v4/characters?q=${encodeURIComponent(name)}&limit=1`);
       if (!data.data || !data.data.length) {
-        return interaction.reply({ content: `No character found for "${name}".`, ephemeral: true });
+        return interaction.reply({ content: `No character found for "${name}".`, flags: MessageFlags.Ephemeral });
       }
       const chara = data.data[0];
       const about = chara.about ? (chara.about.length > 800 ? chara.about.substring(0, 800) + '...' : chara.about) : 'No description available.';
@@ -36,7 +36,7 @@ module.exports = {
       await interaction.reply({ embeds: [embed] });
     } catch (error) {
       console.error('character command error:', error);
-      await interaction.reply({ content: 'There was an error searching for character.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error searching for character.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
+const { SlashCommandBuilder, PermissionFlagsBits , MessageFlags} = require('discord.js');
 const BumpReminder = require('../../models/BumpReminder');
 
 module.exports = {
@@ -42,7 +42,7 @@ module.exports = {
           { upsert: true }
         );
 
-        await interaction.reply({ content: `✅ Bump reminder configured! I'll remind you every 2 hours.`, ephemeral: true });
+        await interaction.reply({ content: `✅ Bump reminder configured! I'll remind you every 2 hours.`, flags: MessageFlags.Ephemeral });
         return;
       }
 
@@ -52,11 +52,11 @@ module.exports = {
           { $set: { enabled: false } }
         );
 
-        await interaction.reply({ content: '✅ Bump reminders disabled.', ephemeral: true });
+        await interaction.reply({ content: '✅ Bump reminders disabled.', flags: MessageFlags.Ephemeral });
       }
     } catch (error) {
       console.error('bumper error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

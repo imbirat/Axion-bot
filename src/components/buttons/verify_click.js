@@ -1,4 +1,4 @@
-const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle , MessageFlags} = require('discord.js');
 const GuildConfig = require('../../models/GuildConfig');
 
 function generateCaptcha() {
@@ -13,17 +13,17 @@ module.exports = {
     try {
       const guildConfig = await GuildConfig.findOne({ guildId: interaction.guild.id });
       if (!guildConfig || !guildConfig.verifyRole) {
-        return interaction.reply({ content: 'Verification is not configured on this server.', ephemeral: true });
+        return interaction.reply({ content: 'Verification is not configured on this server.', flags: MessageFlags.Ephemeral });
       }
 
       const member = await interaction.guild.members.fetch(interaction.user.id);
       if (member.roles.cache.has(guildConfig.verifyRole)) {
-        return interaction.reply({ content: '✅ You are already verified!', ephemeral: true });
+        return interaction.reply({ content: '✅ You are already verified!', flags: MessageFlags.Ephemeral });
       }
 
       if (guildConfig.verifyMode === 'button') {
         await member.roles.add(guildConfig.verifyRole);
-        await interaction.reply({ content: '✅ You have been verified!', ephemeral: true });
+        await interaction.reply({ content: '✅ You have been verified!', flags: MessageFlags.Ephemeral });
 
         if (guildConfig.verifyLogChannel) {
           const logChannel = interaction.guild.channels.cache.get(guildConfig.verifyLogChannel);
@@ -48,7 +48,7 @@ module.exports = {
             content: `🔐 **Verification Captcha**\n\n${captcha.question}\n\nReply with the answer in this DM. This expires in 2 minutes.`
           });
         } catch (e) {
-          return interaction.reply({ content: '❌ I cannot DM you. Please enable DMs to verify.', ephemeral: true });
+          return interaction.reply({ content: '❌ I cannot DM you. Please enable DMs to verify.', flags: MessageFlags.Ephemeral });
         }
 
         client.verifyCaptchas.set(interaction.user.id, {
@@ -65,15 +65,15 @@ module.exports = {
           }
         }, 120000);
 
-        await interaction.reply({ content: '✅ Captcha sent! Check your DMs.', ephemeral: true });
+        await interaction.reply({ content: '✅ Captcha sent! Check your DMs.', flags: MessageFlags.Ephemeral });
         return;
       }
 
-      await interaction.reply({ content: 'Verification mode not supported.', ephemeral: true });
+      await interaction.reply({ content: 'Verification mode not supported.', flags: MessageFlags.Ephemeral });
     } catch (error) {
       console.error('verify_click error:', error);
       if (!interaction.replied) {
-        await interaction.reply({ content: '❌ Verification failed.', ephemeral: true });
+        await interaction.reply({ content: '❌ Verification failed.', flags: MessageFlags.Ephemeral });
       }
     }
   }

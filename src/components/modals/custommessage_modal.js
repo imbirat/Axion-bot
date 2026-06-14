@@ -23,7 +23,7 @@ module.exports = {
       const embedField = embedFieldMap[type];
 
       if (!messageField) {
-        return interaction.reply({ content: 'Invalid message type.', ephemeral: true });
+        return interaction.reply({ content: 'Invalid message type.', flags: MessageFlags.Ephemeral });
       }
 
       const update = { [messageField]: message };
@@ -40,11 +40,11 @@ module.exports = {
       const typeLabel = type.charAt(0).toUpperCase() + type.slice(1);
       await interaction.reply({
         content: `✅ ${typeLabel} message has been updated.`,
-        ephemeral: true
+        flags: MessageFlags.Ephemeral
       });
     } catch (error) {
       console.error('custommessage_modal error:', error);
-      await interaction.reply({ content: '❌ Failed to save message.', ephemeral: true });
+      await interaction.reply({ content: '❌ Failed to save message.', flags: MessageFlags.Ephemeral });
     }
   }
 };

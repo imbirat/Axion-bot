@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder , MessageFlags} = require('discord.js');
 const axios = require('axios');
 
 module.exports = {
@@ -22,7 +22,7 @@ module.exports = {
       await interaction.reply({ embeds: [embed] });
     } catch (error) {
       console.error('meme command error:', error);
-      await interaction.reply({ content: 'Could not fetch a meme right now. Try again later.', ephemeral: true });
+      await interaction.reply({ content: 'Could not fetch a meme right now. Try again later.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

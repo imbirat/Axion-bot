@@ -1,4 +1,4 @@
-const { EmbedBuilder } = require('discord.js');
+const { EmbedBuilder , MessageFlags} = require('discord.js');
 const { claimTicket } = require('../../services/ticketService');
 
 module.exports = {
@@ -7,7 +7,7 @@ module.exports = {
     try {
       const result = await claimTicket(interaction);
       if (result.error) {
-        return interaction.reply({ content: `❌ ${result.error}`, ephemeral: true });
+        return interaction.reply({ content: `❌ ${result.error}`, flags: MessageFlags.Ephemeral });
       }
 
       const embed = new EmbedBuilder()
@@ -17,10 +17,10 @@ module.exports = {
         .setTimestamp();
 
       await interaction.channel.send({ embeds: [embed] });
-      await interaction.reply({ content: '✅ Claimed', ephemeral: true });
+      await interaction.reply({ content: '✅ Claimed', flags: MessageFlags.Ephemeral });
     } catch (error) {
       console.error('ticket_claim error:', error);
-      await interaction.reply({ content: 'Failed to claim ticket.', ephemeral: true });
+      await interaction.reply({ content: 'Failed to claim ticket.', flags: MessageFlags.Ephemeral });
     }
   }
 };

@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits , MessageFlags} = require('discord.js');
 const ReactionRole = require('../../models/ReactionRole');
 
 module.exports = {
@@ -41,7 +41,7 @@ module.exports = {
         });
 
         if (existing) {
-          return interaction.reply({ content: `${role} is already an auto-role.`, ephemeral: true });
+          return interaction.reply({ content: `${role} is already an auto-role.`, flags: MessageFlags.Ephemeral });
         }
 
         await ReactionRole.findOneAndUpdate(
@@ -50,7 +50,7 @@ module.exports = {
           { upsert: true }
         );
 
-        await interaction.reply({ content: `✅ ${role} added to auto-roles.`, ephemeral: true });
+        await interaction.reply({ content: `✅ ${role} added to auto-roles.`, flags: MessageFlags.Ephemeral });
         return;
       }
 
@@ -61,25 +61,25 @@ module.exports = {
         );
 
         if (!result) {
-          return interaction.reply({ content: `${role} is not in auto-roles.`, ephemeral: true });
+          return interaction.reply({ content: `${role} is not in auto-roles.`, flags: MessageFlags.Ephemeral });
         }
 
-        await interaction.reply({ content: `✅ ${role} removed from auto-roles.`, ephemeral: true });
+        await interaction.reply({ content: `✅ ${role} removed from auto-roles.`, flags: MessageFlags.Ephemeral });
         return;
       }
 
       if (sub === 'list') {
         const doc = await ReactionRole.findOne({ guildId: interaction.guild.id, type: 'auto' });
         if (!doc || doc.roles.length === 0) {
-          return interaction.reply({ content: 'No auto-roles configured.', ephemeral: true });
+          return interaction.reply({ content: 'No auto-roles configured.', flags: MessageFlags.Ephemeral });
         }
 
         const mentions = doc.roles.map(r => `<@&${r.roleId}>`).join(', ');
-        await interaction.reply({ content: `**Auto-Roles:** ${mentions}`, ephemeral: true });
+        await interaction.reply({ content: `**Auto-Roles:** ${mentions}`, flags: MessageFlags.Ephemeral });
       }
     } catch (error) {
       console.error('autorole error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

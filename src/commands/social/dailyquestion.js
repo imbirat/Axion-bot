@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder , MessageFlags} = require('discord.js');
 const GuildConfig = require('../../models/GuildConfig');
 
 const questions = [
@@ -57,7 +57,7 @@ module.exports = {
             .setDescription(question)
             .setTimestamp();
           await channel.send({ embeds: [embed] });
-          return interaction.reply({ content: `✅ Question posted in ${channel}.`, ephemeral: true });
+          return interaction.reply({ content: `✅ Question posted in ${channel}.`, flags: MessageFlags.Ephemeral });
         }
       }
       const embed = new EmbedBuilder()
@@ -68,7 +68,7 @@ module.exports = {
       await interaction.reply({ embeds: [embed] });
     } catch (error) {
       console.error('dailyquestion command error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

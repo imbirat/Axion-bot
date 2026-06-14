@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, ChannelType, PermissionsBitField } = require('discord.js');
+const { SlashCommandBuilder, ChannelType, PermissionsBitField , MessageFlags} = require('discord.js');
 const { t } = require('../../utils/i18n');
 
 module.exports = {
@@ -30,7 +30,7 @@ module.exports = {
       await interaction.reply({ content: reply });
     } catch (error) {
       console.error('unlock command error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder , MessageFlags} = require('discord.js');
 const GuildConfig = require('../../models/GuildConfig');
 
 module.exports = {
@@ -20,11 +20,11 @@ module.exports = {
       const config = await GuildConfig.findOne({ guildId: interaction.guildId });
       const channelId = config?.confessionChannel;
       if (!channelId) {
-        return interaction.reply({ content: 'Confession channel has not been configured. Ask an admin to set one up.', ephemeral: true });
+        return interaction.reply({ content: 'Confession channel has not been configured. Ask an admin to set one up.', flags: MessageFlags.Ephemeral });
       }
       const channel = interaction.guild.channels.cache.get(channelId);
       if (!channel) {
-        return interaction.reply({ content: 'The configured confession channel no longer exists.', ephemeral: true });
+        return interaction.reply({ content: 'The configured confession channel no longer exists.', flags: MessageFlags.Ephemeral });
       }
       const embed = new EmbedBuilder()
         .setColor(0x5865F2)
@@ -32,10 +32,10 @@ module.exports = {
         .setDescription(confession)
         .setTimestamp();
       await channel.send({ embeds: [embed] });
-      await interaction.reply({ content: '✅ Your confession has been sent anonymously.', ephemeral: true });
+      await interaction.reply({ content: '✅ Your confession has been sent anonymously.', flags: MessageFlags.Ephemeral });
     } catch (error) {
       console.error('confess command error:', error);
-      await interaction.reply({ content: 'There was an error sending your confession.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error sending your confession.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

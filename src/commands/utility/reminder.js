@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder , MessageFlags} = require('discord.js');
 const ms = require('ms');
 
 module.exports = {
@@ -27,15 +27,15 @@ module.exports = {
       const duration = ms(timeStr);
 
       if (!duration) {
-        return interaction.reply({ content: 'Invalid time format. Use e.g. `10m`, `1h`, `1d`.', ephemeral: true });
+        return interaction.reply({ content: 'Invalid time format. Use e.g. `10m`, `1h`, `1d`.', flags: MessageFlags.Ephemeral });
       }
 
       if (duration < 10000) {
-        return interaction.reply({ content: 'Time must be at least 10 seconds.', ephemeral: true });
+        return interaction.reply({ content: 'Time must be at least 10 seconds.', flags: MessageFlags.Ephemeral });
       }
 
       if (duration > 2592000000) {
-        return interaction.reply({ content: 'Time cannot exceed 30 days.', ephemeral: true });
+        return interaction.reply({ content: 'Time cannot exceed 30 days.', flags: MessageFlags.Ephemeral });
       }
 
       await interaction.reply({ content: `✅ I'll remind you about "${message}" in ${timeStr}.` });
@@ -52,7 +52,7 @@ module.exports = {
       }, duration);
     } catch (error) {
       console.error('reminder command error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

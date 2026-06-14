@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
+const { SlashCommandBuilder, PermissionFlagsBits , MessageFlags} = require('discord.js');
 const GuildConfig = require('../../models/GuildConfig');
 
 module.exports = {
@@ -23,10 +23,10 @@ module.exports = {
         { $set: { aiChannel: channel.id } },
         { upsert: true }
       );
-      await interaction.reply({ content: `✅ AI channel set to ${channel}. Messages there will be auto-answered by Gemini.`, ephemeral: true });
+      await interaction.reply({ content: `✅ AI channel set to ${channel}. Messages there will be auto-answered by Gemini.`, flags: MessageFlags.Ephemeral });
     } catch (error) {
       console.error('setaichannel error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder , MessageFlags} = require('discord.js');
 const { getProfile, addBalance, removeBalance } = require('../../services/economyService');
 
 module.exports = {
@@ -22,7 +22,7 @@ module.exports = {
       const profile = await getProfile(interaction.user.id, interaction.guild.id);
 
       if (profile.balance < amount) {
-        return interaction.reply({ content: 'You do not have enough coins in your wallet.', ephemeral: true });
+        return interaction.reply({ content: 'You do not have enough coins in your wallet.', flags: MessageFlags.Ephemeral });
       }
 
       await removeBalance(interaction.user.id, interaction.guild.id, amount);
@@ -39,7 +39,7 @@ module.exports = {
       }
     } catch (error) {
       console.error('coinflip command error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

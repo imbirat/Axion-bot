@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle , MessageFlags} = require('discord.js');
 const Report = require('../../models/Report');
 const GuildConfig = require('../../models/GuildConfig');
 
@@ -25,7 +25,7 @@ module.exports = {
       const reason = interaction.options.getString('reason');
 
       if (target.id === interaction.user.id) {
-        return interaction.reply({ content: 'You cannot report yourself.', ephemeral: true });
+        return interaction.reply({ content: 'You cannot report yourself.', flags: MessageFlags.Ephemeral });
       }
 
       const report = await Report.create({
@@ -65,10 +65,10 @@ module.exports = {
         }
       }
 
-      await interaction.reply({ content: '✅ Your report has been submitted anonymously.', ephemeral: true });
+      await interaction.reply({ content: '✅ Your report has been submitted anonymously.', flags: MessageFlags.Ephemeral });
     } catch (error) {
       console.error('report error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

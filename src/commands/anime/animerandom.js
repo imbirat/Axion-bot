@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder , MessageFlags} = require('discord.js');
 const axios = require('axios');
 
 module.exports = {
@@ -30,7 +30,7 @@ module.exports = {
       await interaction.reply({ embeds: [embed] });
     } catch (error) {
       console.error('animerandom command error:', error);
-      await interaction.reply({ content: 'Could not fetch a random anime right now.', ephemeral: true });
+      await interaction.reply({ content: 'Could not fetch a random anime right now.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

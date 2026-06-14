@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder , MessageFlags} = require('discord.js');
 const { getProfile, addBalance } = require('../../services/economyService');
 
 module.exports = {
@@ -49,7 +49,7 @@ module.exports = {
       await interaction.reply({ content: message });
     } catch (error) {
       console.error('fish command error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

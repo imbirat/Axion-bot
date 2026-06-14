@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
+const { SlashCommandBuilder, PermissionFlagsBits , MessageFlags} = require('discord.js');
 const GuildConfig = require('../../models/GuildConfig');
 const { clearCache } = require('../../utils/i18n');
 
@@ -36,7 +36,7 @@ module.exports = {
       await interaction.reply({ content: `✅ Language set to ${langNames[language]}` });
     } catch (error) {
       console.error('setlanguage command error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder , MessageFlags} = require('discord.js');
 const UserProfile = require('../../models/UserProfile');
 
 module.exports = {
@@ -17,7 +17,7 @@ module.exports = {
 
       const profile = await UserProfile.findOne({ userId, guildId });
       if (!profile || !profile.afk) {
-        return interaction.reply({ content: 'You are not currently AFK.', ephemeral: true });
+        return interaction.reply({ content: 'You are not currently AFK.', flags: MessageFlags.Ephemeral });
       }
 
       profile.afk = false;
@@ -28,7 +28,7 @@ module.exports = {
       await interaction.reply({ content: '✅ Welcome back, AFK has been removed.' });
     } catch (error) {
       console.error('afkend command error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

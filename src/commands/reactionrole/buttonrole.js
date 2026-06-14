@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, ButtonBuilder, ButtonStyle, PermissionFlagsBits } = require('discord.js');
+const { SlashCommandBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, ButtonBuilder, ButtonStyle, PermissionFlagsBits , MessageFlags} = require('discord.js');
 const ReactionRole = require('../../models/ReactionRole');
 
 module.exports = {
@@ -81,14 +81,14 @@ module.exports = {
               channel = modalInteraction.guild.channels.cache.get(channelRaw);
             }
             if (!channel) {
-              return modalInteraction.reply({ content: 'Invalid channel.', ephemeral: true });
+              return modalInteraction.reply({ content: 'Invalid channel.', flags: MessageFlags.Ephemeral });
             }
 
             const roleMatch = roleRaw.match(/<@&(\d+)>/);
             const roleId = roleMatch ? roleMatch[1] : roleRaw;
             const role = modalInteraction.guild.roles.cache.get(roleId);
             if (!role) {
-              return modalInteraction.reply({ content: 'Invalid role.', ephemeral: true });
+              return modalInteraction.reply({ content: 'Invalid role.', flags: MessageFlags.Ephemeral });
             }
 
             const colorMap = { primary: ButtonStyle.Primary, danger: ButtonStyle.Danger, success: ButtonStyle.Success };
@@ -112,10 +112,10 @@ module.exports = {
               type: 'button'
             });
 
-            await modalInteraction.reply({ content: '✅ Button role created.', ephemeral: true });
+            await modalInteraction.reply({ content: '✅ Button role created.', flags: MessageFlags.Ephemeral });
           } catch (err) {
             console.error('buttonrole modal error:', err);
-            await modalInteraction.reply({ content: 'An error occurred.', ephemeral: true });
+            await modalInteraction.reply({ content: 'An error occurred.', flags: MessageFlags.Ephemeral });
           } finally {
             client.modals.delete(modalId);
           }
@@ -126,7 +126,7 @@ module.exports = {
       await interaction.showModal(modal);
     } catch (error) {
       console.error('buttonrole error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

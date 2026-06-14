@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
+const { SlashCommandBuilder, PermissionFlagsBits , MessageFlags} = require('discord.js');
 const TempVC = require('../../models/TempVC');
 
 module.exports = {
@@ -37,7 +37,7 @@ module.exports = {
       if (sub === 'setup') {
         const channel = interaction.options.getChannel('voice-channel');
         if (channel.type !== 2) {
-          return interaction.reply({ content: 'Please select a voice channel.', ephemeral: true });
+          return interaction.reply({ content: 'Please select a voice channel.', flags: MessageFlags.Ephemeral });
         }
 
         await TempVC.findOneAndUpdate(
@@ -46,7 +46,7 @@ module.exports = {
           { upsert: true }
         );
 
-        await interaction.reply({ content: `✅ Temp VC setup complete! Members can now join ${channel} to create their own VC.`, ephemeral: true });
+        await interaction.reply({ content: `✅ Temp VC setup complete! Members can now join ${channel} to create their own VC.`, flags: MessageFlags.Ephemeral });
         return;
       }
 
@@ -59,7 +59,7 @@ module.exports = {
         if (limit !== null) update.userLimit = limit;
 
         if (Object.keys(update).length === 0) {
-          return interaction.reply({ content: 'Please provide at least one option to update.', ephemeral: true });
+          return interaction.reply({ content: 'Please provide at least one option to update.', flags: MessageFlags.Ephemeral });
         }
 
         await TempVC.findOneAndUpdate(
@@ -68,11 +68,11 @@ module.exports = {
           { upsert: true }
         );
 
-        await interaction.reply({ content: '✅ Temp VC config updated.', ephemeral: true });
+        await interaction.reply({ content: '✅ Temp VC config updated.', flags: MessageFlags.Ephemeral });
       }
     } catch (error) {
       console.error('tempvc error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

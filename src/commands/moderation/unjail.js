@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder , MessageFlags} = require('discord.js');
 const { t } = require('../../utils/i18n');
 const GuildConfig = require('../../models/GuildConfig');
 const UserProfile = require('../../models/UserProfile');
@@ -23,7 +23,7 @@ module.exports = {
       const member = interaction.guild.members.cache.get(targetUser.id);
 
       if (!member) {
-        return interaction.reply({ content: await t(interaction.guild.id, 'moderation.user_not_found', { defaultValue: 'Could not find that user in this server.' }), ephemeral: true });
+        return interaction.reply({ content: await t(interaction.guild.id, 'moderation.user_not_found', { defaultValue: 'Could not find that user in this server.' }), flags: MessageFlags.Ephemeral });
       }
 
       const config = await GuildConfig.findOne({ guildId: interaction.guild.id });
@@ -31,7 +31,7 @@ module.exports = {
       const hasJailRole = jailRoleId && member.roles.cache.has(jailRoleId);
 
       if (!hasJailRole) {
-        return interaction.reply({ content: await t(interaction.guild.id, 'moderation.not_jailed', { defaultValue: 'That user is not jailed.' }), ephemeral: true });
+        return interaction.reply({ content: await t(interaction.guild.id, 'moderation.not_jailed', { defaultValue: 'That user is not jailed.' }), flags: MessageFlags.Ephemeral });
       }
 
       const profile = await UserProfile.findOne({ userId: targetUser.id, guildId: interaction.guild.id });
@@ -59,7 +59,7 @@ module.exports = {
       await interaction.reply({ content: reply });
     } catch (error) {
       console.error('unjail command error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

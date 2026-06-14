@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder , MessageFlags} = require('discord.js');
 const { getProfile, addBalance, removeBalance } = require('../../services/economyService');
 
 module.exports = {
@@ -19,7 +19,7 @@ module.exports = {
     try {
       const target = interaction.options.getUser('user');
       if (target.id === interaction.user.id) {
-        return interaction.reply({ content: 'You cannot rob yourself!', ephemeral: true });
+        return interaction.reply({ content: 'You cannot rob yourself!', flags: MessageFlags.Ephemeral });
       }
 
       const profile = await getProfile(interaction.user.id, interaction.guild.id);
@@ -60,7 +60,7 @@ module.exports = {
       }
     } catch (error) {
       console.error('rob command error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

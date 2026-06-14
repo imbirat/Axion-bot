@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder , MessageFlags} = require('discord.js');
 const { getProfile, addBank, removeBalance } = require('../../services/economyService');
 
 module.exports = {
@@ -26,12 +26,12 @@ module.exports = {
       } else {
         amount = parseInt(amountStr, 10);
         if (isNaN(amount) || amount < 1) {
-          return interaction.reply({ content: 'Please provide a valid amount or "all".', ephemeral: true });
+          return interaction.reply({ content: 'Please provide a valid amount or "all".', flags: MessageFlags.Ephemeral });
         }
       }
 
       if (amount < 1) {
-        return interaction.reply({ content: 'You have no coins to deposit.', ephemeral: true });
+        return interaction.reply({ content: 'You have no coins to deposit.', flags: MessageFlags.Ephemeral });
       }
 
       await removeBalance(interaction.user.id, interaction.guild.id, amount);
@@ -40,10 +40,10 @@ module.exports = {
       await interaction.reply({ content: `✅ Deposited **${amount}** coins to your bank.` });
     } catch (error) {
       if (error.message === 'Insufficient balance') {
-        return interaction.reply({ content: 'You do not have enough coins in your wallet.', ephemeral: true });
+        return interaction.reply({ content: 'You do not have enough coins in your wallet.', flags: MessageFlags.Ephemeral });
       }
       console.error('deposit command error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

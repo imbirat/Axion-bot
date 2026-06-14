@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, PermissionFlagsBits } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, PermissionFlagsBits , MessageFlags} = require('discord.js');
 const ScheduledMessage = require('../../models/ScheduledMessage');
 
 function parseTime(input) {
@@ -65,7 +65,7 @@ module.exports = {
 
         const scheduledFor = parseTime(timeStr);
         if (!scheduledFor || scheduledFor.getTime() <= Date.now()) {
-          return interaction.reply({ content: 'Invalid or past time. Use formats like `1h`, `30m`, `2d`, or `YYYY-MM-DD HH:mm`.', ephemeral: true });
+          return interaction.reply({ content: 'Invalid or past time. Use formats like `1h`, `30m`, `2d`, or `YYYY-MM-DD HH:mm`.', flags: MessageFlags.Ephemeral });
         }
 
         await ScheduledMessage.create({
@@ -77,14 +77,14 @@ module.exports = {
         });
 
         const ts = Math.floor(scheduledFor.getTime() / 1000);
-        await interaction.reply({ content: `✅ Message scheduled for <t:${ts}:F> in ${channel}.`, ephemeral: true });
+        await interaction.reply({ content: `✅ Message scheduled for <t:${ts}:F> in ${channel}.`, flags: MessageFlags.Ephemeral });
         return;
       }
 
       if (sub === 'list') {
         const messages = await ScheduledMessage.find({ guildId: interaction.guild.id, sent: false }).sort({ scheduledFor: 1 }).lean();
         if (messages.length === 0) {
-          return interaction.reply({ content: 'No pending scheduled messages.', ephemeral: true });
+          return interaction.reply({ content: 'No pending scheduled messages.', flags: MessageFlags.Ephemeral });
         }
 
         const itemsPerPage = 5;
@@ -116,7 +116,7 @@ module.exports = {
           new ButtonBuilder().setCustomId('next').setLabel('▶').setStyle(ButtonStyle.Secondary).setDisabled(totalPages <= 1)
         );
 
-        const msg = await interaction.reply({ embeds: [buildEmbed(page)], components: [row], ephemeral: true, fetchReply: true });
+        const msg = await interaction.reply({ embeds: [buildEmbed(page)], components: [row], flags: MessageFlags.Ephemeral, fetchReply: true });
 
         const collector = msg.createMessageComponentCollector({ time: 60000, filter: i => i.user.id === interaction.user.id });
 
@@ -141,14 +141,14 @@ module.exports = {
         const result = await ScheduledMessage.findOneAndDelete({ _id: id, guildId: interaction.guild.id });
 
         if (!result) {
-          return interaction.reply({ content: 'Scheduled message not found.', ephemeral: true });
+          return interaction.reply({ content: 'Scheduled message not found.', flags: MessageFlags.Ephemeral });
         }
 
-        await interaction.reply({ content: '✅ Scheduled message cancelled.', ephemeral: true });
+        await interaction.reply({ content: '✅ Scheduled message cancelled.', flags: MessageFlags.Ephemeral });
       }
     } catch (error) {
       console.error('schedule error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

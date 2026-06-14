@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder , MessageFlags} = require('discord.js');
 
 const responses = [
   'It is certain.', 'It is decidedly so.', 'Without a doubt.', 'Yes definitely.',
@@ -29,7 +29,7 @@ module.exports = {
       await interaction.reply(`🎱 Question: ${question}\nAnswer: ${response}`);
     } catch (error) {
       console.error('8ball command error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

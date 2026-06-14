@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder , MessageFlags} = require('discord.js');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -13,7 +13,7 @@ module.exports = {
     try {
       if (!client.guessGames) client.guessGames = new Map();
       if (client.guessGames.has(interaction.user.id)) {
-        return interaction.reply({ content: 'You already have an active game! Finish it first.', ephemeral: true });
+        return interaction.reply({ content: 'You already have an active game! Finish it first.', flags: MessageFlags.Ephemeral });
       }
 
       const number = Math.floor(Math.random() * 100) + 1;
@@ -46,14 +46,14 @@ module.exports = {
 
       collector.on('end', (collected, reason) => {
         if (reason === 'time' && client.guessGames.has(interaction.user.id)) {
-          interaction.followUp({ content: `⏰ Time\'s up! The number was **${game.number}**.`, ephemeral: true });
+          interaction.followUp({ content: `⏰ Time\'s up! The number was **${game.number}**.`, flags: MessageFlags.Ephemeral });
           client.guessGames.delete(interaction.user.id);
         }
       });
     } catch (error) {
       console.error('guessnumber command error:', error);
       if (client.guessGames) client.guessGames.delete(interaction.user.id);
-      await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

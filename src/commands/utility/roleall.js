@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, PermissionsBitField } = require('discord.js');
+const { SlashCommandBuilder, PermissionsBitField , MessageFlags} = require('discord.js');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -17,13 +17,13 @@ module.exports = {
   async execute(interaction, client) {
     try {
       if (!interaction.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
-        return interaction.reply({ content: 'You need Administrator permission to use this command.', ephemeral: true });
+        return interaction.reply({ content: 'You need Administrator permission to use this command.', flags: MessageFlags.Ephemeral });
       }
 
       const role = interaction.options.getRole('role');
 
       if (role.position >= interaction.member.roles.highest.position) {
-        return interaction.reply({ content: 'You cannot give a role that is higher than or equal to your highest role.', ephemeral: true });
+        return interaction.reply({ content: 'You cannot give a role that is higher than or equal to your highest role.', flags: MessageFlags.Ephemeral });
       }
 
       await interaction.deferReply();
@@ -48,7 +48,7 @@ module.exports = {
       if (interaction.deferred) {
         await interaction.editReply({ content: 'There was an error executing this command.' });
       } else {
-        await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+        await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
       }
     }
   },

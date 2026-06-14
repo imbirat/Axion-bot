@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder , MessageFlags} = require('discord.js');
 
 const truths = [
   'What is the most embarrassing thing you\'ve ever done?',
@@ -48,7 +48,7 @@ module.exports = {
       await interaction.reply(`📖 **Truth:** ${truth}`);
     } catch (error) {
       console.error('truth command error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

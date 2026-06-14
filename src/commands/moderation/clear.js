@@ -24,7 +24,7 @@ module.exports = {
   cooldown: 5,
   async execute(interaction, client) {
     try {
-      await interaction.deferReply();
+      await interaction.reply({ content: '⏳ Clearing messages...' });
       const amount = interaction.options.getInteger('amount');
       const targetUser = interaction.options.getUser('user');
 
@@ -48,8 +48,8 @@ module.exports = {
       interaction.fetchReply().then(msg => setTimeout(() => msg.delete().catch(() => {}), 5000)).catch(() => {});
     } catch (error) {
       console.error('clear command error:', error);
-      const errReply = { content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral };
-      if (interaction.deferred) {
+      const errReply = { content: '❌ Error: ' + (error.message || 'Unknown error') };
+      if (interaction.replied) {
         await interaction.editReply(errReply).catch(() => {});
       } else {
         await interaction.reply(errReply).catch(() => {});

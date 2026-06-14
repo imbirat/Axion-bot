@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder , MessageFlags} = require('discord.js');
 const { transfer } = require('../../services/economyService');
 
 module.exports = {
@@ -27,21 +27,21 @@ module.exports = {
       const amount = interaction.options.getInteger('amount');
 
       if (target.id === interaction.user.id) {
-        return interaction.reply({ content: 'You cannot give coins to yourself!', ephemeral: true });
+        return interaction.reply({ content: 'You cannot give coins to yourself!', flags: MessageFlags.Ephemeral });
       }
 
       if (amount < 1) {
-        return interaction.reply({ content: 'You must give at least 1 coin.', ephemeral: true });
+        return interaction.reply({ content: 'You must give at least 1 coin.', flags: MessageFlags.Ephemeral });
       }
 
       await transfer(interaction.user.id, target.id, interaction.guild.id, amount);
       await interaction.reply({ content: `✅ You gave **${amount}** coins to **${target.username}**.` });
     } catch (error) {
       if (error.message === 'Insufficient balance') {
-        return interaction.reply({ content: 'You do not have enough coins in your wallet.', ephemeral: true });
+        return interaction.reply({ content: 'You do not have enough coins in your wallet.', flags: MessageFlags.Ephemeral });
       }
       console.error('give command error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

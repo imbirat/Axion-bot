@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder , MessageFlags} = require('discord.js');
 const snipeCache = require('../../utils/snipeCache');
 
 module.exports = {
@@ -15,7 +15,7 @@ module.exports = {
       const data = snipeCache.get(interaction.channel.id);
 
       if (!data) {
-        return interaction.reply({ content: 'Nothing to snipe!', ephemeral: true });
+        return interaction.reply({ content: 'Nothing to snipe!', flags: MessageFlags.Ephemeral });
       }
 
       const timeAgo = Math.floor((Date.now() - new Date(data.createdAt).getTime()) / 1000);
@@ -42,7 +42,7 @@ module.exports = {
       await interaction.reply({ embeds: [embed] });
     } catch (error) {
       console.error('snipe command error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

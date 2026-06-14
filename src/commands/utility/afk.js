@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder , MessageFlags} = require('discord.js');
 const UserProfile = require('../../models/UserProfile');
 
 module.exports = {
@@ -34,7 +34,7 @@ module.exports = {
       await interaction.reply({ content: `${interaction.user} I've set your AFK as: ${reason}` });
     } catch (error) {
       console.error('afk command error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

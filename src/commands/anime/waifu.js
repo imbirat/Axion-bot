@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder , MessageFlags} = require('discord.js');
 const axios = require('axios');
 
 module.exports = {
@@ -19,7 +19,7 @@ module.exports = {
       await interaction.reply({ embeds: [embed] });
     } catch (error) {
       console.error('waifu command error:', error);
-      await interaction.reply({ content: 'Could not fetch a waifu image right now.', ephemeral: true });
+      await interaction.reply({ content: 'Could not fetch a waifu image right now.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

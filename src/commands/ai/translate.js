@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder , MessageFlags} = require('discord.js');
 const geminiService = require('../../services/geminiService');
 
 const LANGUAGES = [
@@ -44,7 +44,7 @@ module.exports = {
   cooldown: 10,
   async execute(interaction, client) {
     try {
-      await interaction.deferReply({ ephemeral: true });
+      await interaction.deferReply({ flags: MessageFlags.Ephemeral });
       const text = interaction.options.getString('text');
       const langCode = interaction.options.getString('language');
       const langName = LANGUAGES.find(l => l.value === langCode)?.name || langCode;

@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
+const { SlashCommandBuilder, PermissionFlagsBits , MessageFlags} = require('discord.js');
 const xpService = require('../../services/xpService');
 
 module.exports = {
@@ -34,7 +34,7 @@ module.exports = {
       await interaction.reply({ content: reply });
     } catch (error) {
       console.error('addxp command error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

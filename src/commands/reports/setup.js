@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
+const { SlashCommandBuilder, PermissionFlagsBits , MessageFlags} = require('discord.js');
 const GuildConfig = require('../../models/GuildConfig');
 
 module.exports = {
@@ -25,10 +25,10 @@ module.exports = {
         { upsert: true }
       );
 
-      await interaction.reply({ content: `✅ Report channel set to ${channel}.`, ephemeral: true });
+      await interaction.reply({ content: `✅ Report channel set to ${channel}.`, flags: MessageFlags.Ephemeral });
     } catch (error) {
       console.error('reportsetup error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

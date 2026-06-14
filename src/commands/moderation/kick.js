@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, PermissionsBitField } = require('discord.js');
+const { SlashCommandBuilder, PermissionsBitField , MessageFlags} = require('discord.js');
 const { t } = require('../../utils/i18n');
 const GuildConfig = require('../../models/GuildConfig');
 
@@ -28,15 +28,15 @@ module.exports = {
       const member = interaction.guild.members.cache.get(targetUser.id);
 
       if (!member) {
-        return interaction.reply({ content: await t(interaction.guild.id, 'moderation.user_not_found', { defaultValue: 'Could not find that user in this server.' }), ephemeral: true });
+        return interaction.reply({ content: await t(interaction.guild.id, 'moderation.user_not_found', { defaultValue: 'Could not find that user in this server.' }), flags: MessageFlags.Ephemeral });
       }
 
       if (!member.kickable) {
-        return interaction.reply({ content: await t(interaction.guild.id, 'moderation.cannot_kick', { defaultValue: 'I cannot kick that user.' }), ephemeral: true });
+        return interaction.reply({ content: await t(interaction.guild.id, 'moderation.cannot_kick', { defaultValue: 'I cannot kick that user.' }), flags: MessageFlags.Ephemeral });
       }
 
       if (member.roles.highest.position >= interaction.member.roles.highest.position) {
-        return interaction.reply({ content: await t(interaction.guild.id, 'moderation.higher_role', { defaultValue: 'You cannot kick a user with a higher or equal role.' }), ephemeral: true });
+        return interaction.reply({ content: await t(interaction.guild.id, 'moderation.higher_role', { defaultValue: 'You cannot kick a user with a higher or equal role.' }), flags: MessageFlags.Ephemeral });
       }
 
       await member.kick(reason);
@@ -57,7 +57,7 @@ module.exports = {
       await interaction.reply({ content: reply });
     } catch (error) {
       console.error('kick command error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

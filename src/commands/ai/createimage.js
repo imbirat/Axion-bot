@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder , MessageFlags} = require('discord.js');
 const geminiService = require('../../services/geminiService');
 
 module.exports = {
@@ -28,7 +28,7 @@ module.exports = {
       await interaction.editReply({ embeds: [embed] });
     } catch (error) {
       console.error('createimage command error:', error);
-      await interaction.editReply({ content: 'There was an error generating the image.', ephemeral: true });
+      await interaction.editReply({ content: 'There was an error generating the image.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

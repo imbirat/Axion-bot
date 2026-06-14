@@ -1,4 +1,4 @@
-const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle , MessageFlags} = require('discord.js');
 const Report = require('../../models/Report');
 
 module.exports = {
@@ -7,16 +7,16 @@ module.exports = {
     try {
       const reportId = interaction.customId.split(':')[1];
       if (!reportId) {
-        return interaction.reply({ content: 'Invalid report ID.', ephemeral: true });
+        return interaction.reply({ content: 'Invalid report ID.', flags: MessageFlags.Ephemeral });
       }
 
       const report = await Report.findById(reportId);
       if (!report) {
-        return interaction.reply({ content: 'Report not found.', ephemeral: true });
+        return interaction.reply({ content: 'Report not found.', flags: MessageFlags.Ephemeral });
       }
 
       if (report.status !== 'pending') {
-        return interaction.reply({ content: `This report has already been ${report.status}.`, ephemeral: true });
+        return interaction.reply({ content: `This report has already been ${report.status}.`, flags: MessageFlags.Ephemeral });
       }
 
       report.status = 'resolved';
@@ -45,7 +45,7 @@ module.exports = {
       await interaction.update({ embeds: [embed], components: [disabledRow] });
     } catch (error) {
       console.error('report_resolve error:', error);
-      await interaction.reply({ content: 'Failed to resolve report.', ephemeral: true });
+      await interaction.reply({ content: 'Failed to resolve report.', flags: MessageFlags.Ephemeral });
     }
   }
 };

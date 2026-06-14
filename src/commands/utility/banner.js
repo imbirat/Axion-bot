@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder , MessageFlags} = require('discord.js');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -21,7 +21,7 @@ module.exports = {
       const bannerURL = user.bannerURL({ size: 4096 });
 
       if (!bannerURL) {
-        return interaction.reply({ content: `${target.username} does not have a banner.`, ephemeral: true });
+        return interaction.reply({ content: `${target.username} does not have a banner.`, flags: MessageFlags.Ephemeral });
       }
 
       const embed = new EmbedBuilder()
@@ -33,7 +33,7 @@ module.exports = {
       await interaction.reply({ embeds: [embed] });
     } catch (error) {
       console.error('banner command error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

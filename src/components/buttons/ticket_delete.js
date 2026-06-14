@@ -1,4 +1,4 @@
-const { EmbedBuilder } = require('discord.js');
+const { EmbedBuilder , MessageFlags} = require('discord.js');
 const Ticket = require('../../models/Ticket');
 const GuildConfig = require('../../models/GuildConfig');
 const { generateTranscript } = require('../../services/transcriptService');
@@ -9,12 +9,12 @@ module.exports = {
     try {
       const ticket = await Ticket.findOne({ channelId: interaction.channel.id });
       if (!ticket) {
-        return interaction.reply({ content: 'This is not a ticket channel.', ephemeral: true });
+        return interaction.reply({ content: 'This is not a ticket channel.', flags: MessageFlags.Ephemeral });
       }
 
       const guildConfig = await GuildConfig.findOne({ guildId: interaction.guild.id });
 
-      await interaction.reply({ content: 'Deleting ticket and saving transcript...', ephemeral: true });
+      await interaction.reply({ content: 'Deleting ticket and saving transcript...', flags: MessageFlags.Ephemeral });
 
       let transcriptHtml = null;
       try {
@@ -52,7 +52,7 @@ module.exports = {
     } catch (error) {
       console.error('ticket_delete error:', error);
       if (!interaction.replied) {
-        await interaction.reply({ content: 'Failed to delete ticket.', ephemeral: true });
+        await interaction.reply({ content: 'Failed to delete ticket.', flags: MessageFlags.Ephemeral });
       }
     }
   }

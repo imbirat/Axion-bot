@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder , MessageFlags} = require('discord.js');
 const helpCategories = require('../../utils/helpData');
 const { buildMainPage, buildCategoryPage, setSession } = require('../../components/helpers/helpViews');
 
@@ -23,7 +23,7 @@ module.exports = {
       if (categoryName) {
         const category = helpCategories.find(c => c.name.toLowerCase() === categoryName.toLowerCase());
         if (!category) {
-          return interaction.reply({ content: `Category "${categoryName}" not found.`, ephemeral: true });
+          return interaction.reply({ content: `Category "${categoryName}" not found.`, flags: MessageFlags.Ephemeral });
         }
         const reply = await interaction.reply({ ...buildCategoryPage(category, 0, false), fetchReply: true });
         setSession(interaction.user.id, reply.id, { userId: interaction.user.id, categoryName: category.name, page: 0, sorted: false });
@@ -33,7 +33,7 @@ module.exports = {
       }
     } catch (error) {
       console.error('help command error:', error);
-      await interaction.reply({ content: 'There was an error executing the help command.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error executing the help command.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

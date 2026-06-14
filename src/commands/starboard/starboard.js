@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits , MessageFlags} = require('discord.js');
 const Starboard = require('../../models/Starboard');
 
 module.exports = {
@@ -31,7 +31,7 @@ module.exports = {
         case 'config': {
           const config = await Starboard.findOne({ guildId: interaction.guild.id });
           if (!config) {
-            return interaction.reply({ content: 'Starboard is not configured. Use `/starboard setup` to configure it.', ephemeral: true });
+            return interaction.reply({ content: 'Starboard is not configured. Use `/starboard setup` to configure it.', flags: MessageFlags.Ephemeral });
           }
           const channel = interaction.guild.channels.cache.get(config.channelId);
           const embed = new EmbedBuilder()
@@ -43,7 +43,7 @@ module.exports = {
               { name: 'Enabled', value: config.enabled ? '✅ Yes' : '❌ No', inline: true },
               { name: 'Starred Messages', value: `${config.entries?.length || 0}`, inline: true }
             );
-          await interaction.reply({ embeds: [embed], ephemeral: true });
+          await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
           break;
         }
         case 'setup': {
@@ -54,21 +54,21 @@ module.exports = {
             { $set: { channelId: channel.id, threshold, enabled: true } },
             { upsert: true }
           );
-          await interaction.reply({ content: `⭐ Starboard configured! Channel: ${channel}, Threshold: ${threshold}`, ephemeral: true });
+          await interaction.reply({ content: `⭐ Starboard configured! Channel: ${channel}, Threshold: ${threshold}`, flags: MessageFlags.Ephemeral });
           break;
         }
         case 'disable': {
           const config = await Starboard.findOne({ guildId: interaction.guild.id });
-          if (!config) return interaction.reply({ content: 'Starboard is not configured.', ephemeral: true });
+          if (!config) return interaction.reply({ content: 'Starboard is not configured.', flags: MessageFlags.Ephemeral });
           config.enabled = false;
           await config.save();
-          await interaction.reply({ content: '⭐ Starboard disabled.', ephemeral: true });
+          await interaction.reply({ content: '⭐ Starboard disabled.', flags: MessageFlags.Ephemeral });
           break;
         }
       }
     } catch (error) {
       console.error(`starboard ${sub} error:`, error);
-      await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

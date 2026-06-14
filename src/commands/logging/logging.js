@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
+const { SlashCommandBuilder, PermissionFlagsBits , MessageFlags} = require('discord.js');
 const GuildConfig = require('../../models/GuildConfig');
 
 module.exports = {
@@ -24,11 +24,11 @@ module.exports = {
       if (sub === 'enable') {
         const config = await GuildConfig.findOne({ guildId: interaction.guild.id });
         if (!config || !config.loggingChannel) {
-          return interaction.reply({ content: 'Please set a logging channel first using `/setchannel logging <#channel>`.', ephemeral: true });
+          return interaction.reply({ content: 'Please set a logging channel first using `/setchannel logging <#channel>`.', flags: MessageFlags.Ephemeral });
         }
         const logChannel = interaction.guild.channels.cache.get(config.loggingChannel);
         if (!logChannel) {
-          return interaction.reply({ content: 'The configured logging channel no longer exists. Please set a new one with `/setchannel logging <#channel>`.', ephemeral: true });
+          return interaction.reply({ content: 'The configured logging channel no longer exists. Please set a new one with `/setchannel logging <#channel>`.', flags: MessageFlags.Ephemeral });
         }
         await GuildConfig.findOneAndUpdate(
           { guildId: interaction.guild.id },
@@ -46,7 +46,7 @@ module.exports = {
       }
     } catch (error) {
       console.error('logging command error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

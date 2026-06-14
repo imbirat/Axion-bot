@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, PermissionFlagsBits } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, PermissionFlagsBits , MessageFlags} = require('discord.js');
 const Report = require('../../models/Report');
 
 module.exports = {
@@ -26,7 +26,7 @@ module.exports = {
 
       const reports = await Report.find(filter).sort({ status: 1, createdAt: -1 }).lean();
       if (reports.length === 0) {
-        return interaction.reply({ content: user ? `No reports for ${user.tag}.` : 'No reports yet.', ephemeral: true });
+        return interaction.reply({ content: user ? `No reports for ${user.tag}.` : 'No reports yet.', flags: MessageFlags.Ephemeral });
       }
 
       const itemsPerPage = 5;
@@ -59,7 +59,7 @@ module.exports = {
         new ButtonBuilder().setCustomId('next').setLabel('▶').setStyle(ButtonStyle.Secondary).setDisabled(totalPages <= 1)
       );
 
-      const msg = await interaction.reply({ embeds: [buildEmbed(page)], components: [row], ephemeral: true, fetchReply: true });
+      const msg = await interaction.reply({ embeds: [buildEmbed(page)], components: [row], flags: MessageFlags.Ephemeral, fetchReply: true });
 
       const collector = msg.createMessageComponentCollector({ time: 60000, filter: i => i.user.id === interaction.user.id });
 
@@ -78,7 +78,7 @@ module.exports = {
       });
     } catch (error) {
       console.error('reports view error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

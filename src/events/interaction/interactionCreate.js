@@ -59,6 +59,17 @@ module.exports = {
     }
 
     if (interaction.isButton() || interaction.isAnySelectMenu() || interaction.isModalSubmit()) {
+      if (interaction.customId && interaction.customId.startsWith('help_')) {
+        const { handleHelpInteraction } = require('../../components/helpers/helpViews');
+        try {
+          return await handleHelpInteraction(interaction, client);
+        } catch (error) {
+          logger.error('Help interaction error:', error);
+          if (!interaction.replied && !interaction.deferred) {
+            await interaction.reply({ content: 'There was an error with the help menu.', flags: MessageFlags.Ephemeral }).catch(() => {});
+          }
+        }
+      }
       try {
         await handleComponent(interaction, client);
       } catch (error) {

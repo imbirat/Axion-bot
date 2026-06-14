@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder , MessageFlags} = require('discord.js');
 const birthdayService = require('../../services/birthdayService');
 
 module.exports = {
@@ -40,7 +40,7 @@ module.exports = {
         const year = interaction.options.getInteger('year') || undefined;
         const match = dateStr.match(/^(0[1-9]|1[0-2])[\/-](0[1-9]|[12]\d|3[01])$/);
         if (!match) {
-          return interaction.reply({ content: 'Invalid date format. Use MM/DD or MM-DD (e.g. 12/25).', ephemeral: true });
+          return interaction.reply({ content: 'Invalid date format. Use MM/DD or MM-DD (e.g. 12/25).', flags: MessageFlags.Ephemeral });
         }
         const date = `${match[1]}-${match[2]}`;
         await birthdayService.setBirthday(interaction.user.id, interaction.guild.id, date, year);
@@ -109,7 +109,7 @@ module.exports = {
       }
     } catch (error) {
       console.error('birthday command error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

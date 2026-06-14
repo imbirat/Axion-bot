@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder , MessageFlags} = require('discord.js');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -29,7 +29,7 @@ module.exports = {
       }
 
       if (inviteMap.size === 0) {
-        return interaction.reply({ content: target ? 'That user has no invites.' : 'No invites found.', ephemeral: true });
+        return interaction.reply({ content: target ? 'That user has no invites.' : 'No invites found.', flags: MessageFlags.Ephemeral });
       }
 
       const sorted = [...inviteMap.values()].sort((a, b) => b.total - a.total);
@@ -45,7 +45,7 @@ module.exports = {
       await interaction.reply({ embeds: [embed] });
     } catch (error) {
       console.error('invites error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

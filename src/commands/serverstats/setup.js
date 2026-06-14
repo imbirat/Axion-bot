@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
+const { SlashCommandBuilder, PermissionFlagsBits , MessageFlags} = require('discord.js');
 const ServerStats = require('../../models/ServerStats');
 
 const TEMPLATES = {
@@ -50,7 +50,7 @@ module.exports = {
         if (existing?.categoryId) {
           const cat = interaction.guild.channels.cache.get(existing.categoryId);
           if (cat) {
-            return interaction.reply({ content: `Server stats category already exists: ${cat.name}. Use /serverstats add to add stats.`, ephemeral: true });
+            return interaction.reply({ content: `Server stats category already exists: ${cat.name}. Use /serverstats add to add stats.`, flags: MessageFlags.Ephemeral });
           }
         }
 
@@ -65,7 +65,7 @@ module.exports = {
           { upsert: true }
         );
 
-        await interaction.reply({ content: `✅ Server stats category created! Use /serverstats add to add stats.`, ephemeral: true });
+        await interaction.reply({ content: `✅ Server stats category created! Use /serverstats add to add stats.`, flags: MessageFlags.Ephemeral });
         return;
       }
 
@@ -73,12 +73,12 @@ module.exports = {
         const type = interaction.options.getString('type');
         const doc = await ServerStats.findOne({ guildId: interaction.guild.id });
         if (!doc?.categoryId) {
-          return interaction.reply({ content: 'Please run /serverstats setup first.', ephemeral: true });
+          return interaction.reply({ content: 'Please run /serverstats setup first.', flags: MessageFlags.Ephemeral });
         }
 
         const existingStat = doc.stats.find(s => s.type === type);
         if (existingStat) {
-          return interaction.reply({ content: `**${type}** stat already exists.`, ephemeral: true });
+          return interaction.reply({ content: `**${type}** stat already exists.`, flags: MessageFlags.Ephemeral });
         }
 
         const count = await getCount(interaction.guild, type, client);
@@ -94,7 +94,7 @@ module.exports = {
         doc.stats.push({ type, channelId: channel.id, template });
         await doc.save();
 
-        await interaction.reply({ content: `✅ Added **${type}** stat.`, ephemeral: true });
+        await interaction.reply({ content: `✅ Added **${type}** stat.`, flags: MessageFlags.Ephemeral });
         return;
       }
 
@@ -102,12 +102,12 @@ module.exports = {
         const type = interaction.options.getString('type');
         const doc = await ServerStats.findOne({ guildId: interaction.guild.id });
         if (!doc) {
-          return interaction.reply({ content: 'Server stats not configured.', ephemeral: true });
+          return interaction.reply({ content: 'Server stats not configured.', flags: MessageFlags.Ephemeral });
         }
 
         const stat = doc.stats.find(s => s.type === type);
         if (!stat) {
-          return interaction.reply({ content: `**${type}** stat not found.`, ephemeral: true });
+          return interaction.reply({ content: `**${type}** stat not found.`, flags: MessageFlags.Ephemeral });
         }
 
         const channel = interaction.guild.channels.cache.get(stat.channelId);
@@ -116,11 +116,11 @@ module.exports = {
         doc.stats = doc.stats.filter(s => s.type !== type);
         await doc.save();
 
-        await interaction.reply({ content: `✅ Removed **${type}** stat.`, ephemeral: true });
+        await interaction.reply({ content: `✅ Removed **${type}** stat.`, flags: MessageFlags.Ephemeral });
       }
     } catch (error) {
       console.error('serverstats error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

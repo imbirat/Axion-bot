@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle, PermissionFlagsBits } = require('discord.js');
+const { SlashCommandBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, EmbedBuilder, ButtonBuilder, ButtonStyle, PermissionFlagsBits , MessageFlags} = require('discord.js');
 const { modals, buttons } = require('../../handlers/componentHandler');
 
 const polls = new Map();
@@ -93,12 +93,12 @@ function makeVoteHandler(messageId, row) {
       try {
         const pollState = polls.get(messageId);
         if (!pollState || !pollState.active) {
-          return btnInteraction.reply({ content: 'This poll has ended.', ephemeral: true });
+          return btnInteraction.reply({ content: 'This poll has ended.', flags: MessageFlags.Ephemeral });
         }
         if (pollState.roleRestriction) {
           const member = await btnInteraction.guild.members.fetch(btnInteraction.user.id);
           if (!member.roles.cache.has(pollState.roleRestriction)) {
-            return btnInteraction.reply({ content: 'You do not have the required role to vote.', ephemeral: true });
+            return btnInteraction.reply({ content: 'You do not have the required role to vote.', flags: MessageFlags.Ephemeral });
           }
         }
         const parts = btnInteraction.customId.split('_');
@@ -113,10 +113,10 @@ function makeVoteHandler(messageId, row) {
         } catch (e) {
           console.error('Error updating poll message:', e);
         }
-        await btnInteraction.reply({ content: `Voted for: **${pollState.options[optionIndex].text}**`, ephemeral: true });
+        await btnInteraction.reply({ content: `Voted for: **${pollState.options[optionIndex].text}**`, flags: MessageFlags.Ephemeral });
       } catch (err) {
         console.error('Poll vote error:', err);
-        await btnInteraction.reply({ content: 'An error occurred while voting.', ephemeral: true });
+        await btnInteraction.reply({ content: 'An error occurred while voting.', flags: MessageFlags.Ephemeral });
       }
     }
   };
@@ -223,7 +223,7 @@ module.exports = {
 
       if (sub === 'create') {
         if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
-          return interaction.reply({ content: 'You need Administrator permission to create polls.', ephemeral: true });
+          return interaction.reply({ content: 'You need Administrator permission to create polls.', flags: MessageFlags.Ephemeral });
         }
         const modalId = `poll_create_${interaction.user.id}`;
         const modal = new ModalBuilder()
@@ -274,15 +274,15 @@ module.exports = {
 
               const options = optionsRaw.split(',').map(s => s.trim()).filter(s => s.length > 0);
               if (options.length < 2) {
-                return modalInteraction.reply({ content: 'Please provide at least 2 options.', ephemeral: true });
+                return modalInteraction.reply({ content: 'Please provide at least 2 options.', flags: MessageFlags.Ephemeral });
               }
               if (options.length > 6) {
-                return modalInteraction.reply({ content: 'Maximum 6 options allowed.', ephemeral: true });
+                return modalInteraction.reply({ content: 'Maximum 6 options allowed.', flags: MessageFlags.Ephemeral });
               }
 
               const durationMs = parseDuration(durationStr);
               if (!durationMs) {
-                return modalInteraction.reply({ content: 'Invalid duration. Use format like `1h`, `30m`, `2d`.', ephemeral: true });
+                return modalInteraction.reply({ content: 'Invalid duration. Use format like `1h`, `30m`, `2d`.', flags: MessageFlags.Ephemeral });
               }
 
               let roleRestriction = null;
@@ -296,12 +296,12 @@ module.exports = {
                 }
               }
 
-              await modalInteraction.deferReply({ ephemeral: true });
+              await modalInteraction.deferReply({ flags: MessageFlags.Ephemeral });
               await createPollSend(modalInteraction.channel, question, options, durationMs, roleRestriction);
               await modalInteraction.editReply({ content: '✅ Poll created!' });
             } catch (error) {
               console.error('Poll create modal error:', error);
-              const reply = { content: 'An error occurred while creating the poll.', ephemeral: true };
+              const reply = { content: 'An error occurred while creating the poll.', flags: MessageFlags.Ephemeral };
               if (modalInteraction.deferred) {
                 await modalInteraction.editReply(reply).catch(() => {});
               } else {
@@ -320,11 +320,11 @@ module.exports = {
 
       if (sub === 'end') {
         if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
-          return interaction.reply({ content: 'You need Administrator permission to end polls.', ephemeral: true });
+          return interaction.reply({ content: 'You need Administrator permission to end polls.', flags: MessageFlags.Ephemeral });
         }
         const messageId = interaction.options.getString('message-id');
         const state = polls.get(messageId);
-        if (!state) return interaction.reply({ content: 'Poll not found or already ended.', ephemeral: true });
+        if (!state) return interaction.reply({ content: 'Poll not found or already ended.', flags: MessageFlags.Ephemeral });
         await endPollEarly(messageId, interaction.channel);
         await interaction.reply({ content: '✅ Poll ended.' });
         return;
@@ -333,13 +333,13 @@ module.exports = {
       if (sub === 'results') {
         const messageId = interaction.options.getString('message-id');
         const state = polls.get(messageId);
-        if (!state) return interaction.reply({ content: 'Poll not found.', ephemeral: true });
+        if (!state) return interaction.reply({ content: 'Poll not found.', flags: MessageFlags.Ephemeral });
         await interaction.reply({ embeds: [getResultEmbed(state)] });
         return;
       }
     } catch (error) {
       console.error('advancedpoll command error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
+const { SlashCommandBuilder, PermissionFlagsBits , MessageFlags} = require('discord.js');
 const StickyMessage = require('../../models/StickyMessage');
 
 module.exports = {
@@ -29,17 +29,17 @@ module.exports = {
           { $set: { message } },
           { upsert: true }
         );
-        await interaction.reply({ content: '✅ Sticky message set.', ephemeral: true });
+        await interaction.reply({ content: '✅ Sticky message set.', flags: MessageFlags.Ephemeral });
       } else {
         const result = await StickyMessage.findOneAndDelete({
           guildId: interaction.guild.id, channelId: interaction.channel.id
         });
-        if (!result) return interaction.reply({ content: 'No sticky message set in this channel.', ephemeral: true });
-        await interaction.reply({ content: '✅ Sticky message removed.', ephemeral: true });
+        if (!result) return interaction.reply({ content: 'No sticky message set in this channel.', flags: MessageFlags.Ephemeral });
+        await interaction.reply({ content: '✅ Sticky message removed.', flags: MessageFlags.Ephemeral });
       }
     } catch (error) {
       console.error(`sticky ${sub} error:`, error);
-      await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

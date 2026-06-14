@@ -1,7 +1,7 @@
-const { PermissionsBitField } = require('discord.js');
+const { PermissionsBitField , MessageFlags} = require('discord.js');
 const Ticket = require('../../models/Ticket');
 const GuildConfig = require('../../models/GuildConfig');
-const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle , MessageFlags} = require('discord.js');
 
 module.exports = {
   customId: 'ticket_close',
@@ -9,10 +9,10 @@ module.exports = {
     try {
       const ticket = await Ticket.findOne({ channelId: interaction.channel.id });
       if (!ticket) {
-        return interaction.reply({ content: 'This is not a ticket channel.', ephemeral: true });
+        return interaction.reply({ content: 'This is not a ticket channel.', flags: MessageFlags.Ephemeral });
       }
       if (ticket.status === 'closed') {
-        return interaction.reply({ content: 'Ticket is already closed.', ephemeral: true });
+        return interaction.reply({ content: 'Ticket is already closed.', flags: MessageFlags.Ephemeral });
       }
 
       const guildConfig = await GuildConfig.findOne({ guildId: interaction.guild.id });
@@ -72,12 +72,12 @@ module.exports = {
       }
 
       if (!interaction.replied) {
-        await interaction.reply({ content: 'Ticket closed.', ephemeral: true });
+        await interaction.reply({ content: 'Ticket closed.', flags: MessageFlags.Ephemeral });
       }
     } catch (error) {
       console.error('ticket_close error:', error);
       if (!interaction.replied) {
-        await interaction.reply({ content: 'Failed to close ticket.', ephemeral: true });
+        await interaction.reply({ content: 'Failed to close ticket.', flags: MessageFlags.Ephemeral });
       }
     }
   }

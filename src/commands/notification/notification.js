@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder , MessageFlags} = require('discord.js');
 const Notification = require('../../models/Notification');
 
 module.exports = {
@@ -89,25 +89,25 @@ module.exports = {
             await Notification.create({ guildId, channelId: channel.id, type: 'youtube', targetId, message });
           }
 
-          await interaction.reply({ content: `✅ Now tracking YouTube channel \`${targetId}\`. Notifications will go to ${channel}.`, ephemeral: true });
+          await interaction.reply({ content: `✅ Now tracking YouTube channel \`${targetId}\`. Notifications will go to ${channel}.`, flags: MessageFlags.Ephemeral });
         } else if (sub === 'remove') {
           const targetId = interaction.options.getString('channel-id');
           const result = await Notification.deleteOne({ guildId, type: 'youtube', targetId });
           if (result.deletedCount === 0) {
-            return interaction.reply({ content: `❌ No YouTube notification found for \`${targetId}\`.`, ephemeral: true });
+            return interaction.reply({ content: `❌ No YouTube notification found for \`${targetId}\`.`, flags: MessageFlags.Ephemeral });
           }
-          await interaction.reply({ content: `✅ Removed YouTube notification for \`${targetId}\`.`, ephemeral: true });
+          await interaction.reply({ content: `✅ Removed YouTube notification for \`${targetId}\`.`, flags: MessageFlags.Ephemeral });
         } else if (sub === 'list') {
           const notifications = await Notification.find({ guildId, type: 'youtube' });
           if (notifications.length === 0) {
-            return interaction.reply({ content: 'No YouTube notifications configured.', ephemeral: true });
+            return interaction.reply({ content: 'No YouTube notifications configured.', flags: MessageFlags.Ephemeral });
           }
           const list = notifications.map(n => `• \`${n.targetId}\` → <#${n.channelId}> ${n.enabled ? '✅' : '❌'}`).join('\n');
           const embed = new EmbedBuilder()
             .setColor(0xFF0000)
             .setTitle('📹 YouTube Notifications')
             .setDescription(list);
-          await interaction.reply({ embeds: [embed], ephemeral: true });
+          await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
         }
       } else if (group === 'twitch') {
         if (sub === 'add') {
@@ -125,30 +125,30 @@ module.exports = {
             await Notification.create({ guildId, channelId: channel.id, type: 'twitch', targetId, message });
           }
 
-          await interaction.reply({ content: `✅ Now tracking Twitch channel \`${targetId}\`. Notifications will go to ${channel}.`, ephemeral: true });
+          await interaction.reply({ content: `✅ Now tracking Twitch channel \`${targetId}\`. Notifications will go to ${channel}.`, flags: MessageFlags.Ephemeral });
         } else if (sub === 'remove') {
           const targetId = interaction.options.getString('channel-name').toLowerCase();
           const result = await Notification.deleteOne({ guildId, type: 'twitch', targetId });
           if (result.deletedCount === 0) {
-            return interaction.reply({ content: `❌ No Twitch notification found for \`${targetId}\`.`, ephemeral: true });
+            return interaction.reply({ content: `❌ No Twitch notification found for \`${targetId}\`.`, flags: MessageFlags.Ephemeral });
           }
-          await interaction.reply({ content: `✅ Removed Twitch notification for \`${targetId}\`.`, ephemeral: true });
+          await interaction.reply({ content: `✅ Removed Twitch notification for \`${targetId}\`.`, flags: MessageFlags.Ephemeral });
         } else if (sub === 'list') {
           const notifications = await Notification.find({ guildId, type: 'twitch' });
           if (notifications.length === 0) {
-            return interaction.reply({ content: 'No Twitch notifications configured.', ephemeral: true });
+            return interaction.reply({ content: 'No Twitch notifications configured.', flags: MessageFlags.Ephemeral });
           }
           const list = notifications.map(n => `• \`${n.targetId}\` → <#${n.channelId}> ${n.enabled ? '✅' : '❌'}`).join('\n');
           const embed = new EmbedBuilder()
             .setColor(0x9146FF)
             .setTitle('🔴 Twitch Notifications')
             .setDescription(list);
-          await interaction.reply({ embeds: [embed], ephemeral: true });
+          await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
         }
       }
     } catch (error) {
       console.error('notification command error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

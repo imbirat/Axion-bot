@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, PermissionFlagsBits } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, PermissionFlagsBits , MessageFlags} = require('discord.js');
 const GuildConfig = require('../../models/GuildConfig');
 
 function generateCaptcha() {
@@ -75,15 +75,15 @@ module.exports = {
       switch (sub) {
         case 'start': {
           if (!guildConfig || !guildConfig.verifyRole) {
-            return interaction.reply({ content: 'Verification is not configured on this server.', ephemeral: true });
+            return interaction.reply({ content: 'Verification is not configured on this server.', flags: MessageFlags.Ephemeral });
           }
           const member = await interaction.guild.members.fetch(interaction.user.id);
           if (member.roles.cache.has(guildConfig.verifyRole)) {
-            return interaction.reply({ content: '✅ You are already verified!', ephemeral: true });
+            return interaction.reply({ content: '✅ You are already verified!', flags: MessageFlags.Ephemeral });
           }
           if (guildConfig.verifyMode === 'button') {
             await member.roles.add(guildConfig.verifyRole);
-            await interaction.reply({ content: '✅ You have been verified!', ephemeral: true });
+            await interaction.reply({ content: '✅ You have been verified!', flags: MessageFlags.Ephemeral });
             if (guildConfig.verifyLogChannel) {
               const logChannel = interaction.guild.channels.cache.get(guildConfig.verifyLogChannel);
               if (logChannel) {
@@ -102,16 +102,16 @@ module.exports = {
                 content: `🔐 **Verification Captcha**\n\n${captcha.question}\n\nReply with the answer in this DM. This expires in 2 minutes.`
               });
             } catch (e) {
-              return interaction.reply({ content: '❌ I cannot DM you. Please enable DMs to verify.', ephemeral: true });
+              return interaction.reply({ content: '❌ I cannot DM you. Please enable DMs to verify.', flags: MessageFlags.Ephemeral });
             }
             client.verifyCaptchas.set(interaction.user.id, {
               answer: captcha.answer, guildId: interaction.guild.id, roleId: guildConfig.verifyRole,
               logChannelId: guildConfig.verifyLogChannel, expiresAt: Date.now() + 120000
             });
             setTimeout(() => { if (client.verifyCaptchas?.has(interaction.user.id)) client.verifyCaptchas.delete(interaction.user.id); }, 120000);
-            await interaction.reply({ content: '✅ Captcha sent! Check your DMs.', ephemeral: true });
+            await interaction.reply({ content: '✅ Captcha sent! Check your DMs.', flags: MessageFlags.Ephemeral });
           } else {
-            await interaction.reply({ content: 'Verification mode not supported via command.', ephemeral: true });
+            await interaction.reply({ content: 'Verification mode not supported via command.', flags: MessageFlags.Ephemeral });
           }
           break;
         }
@@ -130,7 +130,7 @@ module.exports = {
             { $set: { verifyChannel: channel.id, verifyRole: role.id, verifyEnabled: true } },
             { upsert: true }
           );
-          await interaction.reply({ content: '✅ Verification setup complete.', ephemeral: true });
+          await interaction.reply({ content: '✅ Verification setup complete.', flags: MessageFlags.Ephemeral });
           break;
         }
         case 'role': {
@@ -139,7 +139,7 @@ module.exports = {
             { guildId: interaction.guild.id },
             { $set: { verifyRole: role.id } }
           );
-          await interaction.reply({ content: '✅ Verify role updated.', ephemeral: true });
+          await interaction.reply({ content: '✅ Verify role updated.', flags: MessageFlags.Ephemeral });
           break;
         }
         case 'mode': {
@@ -148,7 +148,7 @@ module.exports = {
             { guildId: interaction.guild.id },
             { $set: { verifyMode: mode } }
           );
-          await interaction.reply({ content: `✅ Verify mode set to ${mode}.`, ephemeral: true });
+          await interaction.reply({ content: `✅ Verify mode set to ${mode}.`, flags: MessageFlags.Ephemeral });
           break;
         }
         case 'message': {
@@ -157,7 +157,7 @@ module.exports = {
             { guildId: interaction.guild.id },
             { $set: { verifyMessage: text } }
           );
-          await interaction.reply({ content: '✅ Verify message updated.', ephemeral: true });
+          await interaction.reply({ content: '✅ Verify message updated.', flags: MessageFlags.Ephemeral });
           break;
         }
         case 'log': {
@@ -166,22 +166,22 @@ module.exports = {
             { guildId: interaction.guild.id },
             { $set: { verifyLogChannel: channel.id } }
           );
-          await interaction.reply({ content: '✅ Verify log channel set.', ephemeral: true });
+          await interaction.reply({ content: '✅ Verify log channel set.', flags: MessageFlags.Ephemeral });
           break;
         }
         case 'check': {
           const target = interaction.options.getUser('user') || interaction.user;
           if (!guildConfig || !guildConfig.verifyRole) {
-            return interaction.reply({ content: 'Verification role not configured.', ephemeral: true });
+            return interaction.reply({ content: 'Verification role not configured.', flags: MessageFlags.Ephemeral });
           }
           const member = await interaction.guild.members.fetch(target.id);
           const verified = member.roles.cache.has(guildConfig.verifyRole);
-          await interaction.reply({ content: verified ? `✅ ${target} is verified` : `❌ Not verified.`, ephemeral: true });
+          await interaction.reply({ content: verified ? `✅ ${target} is verified` : `❌ Not verified.`, flags: MessageFlags.Ephemeral });
           break;
         }
         case 'all': {
           if (!guildConfig || !guildConfig.verifyRole) {
-            return interaction.reply({ content: 'Verification role not configured.', ephemeral: true });
+            return interaction.reply({ content: 'Verification role not configured.', flags: MessageFlags.Ephemeral });
           }
           await interaction.deferReply();
           const members = await interaction.guild.members.fetch();
@@ -202,17 +202,17 @@ module.exports = {
             { guildId: interaction.guild.id },
             { $unset: { verifyChannel: '', verifyRole: '', verifyLogChannel: '', verifyMessage: '' }, $set: { verifyEnabled: false, verifyMode: 'button' } }
           );
-          await interaction.reply({ content: '✅ Verification settings reset.', ephemeral: true });
+          await interaction.reply({ content: '✅ Verification settings reset.', flags: MessageFlags.Ephemeral });
           break;
         }
         case 'unverify': {
           const target = interaction.options.getUser('user');
           if (!guildConfig || !guildConfig.verifyRole) {
-            return interaction.reply({ content: 'Verification role not configured.', ephemeral: true });
+            return interaction.reply({ content: 'Verification role not configured.', flags: MessageFlags.Ephemeral });
           }
           const member = await interaction.guild.members.fetch(target.id);
           await member.roles.remove(guildConfig.verifyRole);
-          await interaction.reply({ content: `✅ Removed verify role from ${target}.`, ephemeral: true });
+          await interaction.reply({ content: `✅ Removed verify role from ${target}.`, flags: MessageFlags.Ephemeral });
           break;
         }
       }
@@ -221,7 +221,7 @@ module.exports = {
       if (interaction.deferred) {
         await interaction.editReply({ content: 'There was an error executing this command.' });
       } else {
-        await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+        await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
       }
     }
   },

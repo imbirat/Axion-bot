@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder , MessageFlags} = require('discord.js');
 const axios = require('axios');
 
 module.exports = {
@@ -19,7 +19,7 @@ module.exports = {
       const name = interaction.options.getString('name');
       const { data } = await axios.get(`https://api.jikan.moe/v4/anime?q=${encodeURIComponent(name)}&limit=1`);
       if (!data.data || !data.data.length) {
-        return interaction.reply({ content: `No anime found for "${name}".`, ephemeral: true });
+        return interaction.reply({ content: `No anime found for "${name}".`, flags: MessageFlags.Ephemeral });
       }
       const anime = data.data[0];
       const synopsis = anime.synopsis ? (anime.synopsis.length > 500 ? anime.synopsis.substring(0, 500) + '...' : anime.synopsis) : 'No synopsis available.';
@@ -37,7 +37,7 @@ module.exports = {
       await interaction.reply({ embeds: [embed] });
     } catch (error) {
       console.error('anime command error:', error);
-      await interaction.reply({ content: 'There was an error searching for anime.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error searching for anime.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

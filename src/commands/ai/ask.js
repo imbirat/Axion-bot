@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder , MessageFlags} = require('discord.js');
 const geminiService = require('../../services/geminiService');
 
 module.exports = {
@@ -16,7 +16,7 @@ module.exports = {
   cooldown: 10,
   async execute(interaction, client) {
     try {
-      await interaction.deferReply({ ephemeral: true });
+      await interaction.deferReply({ flags: MessageFlags.Ephemeral });
       const prompt = interaction.options.getString('prompt');
       const response = await geminiService.ask(prompt);
       const truncated = response.length > 2000 ? response.substring(0, 1997) + '...' : response;
@@ -28,7 +28,7 @@ module.exports = {
       await interaction.editReply({ embeds: [embed] });
     } catch (error) {
       console.error('ask command error:', error);
-      await interaction.editReply({ content: 'There was an error getting a response from the AI.', ephemeral: true });
+      await interaction.editReply({ content: 'There was an error getting a response from the AI.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits , MessageFlags} = require('discord.js');
 const CustomCommand = require('../../models/CustomCommand');
 
 module.exports = {
@@ -43,24 +43,24 @@ module.exports = {
           const trigger = interaction.options.getString('trigger').toLowerCase();
           const response = interaction.options.getString('response');
           const existing = await CustomCommand.findOne({ guildId: interaction.guild.id, trigger });
-          if (existing) return interaction.reply({ content: `A custom command with trigger \`${trigger}\` already exists.`, ephemeral: true });
+          if (existing) return interaction.reply({ content: `A custom command with trigger \`${trigger}\` already exists.`, flags: MessageFlags.Ephemeral });
           await CustomCommand.create({ guildId: interaction.guild.id, trigger, response, createdBy: interaction.user.id });
-          await interaction.reply({ content: `✅ Custom command \`${trigger}\` added.`, ephemeral: true });
+          await interaction.reply({ content: `✅ Custom command \`${trigger}\` added.`, flags: MessageFlags.Ephemeral });
           break;
         }
         case 'edit': {
           const trigger = interaction.options.getString('trigger').toLowerCase();
           const newResponse = interaction.options.getString('new-response');
           const cmd = await CustomCommand.findOne({ guildId: interaction.guild.id, trigger });
-          if (!cmd) return interaction.reply({ content: `No custom command found with trigger \`${trigger}\`.`, ephemeral: true });
+          if (!cmd) return interaction.reply({ content: `No custom command found with trigger \`${trigger}\`.`, flags: MessageFlags.Ephemeral });
           cmd.response = newResponse;
           await cmd.save();
-          await interaction.reply({ content: `✅ Custom command \`${trigger}\` updated.`, ephemeral: true });
+          await interaction.reply({ content: `✅ Custom command \`${trigger}\` updated.`, flags: MessageFlags.Ephemeral });
           break;
         }
         case 'list': {
           const commands = await CustomCommand.find({ guildId: interaction.guild.id }).sort({ trigger: 1 });
-          if (commands.length === 0) return interaction.reply({ content: 'No custom commands set for this server.', ephemeral: true });
+          if (commands.length === 0) return interaction.reply({ content: 'No custom commands set for this server.', flags: MessageFlags.Ephemeral });
           const itemsPerPage = 10;
           const totalPages = Math.ceil(commands.length / itemsPerPage);
           const page = 0;
@@ -72,20 +72,20 @@ module.exports = {
             .setTitle('Custom Commands')
             .setDescription(pageItems.map(c => `**\`${c.trigger}\`** → ${c.response.substring(0, 50)}`).join('\n'))
             .setFooter({ text: `Page ${page + 1} of ${totalPages} • ${commands.length} total` });
-          await interaction.reply({ embeds: [embed], ephemeral: true });
+          await interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
           break;
         }
         case 'remove': {
           const trigger = interaction.options.getString('trigger').toLowerCase();
           const result = await CustomCommand.findOneAndDelete({ guildId: interaction.guild.id, trigger });
-          if (!result) return interaction.reply({ content: `No custom command found with trigger \`${trigger}\`.`, ephemeral: true });
-          await interaction.reply({ content: `✅ Custom command \`${trigger}\` removed.`, ephemeral: true });
+          if (!result) return interaction.reply({ content: `No custom command found with trigger \`${trigger}\`.`, flags: MessageFlags.Ephemeral });
+          await interaction.reply({ content: `✅ Custom command \`${trigger}\` removed.`, flags: MessageFlags.Ephemeral });
           break;
         }
       }
     } catch (error) {
       console.error(`customcmd ${sub} error:`, error);
-      await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

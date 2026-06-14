@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder , MessageFlags} = require('discord.js');
 const axios = require('axios');
 const geminiService = require('../../services/geminiService');
 
@@ -43,7 +43,7 @@ module.exports = {
   cooldown: 30,
   async execute(interaction, client) {
     try {
-      await interaction.deferReply({ ephemeral: true });
+      await interaction.deferReply({ flags: MessageFlags.Ephemeral });
       const url = interaction.options.getString('url');
       const videoId = extractVideoId(url);
       if (!videoId) {

@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
+const { SlashCommandBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, EmbedBuilder, PermissionFlagsBits , MessageFlags} = require('discord.js');
 const ReactionRole = require('../../models/ReactionRole');
 
 module.exports = {
@@ -60,7 +60,7 @@ module.exports = {
               channel = modalInteraction.guild.channels.cache.get(channelRaw);
             }
             if (!channel) {
-              return modalInteraction.reply({ content: 'Invalid channel.', ephemeral: true });
+              return modalInteraction.reply({ content: 'Invalid channel.', flags: MessageFlags.Ephemeral });
             }
 
             const lines = emojiRolesRaw.split('\n').map(l => l.trim()).filter(l => l.length > 0);
@@ -77,13 +77,13 @@ module.exports = {
             }
 
             if (roles.length === 0) {
-              return modalInteraction.reply({ content: 'No valid emoji-role pairs found. Use format: `:emoji: @role`', ephemeral: true });
+              return modalInteraction.reply({ content: 'No valid emoji-role pairs found. Use format: `:emoji: @role`', flags: MessageFlags.Ephemeral });
             }
 
             if (messageIdInput) {
               const msg = await channel.messages.fetch(messageIdInput).catch(() => null);
               if (!msg) {
-                return modalInteraction.reply({ content: 'Message not found in that channel.', ephemeral: true });
+                return modalInteraction.reply({ content: 'Message not found in that channel.', flags: MessageFlags.Ephemeral });
               }
               for (const r of roles) {
                 await msg.react(r.emoji).catch(() => {});
@@ -106,10 +106,10 @@ module.exports = {
               await ReactionRole.create({ guildId: modalInteraction.guild.id, messageId: msg.id, channelId: channel.id, roles, type: 'reaction' });
             }
 
-            await modalInteraction.reply({ content: '✅ Reaction role created.', ephemeral: true });
+            await modalInteraction.reply({ content: '✅ Reaction role created.', flags: MessageFlags.Ephemeral });
           } catch (err) {
             console.error('reactionrole modal error:', err);
-            await modalInteraction.reply({ content: 'An error occurred.', ephemeral: true });
+            await modalInteraction.reply({ content: 'An error occurred.', flags: MessageFlags.Ephemeral });
           } finally {
             client.modals.delete(modalId);
           }
@@ -120,7 +120,7 @@ module.exports = {
       await interaction.showModal(modal);
     } catch (error) {
       console.error('reactionrole error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

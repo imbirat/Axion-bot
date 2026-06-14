@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder , MessageFlags} = require('discord.js');
 const Quote = require('../../models/Quote');
 
 module.exports = {
@@ -41,7 +41,7 @@ module.exports = {
       if (sub === 'random') {
         const count = await Quote.countDocuments({ guildId: interaction.guild.id });
         if (count === 0) {
-          return interaction.reply({ content: 'No quotes found in this server.', ephemeral: true });
+          return interaction.reply({ content: 'No quotes found in this server.', flags: MessageFlags.Ephemeral });
         }
         const random = Math.floor(Math.random() * count);
         const quote = await Quote.findOne({ guildId: interaction.guild.id }).skip(random);
@@ -109,7 +109,7 @@ module.exports = {
       }
     } catch (error) {
       console.error('quote command error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

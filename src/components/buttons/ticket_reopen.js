@@ -1,4 +1,4 @@
-const { PermissionsBitField, EmbedBuilder } = require('discord.js');
+const { PermissionsBitField, EmbedBuilder , MessageFlags} = require('discord.js');
 const Ticket = require('../../models/Ticket');
 
 module.exports = {
@@ -7,10 +7,10 @@ module.exports = {
     try {
       const ticket = await Ticket.findOne({ channelId: interaction.channel.id });
       if (!ticket) {
-        return interaction.reply({ content: 'This is not a ticket channel.', ephemeral: true });
+        return interaction.reply({ content: 'This is not a ticket channel.', flags: MessageFlags.Ephemeral });
       }
       if (ticket.status !== 'closed') {
-        return interaction.reply({ content: 'Ticket is not closed.', ephemeral: true });
+        return interaction.reply({ content: 'Ticket is not closed.', flags: MessageFlags.Ephemeral });
       }
 
       ticket.status = 'open';
@@ -35,10 +35,10 @@ module.exports = {
         .setTimestamp();
 
       await interaction.channel.send({ embeds: [embed] });
-      await interaction.reply({ content: '✅ Ticket reopened.', ephemeral: true });
+      await interaction.reply({ content: '✅ Ticket reopened.', flags: MessageFlags.Ephemeral });
     } catch (error) {
       console.error('ticket_reopen error:', error);
-      await interaction.reply({ content: 'Failed to reopen ticket.', ephemeral: true });
+      await interaction.reply({ content: 'Failed to reopen ticket.', flags: MessageFlags.Ephemeral });
     }
   }
 };

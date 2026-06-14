@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder , MessageFlags} = require('discord.js');
 const { t } = require('../../utils/i18n');
 const UserProfile = require('../../models/UserProfile');
 
@@ -46,7 +46,7 @@ module.exports = {
       await interaction.reply({ content: reply });
     } catch (error) {
       console.error('warn command error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

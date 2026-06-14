@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, PermissionFlagsBits, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, PermissionFlagsBits, EmbedBuilder , MessageFlags} = require('discord.js');
 const giveawayService = require('../../services/giveawayService');
 const GuildConfig = require('../../models/GuildConfig');
 
@@ -51,10 +51,10 @@ module.exports = {
 
         const durationMs = parseDuration(durationStr);
         if (!durationMs) {
-          return interaction.reply({ content: 'Invalid duration. Use format like `1h`, `2d`, `30m`.', ephemeral: true });
+          return interaction.reply({ content: 'Invalid duration. Use format like `1h`, `2d`, `30m`.', flags: MessageFlags.Ephemeral });
         }
 
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
         await giveawayService.startGiveaway({
           guildId: interaction.guild.id,
@@ -74,7 +74,7 @@ module.exports = {
 
       if (subcommand === 'end') {
         const messageId = interaction.options.getString('message-id');
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
         const result = await giveawayService.endGiveaway(messageId);
         if (!result) return interaction.editReply({ content: 'Giveaway not found or already ended.' });
         await interaction.editReply({ content: '✅ Giveaway ended.' });
@@ -83,7 +83,7 @@ module.exports = {
 
       if (subcommand === 'reroll') {
         const messageId = interaction.options.getString('message-id');
-        await interaction.deferReply({ ephemeral: true });
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
         const result = await giveawayService.rerollGiveaway(messageId);
         if (!result) return interaction.editReply({ content: 'Giveaway not found.' });
         await interaction.editReply({ content: '✅ Giveaway rerolled.' });
@@ -94,7 +94,7 @@ module.exports = {
       if (interaction.deferred) {
         await interaction.editReply({ content: 'There was an error executing this command.' });
       } else {
-        await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+        await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
       }
     }
   },

@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, PermissionsBitField } = require('discord.js');
+const { SlashCommandBuilder, PermissionsBitField , MessageFlags} = require('discord.js');
 const { t } = require('../../utils/i18n');
 const ms = require('ms');
 
@@ -34,24 +34,24 @@ module.exports = {
       const member = interaction.guild.members.cache.get(targetUser.id);
 
       if (!member) {
-        return interaction.reply({ content: await t(interaction.guild.id, 'moderation.user_not_found', { defaultValue: 'Could not find that user in this server.' }), ephemeral: true });
+        return interaction.reply({ content: await t(interaction.guild.id, 'moderation.user_not_found', { defaultValue: 'Could not find that user in this server.' }), flags: MessageFlags.Ephemeral });
       }
 
       if (!member.moderatable) {
-        return interaction.reply({ content: await t(interaction.guild.id, 'moderation.cannot_mute', { defaultValue: 'I cannot mute that user.' }), ephemeral: true });
+        return interaction.reply({ content: await t(interaction.guild.id, 'moderation.cannot_mute', { defaultValue: 'I cannot mute that user.' }), flags: MessageFlags.Ephemeral });
       }
 
       if (member.roles.highest.position >= interaction.member.roles.highest.position) {
-        return interaction.reply({ content: await t(interaction.guild.id, 'moderation.higher_role', { defaultValue: 'You cannot mute a user with a higher or equal role.' }), ephemeral: true });
+        return interaction.reply({ content: await t(interaction.guild.id, 'moderation.higher_role', { defaultValue: 'You cannot mute a user with a higher or equal role.' }), flags: MessageFlags.Ephemeral });
       }
 
       const durationMs = ms(duration);
       if (!durationMs) {
-        return interaction.reply({ content: await t(interaction.guild.id, 'moderation.invalid_duration', { defaultValue: 'Invalid duration format. Use e.g. 10m, 1h, 1d.' }), ephemeral: true });
+        return interaction.reply({ content: await t(interaction.guild.id, 'moderation.invalid_duration', { defaultValue: 'Invalid duration format. Use e.g. 10m, 1h, 1d.' }), flags: MessageFlags.Ephemeral });
       }
 
       if (durationMs > 2419200000) {
-        return interaction.reply({ content: await t(interaction.guild.id, 'moderation.duration_too_long', { defaultValue: 'Duration cannot exceed 28 days.' }), ephemeral: true });
+        return interaction.reply({ content: await t(interaction.guild.id, 'moderation.duration_too_long', { defaultValue: 'Duration cannot exceed 28 days.' }), flags: MessageFlags.Ephemeral });
       }
 
       await member.timeout(durationMs, reason);
@@ -65,7 +65,7 @@ module.exports = {
       await interaction.reply({ content: reply });
     } catch (error) {
       console.error('mute command error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', ephemeral: true });
+      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {

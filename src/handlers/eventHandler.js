@@ -24,7 +24,7 @@ async function loadEvents(client) {
   for (const filePath of eventFiles) {
     try {
       const event = require(filePath);
-      const eventName = path.basename(filePath, '.js');
+      const eventName = event.name || path.basename(filePath, '.js');
       if (event.once) {
         client.once(eventName, (...args) => event.execute(...args, client));
       } else {

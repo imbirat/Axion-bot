@@ -209,6 +209,13 @@ async function handlePrefixCommand(message, config, client) {
       }
       if (cmd.prefixAliases && cmd.prefixAliases.includes(commandName)) {
         command = cmd;
+        const baseName = cmd.data.name;
+        if (commandName.startsWith(baseName)) {
+          const sub = commandName.slice(baseName.length).replace(/^-/, '');
+          if (sub) args.unshift(sub);
+        } else {
+          args.unshift(commandName);
+        }
         break;
       }
     }

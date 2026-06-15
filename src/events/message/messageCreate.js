@@ -18,7 +18,6 @@ module.exports = {
     if (!guildId) return;
 
     const config = await GuildConfig.findOne({ guildId });
-    const prefixes = config?.prefix ?? ['.', '/'];
 
     // ── Snipe cache ────────────────────────────────────────
     push(message.channelId, {
@@ -118,9 +117,8 @@ module.exports = {
 
     // ── AI channel auto-response ───────────────────────────
     if (config?.aiChannel && message.channelId === config.aiChannel) {
-      const prefixMatch = prefixes.find(p => message.content.startsWith(p));
-      if (prefixMatch) {
-        const cmdName = message.content.slice(prefixMatch.length).trim().split(/ +/)[0]?.toLowerCase();
+      if (message.content.startsWith('/')) {
+        const cmdName = message.content.slice(1).trim().split(/ +/)[0]?.toLowerCase();
         const cmd = client.commands.get(cmdName);
         if (cmd?.prefixExecute) return;
       }
@@ -135,10 +133,9 @@ module.exports = {
     }
 
     // ── Prefix command check ───────────────────────────────
-    const usedPrefix = prefixes.find(p => message.content.startsWith(p));
-    if (!usedPrefix) return;
+    if (!message.content.startsWith('/')) return;
 
-    const args = message.content.slice(usedPrefix.length).trim().split(/ +/);
+    const args = message.content.slice(1).trim().split(/ +/);
     const commandName = args.shift().toLowerCase();
 
     // Check custom commands first

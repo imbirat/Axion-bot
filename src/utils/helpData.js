@@ -175,7 +175,6 @@ const helpCategories = [
   {
     name: 'Config', emoji: '⚙️', description: 'Configure Axion for your server',
     commands: [
-      { name: 'setprefix', usage: '/setprefix <prefix>', description: 'Change bot prefix', perms: 'Administrator', cooldown: '3s' },
       { name: 'setchannel', usage: '/setchannel <type> <#channel>', description: 'Set a channel', perms: 'Administrator', cooldown: '3s' },
       { name: 'setlanguage', usage: '/setlanguage <language>', description: 'Set server language', perms: 'Administrator', cooldown: '3s' },
     ],

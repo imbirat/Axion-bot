@@ -38,12 +38,22 @@ async function ask(prompt) {
 }
 
 async function createImage(prompt) {
+  if (!genAI && !initGemini()) return { error: 'Gemini API key not configured.' };
   try {
-    const encoded = encodeURIComponent(prompt);
-    const url = `https://image.pollinations.ai/prompt/${encoded}`;
-    return { image: { url } };
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-image' });
+    const result = await model.generateContent({
+      contents: [{ role: 'user', parts: [{ text: prompt }] }],
+      generationConfig: { responseModalities: ['Text', 'Image'] },
+    });
+    const response = result.response;
+    for (const part of response.candidates[0]?.content?.parts || []) {
+      if (part.inlineData) {
+        return { data: part.inlineData.data, mimeType: part.inlineData.mimeType };
+      }
+    }
+    return { text: response.text() };
   } catch (err) {
-    console.error('[IMAGE] Error:', err);
+    console.error('[IMAGE] Gemini error:', err);
     return { error: 'Failed to generate image.' };
   }
 }

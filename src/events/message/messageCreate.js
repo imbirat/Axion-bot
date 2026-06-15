@@ -117,8 +117,9 @@ module.exports = {
 
     // ── AI channel auto-response ───────────────────────────
     if (config?.aiChannel && message.channelId === config.aiChannel) {
-      if (message.content.startsWith('/')) {
-        const cmdName = message.content.slice(1).trim().split(/ +/)[0]?.toLowerCase();
+      const prefixMatch = ['/', '.'].find(p => message.content.startsWith(p));
+      if (prefixMatch) {
+        const cmdName = message.content.slice(prefixMatch.length).trim().split(/ +/)[0]?.toLowerCase();
         const cmd = client.commands.get(cmdName);
         if (cmd?.prefixExecute) return;
       }
@@ -133,9 +134,10 @@ module.exports = {
     }
 
     // ── Prefix command check ───────────────────────────────
-    if (!message.content.startsWith('/')) return;
+    const usedPrefix = ['/', '.'].find(p => message.content.startsWith(p));
+    if (!usedPrefix) return;
 
-    const args = message.content.slice(1).trim().split(/ +/);
+    const args = message.content.slice(usedPrefix.length).trim().split(/ +/);
     const commandName = args.shift().toLowerCase();
 
     // Check custom commands first

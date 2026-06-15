@@ -34,14 +34,17 @@ module.exports = {
   },
   async prefixExecute(message, args, client) {
     try {
+      if (!message.member.permissions.has(PermissionFlagsBits.Administrator)) {
+        return message.reply('❌ You need Administrator permission to use this command.');
+      }
       const prefix = args[0];
       if (!prefix || prefix.length !== 1) return message.reply('❌ Usage: setprefix <prefix> (single character)');
       await GuildConfig.findOneAndUpdate(
         { guildId: message.guild.id },
-        { $addToSet: { prefix } },
+        { $set: { prefix: [prefix] } },
         { upsert: true }
       );
-      await message.reply(`✅ Prefix \`${prefix}\` has been added.`);
+      await message.reply(`✅ Prefix set to \`${prefix}\`.`);
     } catch (error) {
       console.error('setprefix prefix error:', error);
       await message.reply('There was an error setting the prefix.');

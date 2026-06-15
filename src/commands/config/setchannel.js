@@ -59,6 +59,9 @@ module.exports = {
   },
   async prefixExecute(message, args, client) {
     try {
+      if (!message.member.permissions.has(PermissionFlagsBits.Administrator)) {
+        return message.reply('❌ You need Administrator permission to use this command.');
+      }
       const type = args[0]?.toLowerCase();
       const channel = message.mentions.channels.first();
       if (!type || !channel) return message.reply('Usage: setchannel <welcome|farewell|booster|leveling|logging|birthday|confess> <#channel>');

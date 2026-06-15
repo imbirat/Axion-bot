@@ -79,6 +79,9 @@ module.exports = {
   },
   async prefixExecute(message, args, client) {
     try {
+      if (!message.member.permissions.has(PermissionFlagsBits.Administrator)) {
+        return message.reply('❌ You need Administrator permission to use this command.');
+      }
       const type = args[0]?.toLowerCase();
       const text = args.slice(1).join(' ');
       if (!type || !['welcome', 'farewell', 'booster'].includes(type)) {

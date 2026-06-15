@@ -21,7 +21,7 @@ module.exports = {
       const embed = new EmbedBuilder()
         .setColor(0x5865F2)
         .setAuthor({ name: 'Axion', iconURL: client.user.displayAvatarURL() })
-        .setDescription(`Axion is an all-in-one bot providing premium features for free.\n\nnode.js ${nodeVer}     ping: ${ping}ms\nowner: @${ownerTag}    servers: ${serverCount}`)
+        .setDescription('Axion is an all-in-one bot providing premium features for free.')
         .addFields(
           { name: 'Node.js', value: `\`${nodeVer}\``, inline: true },
           { name: 'discord.js', value: `v${djsVer}`, inline: true },
@@ -66,7 +66,7 @@ module.exports = {
       const embed = new EmbedBuilder()
         .setColor(0x5865F2)
         .setAuthor({ name: 'Axion', iconURL: client.user.displayAvatarURL() })
-        .setDescription(`Axion is an all-in-one bot providing premium features for free.\n\nnode.js ${nodeVer}     ping: ${ping}ms\nowner: @${ownerTag}    servers: ${serverCount}`)
+        .setDescription('Axion is an all-in-one bot providing premium features for free.')
         .addFields(
           { name: 'Node.js', value: `\`${nodeVer}\``, inline: true },
           { name: 'discord.js', value: `v${djsVer}`, inline: true },

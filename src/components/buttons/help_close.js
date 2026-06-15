@@ -9,6 +9,7 @@ module.exports = {
       return interaction.reply({ content: 'Session expired. Run /help again.', flags: MessageFlags.Ephemeral });
     }
     client.helpSessions.delete(key);
-    await interaction.deleteReply();
+    await interaction.deferUpdate();
+    await interaction.message.delete();
   },
 };

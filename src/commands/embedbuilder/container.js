@@ -29,12 +29,11 @@ module.exports = {
     if (!message.member.permissions.has(PermissionFlagsBits.ManageMessages)) {
       return message.reply('❌ You need Manage Messages permission to use this.');
     }
-    const channel = message.mentions.channels.first() || message.guild.channels.cache.get(args[0]);
+    const { channel, content } = extractChannelContent(message);
     if (!channel) return message.reply('Usage: container <#channel> <content>');
-    const raw = message.content.slice(message.content.indexOf(args[0]) + args[0].length).trim();
-    if (!raw) return message.reply('Please provide container content.');
+    if (!content) return message.reply('Please provide container content.');
     try {
-      const container = parseContainer(raw);
+      const container = parseContainer(content);
       await channel.send({ flags: MessageFlags.IsComponentsV2, components: [container] });
       await message.reply(`✅ Container sent to ${channel}.`);
     } catch (err) {
@@ -42,6 +41,17 @@ module.exports = {
     }
   },
 };
+
+function extractChannelContent(message) {
+  const afterCmd = message.content.slice(message.content.indexOf(' ') + 1).trim();
+  const mention = afterCmd.match(/^<#\d+>/);
+  const id = !mention ? afterCmd.match(/^\d{17,20}/) : null;
+  if (!mention && !id) return { channel: null, content: null };
+  const chStr = mention ? mention[0] : id[0];
+  const channel = message.mentions.channels.first() || message.guild.channels.cache.get(chStr.replace(/[<#>]/g, ''));
+  const content = afterCmd.slice(chStr.length).trim();
+  return { channel, content };
+}
 
 function parseContainer(text) {
   const C = new ContainerBuilder();

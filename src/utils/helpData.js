@@ -86,7 +86,10 @@ const helpCategories = [
       { name: 'ticket close', usage: '/ticket close [reason]', description: 'Close a ticket', perms: 'Support Role', cooldown: '3s' },
       { name: 'ticket claim', usage: '/ticket claim', description: 'Claim a ticket', perms: 'Support Role', cooldown: '3s' },
       { name: 'ticket add', usage: '/ticket add <user>', description: 'Add user to ticket', perms: 'Support Role', cooldown: '3s' },
+      { name: 'ticket remove', usage: '/ticket-remove <user>', description: 'Remove user from ticket', perms: 'Support Role', cooldown: '3s' },
       { name: 'ticket rename', usage: '/ticket rename <name>', description: 'Rename ticket channel', perms: 'Support Role', cooldown: '3s' },
+      { name: 'ticket claim', usage: '/ticket claim', description: 'Claim a ticket', perms: 'Support Role', cooldown: '3s' },
+      { name: 'ticket unclaim', usage: '/ticket-unclaim', description: 'Unclaim a ticket', perms: 'Support Role', cooldown: '3s' },
       { name: 'ticket transcript', usage: '/ticket transcript', description: 'Get ticket transcript', perms: 'Support Role', cooldown: '10s' },
       { name: 'ticket reopen', usage: '/ticket reopen', description: 'Re-open a ticket', perms: 'Support Role', cooldown: '3s' },
     ],
@@ -265,6 +268,7 @@ const helpCategories = [
       { name: 'reportsetup', usage: '/reportsetup <#channel>', description: 'Set report channel', perms: 'Administrator', cooldown: '5s' },
       { name: 'report', usage: '/report <user> <reason>', description: 'Report a user', perms: 'Everyone', cooldown: '30s' },
       { name: 'reports view', usage: '/reports view [user]', description: 'View reports', perms: 'Administrator', cooldown: '5s' },
+      { name: 'reports clear', usage: '/reports clear', description: 'Clear resolved reports', perms: 'Administrator', cooldown: '3s' },
     ],
   },
   {

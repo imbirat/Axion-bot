@@ -12,14 +12,23 @@ module.exports = {
           opt.setName('user')
             .setDescription('Filter by reported user')
             .setRequired(false)))
+    .addSubcommand(sub =>
+      sub.setName('clear')
+        .setDescription('Clear all resolved reports'))
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
   category: 'Reports',
-  usage: '/reports view [user]',
+  usage: '/reports <view [user]|clear>',
   description: 'View submitted reports with optional user filter',
   permissions: ['Administrator'],
   cooldown: 5,
   async execute(interaction, client) {
     try {
+      const sub = interaction.options.getSubcommand();
+      if (sub === 'clear') {
+        const result = await Report.deleteMany({ guildId: interaction.guild.id, status: { $ne: 'pending' } });
+        return interaction.reply({ content: `✅ Cleared ${result.deletedCount} resolved report(s).`, flags: MessageFlags.Ephemeral });
+      }
+
       const user = interaction.options.getUser('user');
       const filter = { guildId: interaction.guild.id };
       if (user) filter.reportedUserId = user.id;
@@ -83,6 +92,12 @@ module.exports = {
   },
   async prefixExecute(message, args, client) {
     try {
+      const sub = args[0]?.toLowerCase();
+      if (sub === 'clear') {
+        const result = await Report.deleteMany({ guildId: message.guild.id, status: { $ne: 'pending' } });
+        return message.reply(`✅ Cleared ${result.deletedCount} resolved report(s).`);
+      }
+
       const userMention = message.mentions.users.first();
       const filter = { guildId: message.guild.id };
       if (userMention) filter.reportedUserId = userMention.id;

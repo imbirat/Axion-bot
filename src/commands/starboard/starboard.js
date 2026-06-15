@@ -18,9 +18,14 @@ module.exports = {
     .addSubcommand(sub =>
       sub.setName('disable')
         .setDescription('Disable the starboard'))
+    .addSubcommand(sub =>
+      sub.setName('emoji')
+        .setDescription('Set the starboard emoji')
+        .addStringOption(opt =>
+          opt.setName('emoji').setDescription('The emoji to use').setRequired(true)))
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
   category: 'Starboard',
-  usage: '/starboard <config|setup|disable>',
+  usage: '/starboard <config|setup|disable|emoji>',
   description: 'Starboard system to highlight popular messages',
   permissions: ['Administrator'],
   cooldown: 5,
@@ -63,6 +68,15 @@ module.exports = {
           config.enabled = false;
           await config.save();
           await interaction.reply({ content: '⭐ Starboard disabled.', flags: MessageFlags.Ephemeral });
+          break;
+        }
+        case 'emoji': {
+          const emoji = interaction.options.getString('emoji');
+          const cfg = await Starboard.findOne({ guildId: interaction.guild.id });
+          if (!cfg) return interaction.reply({ content: 'Starboard is not configured. Use `/starboard setup` first.', flags: MessageFlags.Ephemeral });
+          cfg.emoji = emoji;
+          await cfg.save();
+          await interaction.reply({ content: `⭐ Starboard emoji changed to ${emoji}.`, flags: MessageFlags.Ephemeral });
           break;
         }
       }
@@ -112,8 +126,17 @@ module.exports = {
           await message.reply('⭐ Starboard disabled.');
           break;
         }
+        case 'emoji': {
+          if (!rest[0]) return message.reply('Usage: starboard emoji <emoji>');
+          const cfg = await Starboard.findOne({ guildId: message.guild.id });
+          if (!cfg) return message.reply('Starboard is not configured. Use `starboard setup` first.');
+          cfg.emoji = rest[0];
+          await cfg.save();
+          await message.reply(`⭐ Starboard emoji changed to ${rest[0]}.`);
+          break;
+        }
         default:
-          await message.reply('Usage: starboard <config|setup|disable>');
+          await message.reply('Usage: starboard <config|setup|disable|emoji>');
       }
     } catch (error) {
       console.error(`starboard prefix ${sub} error:`, error);

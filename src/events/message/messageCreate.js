@@ -1,4 +1,4 @@
-const { Events, EmbedBuilder } = require('discord.js');
+const { Events, EmbedBuilder, MessageFlags } = require('discord.js');
 const GuildConfig = require('../../models/GuildConfig');
 const UserProfile = require('../../models/UserProfile');
 const CustomCommand = require('../../models/CustomCommand');
@@ -6,6 +6,7 @@ const CountingChannel = require('../../models/CountingChannel');
 const BumpReminder = require('../../models/BumpReminder');
 const StickyMessage = require('../../models/StickyMessage');
 const { push } = require('../../utils/snipeCache');
+const geminiService = require('../../services/geminiService');
 
 module.exports = {
   name: Events.MessageCreate,
@@ -113,6 +114,24 @@ module.exports = {
       const newSticky = await message.channel.send({ content: sticky.message });
       sticky.lastMessageId = newSticky.id;
       await sticky.save();
+    }
+
+    // ── AI channel auto-response ───────────────────────────
+    if (config?.aiChannel && message.channelId === config.aiChannel) {
+      const prefixMatch = prefixes.find(p => message.content.startsWith(p));
+      if (prefixMatch) {
+        const cmdName = message.content.slice(prefixMatch.length).trim().split(/ +/)[0]?.toLowerCase();
+        const cmd = client.commands.get(cmdName);
+        if (cmd?.prefixExecute) return;
+      }
+      await message.channel.sendTyping();
+      const result = await geminiService.ask(message.content);
+      if (!result.error) {
+        const text = typeof result?.text === 'string' ? result.text : '';
+        const truncated = text.length > 2000 ? text.substring(0, 1997) + '...' : text;
+        if (truncated) await message.reply({ content: truncated, allowedMentions: { repliedUser: false } });
+      }
+      return;
     }
 
     // ── Prefix command check ───────────────────────────────

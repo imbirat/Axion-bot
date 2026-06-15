@@ -29,9 +29,13 @@ async function ask(prompt) {
 
 async function createImage(prompt) {
   try {
-    const encoded = encodeURIComponent(prompt);
+    const enhanced = await ask(`Enhance this image prompt into a detailed English description for AI image generation (keep it under 500 chars, only return the prompt): ${prompt}`);
+    const imagePrompt = enhanced?.text && !enhanced.error
+      ? enhanced.text.substring(0, 500)
+      : prompt;
+    const encoded = encodeURIComponent(imagePrompt);
     const url = `https://image.pollinations.ai/prompt/${encoded}`;
-    return { image: { url } };
+    return { image: { url }, enhanced: imagePrompt !== prompt };
   } catch (err) {
     console.error('[GEMINI] Image error:', err);
     return { error: 'Failed to generate image.' };

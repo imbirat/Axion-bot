@@ -1,6 +1,7 @@
 const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 const helpCategories = require('../../utils/helpData');
 const { buildMainPage, buildCategoryPage, setSession } = require('../../components/helpers/helpViews');
+const CATS_PER_PAGE = 10;
 
 module.exports = {
   data: new SlashCommandBuilder()

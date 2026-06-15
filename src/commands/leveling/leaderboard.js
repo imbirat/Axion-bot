@@ -18,7 +18,7 @@ module.exports = {
   cooldown: 10,
   async execute(interaction, client) {
     try {
-      const sub = interaction.options.getSubcommand();
+      const sub = interaction.options.getSubcommand(false) || 'xp';
       if (sub === 'xp') {
         const top = await UserProfile.find({ guildId: interaction.guild.id })
           .sort({ level: -1, xp: -1 })

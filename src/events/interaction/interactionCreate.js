@@ -1,4 +1,4 @@
-const { Events } = require('discord.js');
+const { Events, MessageFlags } = require('discord.js');
 const { handleComponent } = require('../../handlers/componentHandler');
 const { t } = require('../../utils/i18n');
 
@@ -23,7 +23,7 @@ module.exports = {
           const exp = timestamps.get(interaction.user.id) + cooldownAmount;
           if (now < exp) {
             const left = ((exp - now) / 1000).toFixed(1);
-            return interaction.reply({ content: await t(interaction.guildId, 'errors.cooldown', { time: left }), ephemeral: true });
+            return interaction.reply({ content: await t(interaction.guildId, 'errors.cooldown', { time: left }), flags: MessageFlags.Ephemeral });
           }
         }
         timestamps.set(interaction.user.id, now);
@@ -40,7 +40,7 @@ module.exports = {
 
     } catch (err) {
       console.error('[INTERACTION] Error:', err);
-      const msg = { content: 'An error occurred.', ephemeral: true };
+      const msg = { content: 'An error occurred.', flags: MessageFlags.Ephemeral };
       if (interaction.replied || interaction.deferred) await interaction.followUp(msg).catch(() => {});
       else await interaction.reply(msg).catch(() => {});
     }

@@ -1,3 +1,4 @@
+const { MessageFlags } = require('discord.js');
 const path = require('path');
 const fs   = require('fs');
 
@@ -25,10 +26,10 @@ async function handleComponent(interaction, client) {
     await handler.execute(interaction, client);
   } catch (err) {
     console.error(`[COMPONENT] Error in ${id}:`, err);
-    const msg = { content: 'An error occurred while handling this interaction.', ephemeral: true };
+    const msg = { content: 'An error occurred while handling this interaction.', flags: MessageFlags.Ephemeral };
     if (interaction.replied || interaction.deferred) await interaction.followUp(msg);
     else await interaction.reply(msg);
   }
 }
 
-module.exports = { loadComponents, handleComponent, components };
+module.exports = { loadComponents, handleComponent, components, modals: components, buttons: components };

@@ -17,14 +17,24 @@ async function loadCommands(client) {
 
 async function registerSlashCommands(client, guildId) {
   const rest = new REST().setToken(process.env.DISCORD_TOKEN);
-  const commands = [...client.commands.values()].map(c => c.data.toJSON());
+  const COMMAND_LIMIT = 100;
+  let commands = [...client.commands.values()].map(c => c.data.toJSON());
+
+  const names = commands.map(c => c.name);
+  commands = commands.filter((c, i) => names.indexOf(c.name) === i);
+
+  if (commands.length > COMMAND_LIMIT) {
+    console.warn(`[CMD] Truncating to ${COMMAND_LIMIT} commands (Discord limit)`);
+    commands.length = COMMAND_LIMIT;
+  }
+
   try {
-    if (guildId) {
-      await rest.put(Routes.applicationGuildCommands(process.env.CLIENT_ID, guildId), { body: commands });
+    if (guildId || process.env.GUILD_ID) {
+      await rest.put(Routes.applicationGuildCommands(process.env.CLIENT_ID, guildId || process.env.GUILD_ID), { body: commands });
     } else {
       await rest.put(Routes.applicationCommands(process.env.CLIENT_ID), { body: commands });
     }
-    console.log('[CMD] Slash commands registered');
+    console.log(`[CMD] Registered ${commands.length} slash commands`);
   } catch (err) {
     console.error('[CMD] Failed to register commands:', err);
   }

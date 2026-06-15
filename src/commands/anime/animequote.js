@@ -13,12 +13,15 @@ module.exports = {
   async execute(interaction, client) {
     try {
       const { data } = await axios.get('https://animechan.xyz/api/random');
+      const quote = data.quote || 'No quote available';
+      const character = data.character || 'Unknown';
+      const anime = data.anime || 'Unknown';
       const embed = new EmbedBuilder()
         .setColor(0x5865F2)
-        .setDescription(`"${data.quote}"`)
+        .setDescription(`"${quote}"`)
         .addFields(
-          { name: '— Character', value: data.character, inline: true },
-          { name: 'Anime', value: data.anime, inline: true }
+          { name: '— Character', value: character, inline: true },
+          { name: 'Anime', value: anime, inline: true }
         );
       await interaction.reply({ embeds: [embed] });
     } catch (error) {
@@ -29,12 +32,15 @@ module.exports = {
   async prefixExecute(message, args, client) {
     try {
       const { data } = await axios.get('https://animechan.xyz/api/random');
+      const quote = data.quote || 'No quote available';
+      const character = data.character || 'Unknown';
+      const anime = data.anime || 'Unknown';
       const embed = new EmbedBuilder()
         .setColor(0x5865F2)
-        .setDescription(`"${data.quote}"`)
+        .setDescription(`"${quote}"`)
         .addFields(
-          { name: '— Character', value: data.character, inline: true },
-          { name: 'Anime', value: data.anime, inline: true }
+          { name: '— Character', value: character, inline: true },
+          { name: 'Anime', value: anime, inline: true }
         );
       await message.channel.send({ embeds: [embed] });
     } catch (error) {

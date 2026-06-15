@@ -115,7 +115,7 @@ function buildCategoryPage(category, page, sorted) {
           .setCustomId('help_switch_category')
           .setPlaceholder('Switch category...')
           .addOptions(
-            helpCategories.map(c =>
+            helpCategories.slice(0, 25).map(c =>
               new StringSelectMenuOptionBuilder()
                 .setLabel(c.name)
                 .setValue(c.name)

@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, MessageFlags } = require('discord.js');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -11,7 +11,8 @@ module.exports = {
   cooldown: 3,
 
   async execute(interaction, client) {
-    const sent = await interaction.reply({ content: 'Pinging...', fetchReply: true, ephemeral: false });
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+    const sent = await interaction.fetchReply();
     const latency = sent.createdTimestamp - interaction.createdTimestamp;
     const apiLatency = Math.round(client.ws.ping);
     const embed = new EmbedBuilder()

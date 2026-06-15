@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags, version } = require('discord.js');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -15,11 +15,21 @@ module.exports = {
       const ownerTag = owner.owner ? owner.owner.username : 'Unknown';
       const serverCount = client.guilds.cache.size;
       const ping = Math.round(client.ws.ping);
+      const nodeVer = process.version;
+      const djsVer = version;
 
       const embed = new EmbedBuilder()
         .setColor(0x5865F2)
-        .setTitle('Axion')
-        .setDescription(`Axion is an all-in-one bot providing premium features for free.\n\nnode.js (22.x.x)     ping: ${ping}ms\nowner: @${ownerTag}    servers: ${serverCount}`)
+        .setAuthor({ name: 'Axion', iconURL: client.user.displayAvatarURL() })
+        .setDescription(`Axion is an all-in-one bot providing premium features for free.\n\nnode.js ${nodeVer}     ping: ${ping}ms\nowner: @${ownerTag}    servers: ${serverCount}`)
+        .addFields(
+          { name: 'Node.js', value: `\`${nodeVer}\``, inline: true },
+          { name: 'discord.js', value: `v${djsVer}`, inline: true },
+          { name: 'Ping', value: `${ping}ms`, inline: true },
+          { name: 'Owner', value: `@${ownerTag}`, inline: true },
+          { name: 'Servers', value: `${serverCount}`, inline: true },
+          { name: 'Users', value: `${client.users.cache.size}`, inline: true }
+        )
         .setFooter({ text: 'made by Axion-team' })
         .setTimestamp();
 
@@ -31,7 +41,11 @@ module.exports = {
         new ButtonBuilder()
           .setLabel('Invite Bot')
           .setStyle(ButtonStyle.Link)
-          .setURL(`https://discord.com/api/oauth2/authorize?client_id=${client.user.id}&permissions=8&scope=bot%20applications.commands`)
+          .setURL(`https://discord.com/api/oauth2/authorize?client_id=${client.user.id}&permissions=8&scope=bot%20applications.commands`),
+        new ButtonBuilder()
+          .setLabel('Ping')
+          .setStyle(ButtonStyle.Secondary)
+          .setCustomId('botinfo_ping')
       );
 
       await interaction.reply({ embeds: [embed], components: [row] });
@@ -46,11 +60,21 @@ module.exports = {
       const ownerTag = owner.owner ? owner.owner.username : 'Unknown';
       const serverCount = client.guilds.cache.size;
       const ping = Math.round(client.ws.ping);
+      const nodeVer = process.version;
+      const djsVer = version;
 
       const embed = new EmbedBuilder()
         .setColor(0x5865F2)
-        .setTitle('Axion')
-        .setDescription(`Axion is an all-in-one bot providing premium features for free.\n\nnode.js (22.x.x)     ping: ${ping}ms\nowner: @${ownerTag}    servers: ${serverCount}`)
+        .setAuthor({ name: 'Axion', iconURL: client.user.displayAvatarURL() })
+        .setDescription(`Axion is an all-in-one bot providing premium features for free.\n\nnode.js ${nodeVer}     ping: ${ping}ms\nowner: @${ownerTag}    servers: ${serverCount}`)
+        .addFields(
+          { name: 'Node.js', value: `\`${nodeVer}\``, inline: true },
+          { name: 'discord.js', value: `v${djsVer}`, inline: true },
+          { name: 'Ping', value: `${ping}ms`, inline: true },
+          { name: 'Owner', value: `@${ownerTag}`, inline: true },
+          { name: 'Servers', value: `${serverCount}`, inline: true },
+          { name: 'Users', value: `${client.users.cache.size}`, inline: true }
+        )
         .setFooter({ text: 'made by Axion-team' })
         .setTimestamp();
 

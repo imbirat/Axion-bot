@@ -22,7 +22,7 @@ module.exports = {
   cooldown: 5,
   async execute(interaction, client) {
     try {
-      const sub = interaction.options.getSubcommand();
+      const sub = interaction.options.getSubcommand(false) || 'xp';
       if (sub === 'xp') {
         const target = interaction.options.getUser('user') || interaction.user;
         const profile = await UserProfile.findOne({ userId: target.id, guildId: interaction.guild.id });

@@ -18,8 +18,10 @@ module.exports = {
     try {
       await interaction.deferReply({ flags: MessageFlags.Ephemeral });
       const prompt = interaction.options.getString('prompt');
-      const response = await geminiService.ask(prompt);
-      const truncated = response.length > 2000 ? response.substring(0, 1997) + '...' : response;
+      const result = await geminiService.ask(prompt);
+      if (result.error) throw new Error(result.error);
+      const text = typeof result?.text === 'string' ? result.text : '';
+      const truncated = text.length > 2000 ? text.substring(0, 1997) + '...' : text;
       const embed = new EmbedBuilder()
         .setColor(0x5865F2)
         .setTitle('🤖 AI Response')
@@ -35,8 +37,10 @@ module.exports = {
     try {
       if (!args.length) return message.reply('Please provide a prompt for the AI.');
       const prompt = args.join(' ');
-      const response = await geminiService.ask(prompt);
-      const truncated = response.length > 2000 ? response.substring(0, 1997) + '...' : response;
+      const result = await geminiService.ask(prompt);
+      if (result.error) throw new Error(result.error);
+      const text = typeof result?.text === 'string' ? result.text : '';
+      const truncated = text.length > 2000 ? text.substring(0, 1997) + '...' : text;
       const embed = new EmbedBuilder()
         .setColor(0x5865F2)
         .setTitle('🤖 AI Response')

@@ -23,7 +23,7 @@ module.exports = {
       const embed = new EmbedBuilder()
         .setColor(0x5865F2)
         .setTitle('🎨 Generated Image')
-        .setDescription(`Prompt: ${prompt}`)
+        .setDescription(`Prompt: ${prompt}\n[Open image](${result.image.url})`)
         .setImage(result.image.url)
         .setTimestamp();
       await interaction.editReply({ embeds: [embed] });
@@ -41,7 +41,7 @@ module.exports = {
       const embed = new EmbedBuilder()
         .setColor(0x5865F2)
         .setTitle('🎨 Generated Image')
-        .setDescription(`Prompt: ${prompt}`)
+        .setDescription(`Prompt: ${prompt}\n[Open image](${result.image.url})`)
         .setImage(result.image.url)
         .setTimestamp();
       await message.channel.send({ embeds: [embed] });

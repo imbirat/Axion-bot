@@ -1,5 +1,4 @@
 const { GoogleGenerativeAI } = require('@google/generative-ai');
-const axios = require('axios');
 
 let genAI = null;
 let model = null;
@@ -29,13 +28,9 @@ async function ask(prompt) {
 
 async function createImage(prompt) {
   try {
-    const enhanced = await ask(`Enhance this image prompt into a detailed English description for AI image generation (keep it under 500 chars, only return the prompt): ${prompt}`);
-    const imagePrompt = enhanced?.text && !enhanced.error
-      ? enhanced.text.substring(0, 500)
-      : prompt;
-    const encoded = encodeURIComponent(imagePrompt);
+    const encoded = encodeURIComponent(prompt);
     const url = `https://image.pollinations.ai/prompt/${encoded}`;
-    return { image: { url }, enhanced: imagePrompt !== prompt };
+    return { image: { url } };
   } catch (err) {
     console.error('[GEMINI] Image error:', err);
     return { error: 'Failed to generate image.' };

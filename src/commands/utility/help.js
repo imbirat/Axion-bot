@@ -1,7 +1,6 @@
 const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 const helpCategories = require('../../utils/helpData');
 const { buildMainPage, buildCategoryPage, setSession } = require('../../components/helpers/helpViews');
-const CATS_PER_PAGE = 10;
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -40,50 +39,13 @@ module.exports = {
         if (!cat) {
           return message.reply(`Category "${categoryName}" not found.`);
         }
-        const cmds = cat.commands.map(c => `• **${c.name}** — ${c.description}`).join('\n');
-        return message.channel.send(`**${cat.emoji} ${cat.name}** • *${cat.description}*\n\n${cmds}`);
+        const msg = await message.channel.send(buildCategoryPage(cat, 0, false));
+        setSession(client, message.author.id, msg.id, { userId: message.author.id, categoryName: cat.name, page: 0, sorted: false });
+        return;
       }
 
-      const totalPages = Math.ceil(helpCategories.length / CATS_PER_PAGE);
-      const slice = helpCategories.slice(0, CATS_PER_PAGE);
-      const categoryList = slice.map(c => `${c.emoji}  **${c.name}**`).join('\n');
-      const totalUsers = client.guilds.cache.reduce((a, g) => a + g.memberCount, 0);
-      const serverCount = client.guilds.cache.size;
-
-      const msg = await message.channel.send(
-        `## Hey, I'm Axion\n\n` +
-        `Prefix: \`.\`\n` +
-        `Serving **${totalUsers.toLocaleString()}** users in **${serverCount}** servers\n\n` +
-        `__**Categories**__\n${categoryList}\n\n` +
-        `Use \`.help <category>\` to see commands in that category.\n` +
-        `-# Page 1 of ${totalPages}`
-      );
-
-      if (totalPages > 1) {
-        await msg.react('⬅️');
-        await msg.react('➡️');
-        const collector = msg.createReactionCollector({ filter: (reaction, user) => user.id === message.author.id && ['⬅️', '➡️'].includes(reaction.emoji.name), time: 120000, dispose: true });
-        let currentPage = 0;
-        collector.on('collect', async (reaction) => {
-          if (reaction.emoji.name === '➡️' && currentPage < totalPages - 1) currentPage++;
-          else if (reaction.emoji.name === '⬅️' && currentPage > 0) currentPage--;
-          else return;
-          await reaction.users.remove(message.author.id);
-          const newSlice = helpCategories.slice(currentPage * CATS_PER_PAGE, (currentPage + 1) * CATS_PER_PAGE);
-          const newCategoryList = newSlice.map(c => `${c.emoji}  **${c.name}**`).join('\n');
-          await msg.edit(
-            `## Hey, I'm Axion\n\n` +
-            `Prefix: \`.\`\n` +
-            `Serving **${totalUsers.toLocaleString()}** users in **${serverCount}** servers\n\n` +
-            `__**Categories**__\n${newCategoryList}\n\n` +
-            `Use \`.help <category>\` to see commands in that category.\n` +
-            `-# Page ${currentPage + 1} of ${totalPages}`
-          );
-        });
-        collector.on('end', async () => {
-          try { await msg.reactions.removeAll(); } catch {}
-        });
-      }
+      const msg = await message.channel.send(buildMainPage(client, message.guild, 0));
+      setSession(client, message.author.id, msg.id, { userId: message.author.id, categoryName: null, page: 0, mainPage: 0, sorted: false });
     } catch (error) {
       console.error('help prefix error:', error);
       await message.reply('There was an error executing the help command.');

@@ -20,6 +20,15 @@ module.exports = {
       const prompt = interaction.options.getString('prompt');
       const result = await geminiService.createImage(prompt);
       if (result.error) throw new Error(result.error);
+      if (result.image?.url) {
+        const embed = new EmbedBuilder()
+          .setColor(0x5865F2)
+          .setTitle('🎨 Generated Image')
+          .setDescription(`Prompt: ${prompt}\n[Open image](${result.image.url})`)
+          .setImage(result.image.url)
+          .setTimestamp();
+        return interaction.editReply({ embeds: [embed] });
+      }
       if (result.text) {
         return interaction.editReply({ content: `Gemini returned text instead of an image:\n${result.text.substring(0, 1900)}` });
       }
@@ -43,6 +52,15 @@ module.exports = {
       const prompt = args.join(' ');
       const result = await geminiService.createImage(prompt);
       if (result.error) throw new Error(result.error);
+      if (result.image?.url) {
+        const embed = new EmbedBuilder()
+          .setColor(0x5865F2)
+          .setTitle('🎨 Generated Image')
+          .setDescription(`Prompt: ${prompt}\n[Open image](${result.image.url})`)
+          .setImage(result.image.url)
+          .setTimestamp();
+        return message.channel.send({ embeds: [embed] });
+      }
       if (result.text) {
         return message.channel.send(`Gemini returned text instead of an image:\n${result.text.substring(0, 1900)}`);
       }

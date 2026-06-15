@@ -1,5 +1,5 @@
-const { SlashCommandBuilder, EmbedBuilder , MessageFlags} = require('discord.js');
-const snipeCache = require('../../utils/snipeCache');
+const { SlashCommandBuilder, EmbedBuilder, MessageFlags } = require('discord.js');
+const { getLatest } = require('../../utils/snipeCache');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -12,13 +12,13 @@ module.exports = {
   cooldown: 5,
   async execute(interaction, client) {
     try {
-      const data = snipeCache.get(interaction.channel.id);
+      const data = getLatest(interaction.channel.id);
 
       if (!data) {
         return interaction.reply({ content: 'Nothing to snipe!', flags: MessageFlags.Ephemeral });
       }
 
-      const timeAgo = Math.floor((Date.now() - new Date(data.createdAt).getTime()) / 1000);
+      const timeAgo = Math.floor((Date.now() - data.createdAt) / 1000);
       const timeDisplay = timeAgo < 60
         ? `${timeAgo}s ago`
         : timeAgo < 3600
@@ -47,13 +47,13 @@ module.exports = {
   },
   async prefixExecute(message, args, client) {
     try {
-      const data = snipeCache.get(message.channel.id);
+      const data = getLatest(message.channel.id);
 
       if (!data) {
         return message.reply('Nothing to snipe!');
       }
 
-      const timeAgo = Math.floor((Date.now() - new Date(data.createdAt).getTime()) / 1000);
+      const timeAgo = Math.floor((Date.now() - data.createdAt) / 1000);
       const timeDisplay = timeAgo < 60
         ? `${timeAgo}s ago`
         : timeAgo < 3600

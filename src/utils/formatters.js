@@ -1,37 +1,41 @@
-function formatDuration(ms) {
-  if (!ms || ms < 0) return '0s';
-  const seconds = Math.floor(ms / 1000) % 60;
-  const minutes = Math.floor(ms / (1000 * 60)) % 60;
-  const hours = Math.floor(ms / (1000 * 60 * 60)) % 24;
-  const days = Math.floor(ms / (1000 * 60 * 60 * 24));
-  const parts = [];
-  if (days) parts.push(`${days}d`);
-  if (hours) parts.push(`${hours}h`);
-  if (minutes) parts.push(`${minutes}m`);
-  if (seconds) parts.push(`${seconds}s`);
-  return parts.join(' ') || '0s';
+const ms = require('ms');
+
+function formatDuration(msValue) {
+  if (!msValue || msValue <= 0) return '0s';
+  const seconds = Math.floor(msValue / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+  if (days > 0) return `${days}d ${hours % 24}h ${minutes % 60}m`;
+  if (hours > 0) return `${hours}h ${minutes % 60}m ${seconds % 60}s`;
+  if (minutes > 0) return `${minutes}m ${seconds % 60}s`;
+  return `${seconds}s`;
 }
 
-function formatNumber(n) {
-  if (n === null || n === undefined) return '0';
-  return n.toLocaleString('en-US');
+function formatNumber(num) {
+  if (!num) return '0';
+  return num.toLocaleString();
 }
 
 function formatDate(date) {
   if (!date) return 'N/A';
   const d = new Date(date);
-  return d.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
+  return `<t:${Math.floor(d.getTime() / 1000)}:F>`;
 }
 
-function capitalize(str) {
-  if (!str || typeof str !== 'string') return '';
-  return str.charAt(0).toUpperCase() + str.slice(1);
+function formatRelative(date) {
+  if (!date) return 'N/A';
+  const d = new Date(date);
+  return `<t:${Math.floor(d.getTime() / 1000)}:R>`;
 }
 
-module.exports = { formatDuration, formatNumber, formatDate, capitalize };
+function parseTime(input) {
+  if (!input) return null;
+  const parsed = ms(input);
+  if (parsed) return parsed;
+  const date = new Date(input);
+  if (!isNaN(date.getTime())) return date.getTime() - Date.now();
+  return null;
+}
+
+module.exports = { formatDuration, formatNumber, formatDate, formatRelative, parseTime };

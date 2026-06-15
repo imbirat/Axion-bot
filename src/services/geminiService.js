@@ -1,53 +1,53 @@
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+let genAI = null;
+let model = null;
+
+function initGemini() {
+  if (!process.env.GEMINI_API_KEY) {
+    console.warn('[GEMINI] No API key found. AI features disabled.');
+    return false;
+  }
+  genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+  model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+  return true;
+}
 
 async function ask(prompt) {
+  if (!model) {
+    if (!initGemini()) return { error: 'Gemini API key not configured.' };
+  }
   try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
     const result = await model.generateContent(prompt);
-    return result.response.text();
-  } catch (error) {
-    console.error('Gemini ask error:', error);
-    throw error;
+    return { text: result.response.text() };
+  } catch (err) {
+    console.error('[GEMINI] Ask error:', err);
+    return { error: 'Failed to get response from Gemini.' };
   }
 }
 
 async function createImage(prompt) {
+  if (!model) {
+    if (!initGemini()) return { error: 'Gemini API key not configured.' };
+  }
   try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
-    const result = await model.generateContent(prompt);
-    return result.response;
-  } catch (error) {
-    console.error('Gemini image error:', error);
-    throw error;
+    const result = await model.generateContent({
+      contents: [{ role: 'user', parts: [{ text: prompt }] }],
+      generationConfig: {
+        responseModalities: ['Text', 'Image'],
+      },
+    });
+    const response = result.response;
+    for (const part of response.candidates[0]?.content?.parts || []) {
+      if (part.inlineData) {
+        return { data: part.inlineData.data, mimeType: part.inlineData.mimeType };
+      }
+    }
+    return { text: response.text() };
+  } catch (err) {
+    console.error('[GEMINI] Image error:', err);
+    return { error: 'Failed to generate image.' };
   }
 }
 
-async function summarize(text, url) {
-  try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
-    const prompt = url
-      ? `Summarize the following transcript from the video at ${url} in a clear, concise way. Highlight the key points and main takeaways:\n\n${text}`
-      : `Summarize the following content in a clear, concise way. Highlight the key points and main takeaways:\n\n${text}`;
-    const result = await model.generateContent(prompt);
-    return result.response.text();
-  } catch (error) {
-    console.error('Gemini summarize error:', error);
-    throw error;
-  }
-}
-
-async function translate(text, targetLang) {
-  try {
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
-    const prompt = `Translate the following text to ${targetLang}. Return ONLY the translated text, no explanations:\n\n${text}`;
-    const result = await model.generateContent(prompt);
-    return result.response.text();
-  } catch (error) {
-    console.error('Gemini translate error:', error);
-    throw error;
-  }
-}
-
-module.exports = { ask, createImage, summarize, translate };
+module.exports = { initGemini, ask, createImage };

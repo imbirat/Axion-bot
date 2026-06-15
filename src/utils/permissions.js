@@ -1,11 +1,23 @@
-const { PermissionsBitField } = require('discord.js');
+const { PermissionFlagsBits } = require('discord.js');
 
-function hasPermission(member, perm) {
-  if (!member || !perm) return false;
-  if (member.permissions instanceof PermissionsBitField) {
-    return member.permissions.has(perm);
-  }
-  return false;
+function hasPermission(member, permission) {
+  if (!member?.permissions) return false;
+  return member.permissions.has(permission);
 }
 
-module.exports = { hasPermission };
+function isAdmin(member) {
+  return hasPermission(member, PermissionFlagsBits.Administrator);
+}
+
+function isModerator(member) {
+  return hasPermission(member, PermissionFlagsBits.ModerateMembers)
+    || hasPermission(member, PermissionFlagsBits.BanMembers)
+    || hasPermission(member, PermissionFlagsBits.KickMembers)
+    || isAdmin(member);
+}
+
+function isOwner(member) {
+  return member.id === member.guild.ownerId;
+}
+
+module.exports = { hasPermission, isAdmin, isModerator, isOwner };

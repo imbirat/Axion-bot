@@ -1,95 +1,48 @@
-const { Events, MessageFlags } = require('discord.js');
+const { Events } = require('discord.js');
 const { handleComponent } = require('../../handlers/componentHandler');
-const { hasPermission } = require('../../utils/permissions');
-const logger = require('../../utils/logger');
+const { t } = require('../../utils/i18n');
 
 module.exports = {
   name: Events.InteractionCreate,
-  once: false,
+
   async execute(interaction, client) {
-    if (interaction.isChatInputCommand()) {
-      const command = client.commands.get(interaction.commandName);
-      if (!command) {
-        return interaction.reply({ content: 'Command not found.', flags: MessageFlags.Ephemeral });
-      }
+    try {
+      // ── Slash commands ──────────────────────────────────
+      if (interaction.isChatInputCommand()) {
+        const command = client.commands.get(interaction.commandName);
+        if (!command) return;
 
-      if (command.permissions) {
-        const missing = command.permissions.filter(p => !hasPermission(interaction.member, p));
-        if (missing.length > 0) {
-          return interaction.reply({
-            content: `You need the following permissions: ${missing.join(', ')}`,
-            flags: MessageFlags.Ephemeral,
-          });
-        }
-      }
+        // Cooldown check
+        const { cooldowns } = client;
+        if (!cooldowns.has(command.data.name)) cooldowns.set(command.data.name, new Map());
+        const now = Date.now();
+        const timestamps = cooldowns.get(command.data.name);
+        const cooldownAmount = (command.cooldown ?? 3) * 1000;
 
-      if (!client.cooldowns.has(command.data.name)) {
-        client.cooldowns.set(command.data.name, new Map());
-      }
-      const timestamps = client.cooldowns.get(command.data.name);
-      const cooldownAmount = (command.cooldown || 3) * 1000;
-      const now = Date.now();
-
-      if (timestamps.has(interaction.user.id)) {
-        const expirationTime = timestamps.get(interaction.user.id) + cooldownAmount;
-        if (now < expirationTime) {
-          const timeLeft = Math.round((expirationTime - now) / 1000);
-          return interaction.reply({
-            content: `Please wait ${timeLeft}s before using this command again.`,
-            flags: MessageFlags.Ephemeral,
-          });
-        }
-      }
-
-      timestamps.set(interaction.user.id, now);
-      setTimeout(() => timestamps.delete(interaction.user.id), cooldownAmount);
-
-      try {
-        await command.execute(interaction, client);
-      } catch (error) {
-        logger.error(`Error executing command ${interaction.commandName}:`, error);
-        const reply = { content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral };
-        if (interaction.replied || interaction.deferred) {
-          await interaction.followUp(reply).catch(() => {});
-        } else {
-          await interaction.reply(reply).catch(() => {});
-        }
-      }
-      return;
-    }
-
-    if (interaction.isButton() || interaction.isAnySelectMenu() || interaction.isModalSubmit()) {
-      if (interaction.customId && interaction.customId.startsWith('help_')) {
-        const { handleHelpInteraction } = require('../../components/helpers/helpViews');
-        try {
-          return await handleHelpInteraction(interaction, client);
-        } catch (error) {
-          logger.error('Help interaction error:', error);
-          if (!interaction.replied && !interaction.deferred) {
-            await interaction.reply({ content: 'There was an error with the help menu.', flags: MessageFlags.Ephemeral }).catch(() => {});
+        if (timestamps.has(interaction.user.id)) {
+          const exp = timestamps.get(interaction.user.id) + cooldownAmount;
+          if (now < exp) {
+            const left = ((exp - now) / 1000).toFixed(1);
+            return interaction.reply({ content: await t(interaction.guildId, 'errors.cooldown', { time: left }), ephemeral: true });
           }
         }
-      }
-      try {
-        await handleComponent(interaction, client);
-      } catch (error) {
-        logger.error('Component handler error:', error);
-        if (!interaction.replied && !interaction.deferred) {
-          await interaction.reply({ content: 'There was an error handling this interaction.', flags: MessageFlags.Ephemeral }).catch(() => {});
-        }
-      }
-      return;
-    }
+        timestamps.set(interaction.user.id, now);
+        setTimeout(() => timestamps.delete(interaction.user.id), cooldownAmount);
 
-    if (interaction.isAutocomplete()) {
-      const command = client.commands.get(interaction.commandName);
-      if (command && command.autocomplete) {
-        try {
-          await command.autocomplete(interaction, client);
-        } catch (error) {
-          logger.error(`Error in autocomplete for ${interaction.commandName}:`, error);
-        }
+        await command.execute(interaction, client);
+        return;
       }
+
+      // ── Components (buttons, select menus, modals) ──────
+      if (interaction.isButton() || interaction.isStringSelectMenu() || interaction.isModalSubmit()) {
+        await handleComponent(interaction, client);
+      }
+
+    } catch (err) {
+      console.error('[INTERACTION] Error:', err);
+      const msg = { content: 'An error occurred.', ephemeral: true };
+      if (interaction.replied || interaction.deferred) await interaction.followUp(msg).catch(() => {});
+      else await interaction.reply(msg).catch(() => {});
     }
   },
 };

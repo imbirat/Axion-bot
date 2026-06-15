@@ -1,7 +1,7 @@
-const { SlashCommandBuilder , MessageFlags} = require('discord.js');
-const { t } = require('../../utils/i18n');
+const { SlashCommandBuilder, PermissionFlagsBits, MessageFlags } = require('discord.js');
 const GuildConfig = require('../../models/GuildConfig');
 const UserProfile = require('../../models/UserProfile');
+const { successEmbed, errorEmbed } = require('../../utils/embeds');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -16,12 +16,13 @@ module.exports = {
       option.setName('reason')
         .setDescription('Reason for jailing')
         .setRequired(false)
-    ),
+    )
+    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
   category: 'Moderation',
-  usage: '/jail <user> [reason]',
   description: 'Jail a user by removing all roles and assigning the jail role',
   permissions: ['Administrator'],
   cooldown: 5,
+
   async execute(interaction, client) {
     try {
       const targetUser = interaction.options.getUser('user');
@@ -29,7 +30,7 @@ module.exports = {
       const member = interaction.guild.members.cache.get(targetUser.id);
 
       if (!member) {
-        return interaction.reply({ content: await t(interaction.guild.id, 'moderation.user_not_found', { defaultValue: 'Could not find that user in this server.' }), flags: MessageFlags.Ephemeral });
+        return interaction.reply({ embeds: [errorEmbed('Could not find that user in this server.')], flags: MessageFlags.Ephemeral });
       }
 
       let config = await GuildConfig.findOne({ guildId: interaction.guild.id });
@@ -48,28 +49,25 @@ module.exports = {
         await config.save();
       }
 
-      const previousRoles = member.roles.cache
+      const originalRoles = member.roles.cache
         .filter(r => r.id !== interaction.guild.id && r.id !== jailRole.id)
         .map(r => r.id);
 
       await UserProfile.findOneAndUpdate(
         { userId: targetUser.id, guildId: interaction.guild.id },
-        { $set: { jailed: true, previousRoles }, $setOnInsert: { userId: targetUser.id, guildId: interaction.guild.id } },
+        { $set: { jailed: true, roles: originalRoles }, $setOnInsert: { userId: targetUser.id, guildId: interaction.guild.id } },
         { upsert: true }
       );
 
       await member.roles.set([jailRole.id]);
 
-      const reply = await t(interaction.guild.id, 'moderation.jail.success', {
-        defaultValue: '🔒 **{{user}}** has been jailed.',
-        user: targetUser.tag
-      });
-      await interaction.reply({ content: reply });
+      await interaction.reply({ embeds: [successEmbed(`**${targetUser.tag}** has been jailed. Reason: ${reason}`)] });
     } catch (error) {
       console.error('jail command error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
+      await interaction.reply({ embeds: [errorEmbed('There was an error executing this command.')], flags: MessageFlags.Ephemeral });
     }
   },
+
   async prefixExecute(message, args, client) {
     try {
       const targetUser = message.mentions.users.first();
@@ -95,18 +93,19 @@ module.exports = {
         await config.save();
       }
 
-      const previousRoles = member.roles.cache
+      const originalRoles = member.roles.cache
         .filter(r => r.id !== message.guild.id && r.id !== jailRole.id)
         .map(r => r.id);
 
       await UserProfile.findOneAndUpdate(
         { userId: targetUser.id, guildId: message.guild.id },
-        { $set: { jailed: true, previousRoles }, $setOnInsert: { userId: targetUser.id, guildId: message.guild.id } },
+        { $set: { jailed: true, roles: originalRoles }, $setOnInsert: { userId: targetUser.id, guildId: message.guild.id } },
         { upsert: true }
       );
 
       await member.roles.set([jailRole.id]);
-      await message.channel.send(`🔒 **${targetUser.tag}** has been jailed.`);
+
+      await message.channel.send({ embeds: [successEmbed(`**${targetUser.tag}** has been jailed. Reason: ${reason}`)] });
     } catch (error) {
       console.error('jail prefix error:', error);
       await message.reply('There was an error executing this command.');

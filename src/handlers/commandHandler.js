@@ -1,65 +1,44 @@
-const fs = require('fs');
+const { REST, Routes, Collection } = require('discord.js');
 const path = require('path');
-const { REST, Routes } = require('discord.js');
-const chalk = require('chalk');
+const fs   = require('fs');
 
 async function loadCommands(client) {
   const commandsPath = path.join(__dirname, '..', 'commands');
-  if (!fs.existsSync(commandsPath)) {
-    fs.mkdirSync(commandsPath, { recursive: true });
-    return;
+  const commandFiles = getAllFiles(commandsPath);
+
+  for (const file of commandFiles) {
+    const command = require(file);
+    if (!command?.data?.name) continue;
+    client.commands.set(command.data.name, command);
   }
-  const commandFiles = [];
-  function walk(dir) {
-    const entries = fs.readdirSync(dir, { withFileTypes: true });
-    for (const entry of entries) {
-      const fullPath = path.join(dir, entry.name);
-      if (entry.isDirectory()) {
-        walk(fullPath);
-      } else if (entry.isFile() && entry.name.endsWith('.js')) {
-        commandFiles.push(fullPath);
-      }
-    }
-  }
-  walk(commandsPath);
-  for (const filePath of commandFiles) {
-    try {
-      const command = require(filePath);
-      if (!command.data || !command.execute) {
-        console.warn(chalk.yellow(`[Commands] Skipping ${filePath}: missing data or execute`));
-        continue;
-      }
-      client.commands.set(command.data.name, command);
-      console.log(chalk.green(`[Commands] Loaded: ${command.data.name}`));
-    } catch (err) {
-      console.error(chalk.red(`[Commands] Failed to load ${filePath}:`), err);
-    }
-  }
+
+  console.log(`[CMD] Loaded ${client.commands.size} commands`);
 }
 
-async function deployCommands(client) {
+async function registerSlashCommands(client, guildId) {
+  const rest = new REST().setToken(process.env.DISCORD_TOKEN);
+  const commands = [...client.commands.values()].map(c => c.data.toJSON());
   try {
-    const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
-    const commands = [];
-    for (const command of client.commands.values()) {
-      commands.push(command.data.toJSON());
-    }
-    if (process.env.GUILD_ID) {
-      await rest.put(
-        Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.GUILD_ID),
-        { body: commands }
-      );
-      console.log(chalk.green(`[Deploy] Deployed ${commands.length} commands to guild ${process.env.GUILD_ID}`));
+    if (guildId) {
+      await rest.put(Routes.applicationGuildCommands(process.env.CLIENT_ID, guildId), { body: commands });
     } else {
-      await rest.put(
-        Routes.applicationCommands(process.env.CLIENT_ID),
-        { body: commands }
-      );
-      console.log(chalk.green(`[Deploy] Deployed ${commands.length} global commands`));
+      await rest.put(Routes.applicationCommands(process.env.CLIENT_ID), { body: commands });
     }
+    console.log('[CMD] Slash commands registered');
   } catch (err) {
-    console.error(chalk.red('[Deploy] Failed:'), err);
+    console.error('[CMD] Failed to register commands:', err);
   }
 }
 
-module.exports = { loadCommands, deployCommands };
+function getAllFiles(dir) {
+  let results = [];
+  if (!fs.existsSync(dir)) return results;
+  for (const item of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, item.name);
+    if (item.isDirectory()) results = results.concat(getAllFiles(full));
+    else if (item.name.endsWith('.js')) results.push(full);
+  }
+  return results;
+}
+
+module.exports = { loadCommands, registerSlashCommands, getAllFiles };

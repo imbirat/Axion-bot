@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder , MessageFlags} = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, MessageFlags } = require('discord.js');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -26,16 +26,12 @@ module.exports = {
       const totalBots = members.filter(m => m.user.bot).size;
 
       const verificationLevels = {
-        0: 'None',
-        1: 'Low',
-        2: 'Medium',
-        3: 'High',
-        4: 'Very High',
+        0: 'None', 1: 'Low', 2: 'Medium', 3: 'High', 4: 'Very High',
       };
 
       const embed = new EmbedBuilder()
         .setColor(0x5865F2)
-        .setTitle(`${guild.name}`)
+        .setTitle(guild.name)
         .setThumbnail(guild.iconURL({ size: 1024 }))
         .addFields(
           { name: 'Owner', value: `${owner.user.tag}`, inline: true },
@@ -71,16 +67,12 @@ module.exports = {
       const totalBots = members.filter(m => m.user.bot).size;
 
       const verificationLevels = {
-        0: 'None',
-        1: 'Low',
-        2: 'Medium',
-        3: 'High',
-        4: 'Very High',
+        0: 'None', 1: 'Low', 2: 'Medium', 3: 'High', 4: 'Very High',
       };
 
       const embed = new EmbedBuilder()
         .setColor(0x5865F2)
-        .setTitle(`${guild.name}`)
+        .setTitle(guild.name)
         .setThumbnail(guild.iconURL({ size: 1024 }))
         .addFields(
           { name: 'Owner', value: `${owner.user.tag}`, inline: true },

@@ -1,36 +1,26 @@
-const { SlashCommandBuilder, EmbedBuilder , MessageFlags} = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, MessageFlags } = require('discord.js');
 
-const dares = [
-  'Do your best impression of someone in this server.',
-  'Send a funny selfie to the chat.',
-  'Say the alphabet backwards in under 10 seconds.',
-  'Let someone write a message to send using your account.',
+const DARES = [
+  'Do your best impression of someone in the chat.',
+  'Send a funny selfie to the channel.',
+  'Speak in an accent for the next 3 rounds.',
+  'Let someone write a message for you.',
   'Do 10 pushups right now.',
   'Sing the chorus of your favorite song.',
-  'Talk in a funny accent for the next 3 rounds.',
-  'Send the last meme you saved on your phone.',
-  'Let someone pick a profile picture for you for 24 hours.',
-  'Speak only in rhymes for the next 5 minutes.',
-  'Do a dramatic reading of the last text you sent.',
-  'Act like a chicken for 30 seconds.',
-  'Tell an embarrassing story about yourself.',
-  'Let someone give you a nickname for the next week.',
-  'Do your best celebrity impression.',
-  'Send a message to the last person you texted saying something random.',
+  'Tell the group an embarrassing story.',
+  'Message a random emoji to your last text contact.',
+  'Let someone pick your phone wallpaper.',
+  'Do a dramatic reading of the last message in chat.',
+  'Talk like a pirate for the next 5 minutes.',
+  'Go outside and yell "I love cheese!" as loud as you can.',
+  'Let the person who dared you post something on your social media.',
+  'Eat a spoonful of something spicy.',
   'Do a handstand against the wall for 10 seconds.',
-  'Talk like a pirate for the next 5 messages.',
-  'Record yourself doing a silly dance.',
-  'Let someone draw on your arm/hand.',
-  'Eat something unusual (like a spoonful of hot sauce).',
-  'Do 20 jumping jacks.',
-  'Make a poem about the person to your left.',
-  'Compliment everyone in the chat individually.',
-  'Send a voice message saying something silly.',
-  'Change your status to something embarrassing for an hour.',
-  'Do a plank for 30 seconds while recording.',
-  'Tell a joke in the most serious tone possible.',
-  'Let the group pick a filter for you to use.',
-  'Do your best animal impression for 15 seconds.'
+  'Call a friend and say "I love you" without context.',
+  'Wear your shirt backwards for the rest of the game.',
+  'Make up a rap about the person to your left.',
+  'Try to lick your elbow for 30 seconds.',
+  'Speak only in questions for the next 5 minutes.',
 ];
 
 module.exports = {
@@ -39,25 +29,35 @@ module.exports = {
     .setDescription('Get a random dare'),
   category: 'Social',
   usage: '/dare',
-  description: 'Receive a random dare challenge',
+  description: 'Get a random dare for a game of truth or dare',
   permissions: [],
   cooldown: 3,
   async execute(interaction, client) {
     try {
-      const dare = dares[Math.floor(Math.random() * dares.length)];
-      await interaction.reply(`🔥 **Dare:** ${dare}`);
+      const dare = DARES[Math.floor(Math.random() * DARES.length)];
+      const embed = new EmbedBuilder()
+        .setColor(0x5865F2)
+        .setTitle('⚡ Dare')
+        .setDescription(dare)
+        .setFooter({ text: `Requested by ${interaction.user.username}` });
+      await interaction.reply({ embeds: [embed] });
     } catch (error) {
       console.error('dare command error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
+      await interaction.reply({ content: 'There was an error fetching a dare.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {
     try {
-      const dare = dares[Math.floor(Math.random() * dares.length)];
-      await message.reply(`🔥 **Dare:** ${dare}`);
+      const dare = DARES[Math.floor(Math.random() * DARES.length)];
+      const embed = new EmbedBuilder()
+        .setColor(0x5865F2)
+        .setTitle('⚡ Dare')
+        .setDescription(dare)
+        .setFooter({ text: `Requested by ${message.author.username}` });
+      await message.channel.send({ embeds: [embed] });
     } catch (error) {
       console.error('dare prefix error:', error);
-      await message.reply('There was an error executing this command.');
+      await message.reply('There was an error fetching a dare.');
     }
   },
 };

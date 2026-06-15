@@ -1,3 +1,4 @@
+const { MessageFlags } = require('discord.js');
 const GuildConfig = require('../../models/GuildConfig');
 
 module.exports = {
@@ -11,12 +12,12 @@ module.exports = {
       const typeFieldMap = {
         welcome: 'welcomeMessage',
         farewell: 'farewellMessage',
-        booster: 'boosterMessage'
+        booster: 'boosterMessage',
       };
       const embedFieldMap = {
         welcome: 'welcomeEmbed',
         farewell: 'farewellEmbed',
-        booster: 'boosterEmbed'
+        booster: 'boosterEmbed',
       };
 
       const messageField = typeFieldMap[type];
@@ -40,11 +41,11 @@ module.exports = {
       const typeLabel = type.charAt(0).toUpperCase() + type.slice(1);
       await interaction.reply({
         content: `✅ ${typeLabel} message has been updated.`,
-        flags: MessageFlags.Ephemeral
+        flags: MessageFlags.Ephemeral,
       });
     } catch (error) {
       console.error('custommessage_modal error:', error);
       await interaction.reply({ content: '❌ Failed to save message.', flags: MessageFlags.Ephemeral });
     }
-  }
+  },
 };

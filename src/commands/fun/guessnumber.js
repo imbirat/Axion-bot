@@ -1,106 +1,87 @@
-const { SlashCommandBuilder, EmbedBuilder , MessageFlags} = require('discord.js');
+const { SlashCommandBuilder, MessageFlags } = require('discord.js');
+
+const games = new Map();
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('guessnumber')
-    .setDescription('Start a number guessing game (1-100)'),
+    .setDescription('Guess the number (1-100)'),
   category: 'Fun',
   usage: '/guessnumber',
-  description: 'Guess the number between 1 and 100 with 5 attempts',
+  description: 'Start a number guessing game. You have 5 guesses.',
   permissions: [],
   cooldown: 10,
   async execute(interaction, client) {
     try {
-      if (!client.guessGames) client.guessGames = new Map();
-      if (client.guessGames.has(interaction.user.id)) {
-        return interaction.reply({ content: 'You already have an active game! Finish it first.', flags: MessageFlags.Ephemeral });
+      const key = `${interaction.user.id}:${interaction.guild.id}`;
+      if (games.has(key)) {
+        return interaction.reply({ content: 'You already have an active game. Use your last guess or wait for it to expire.', flags: MessageFlags.Ephemeral });
       }
-
       const number = Math.floor(Math.random() * 100) + 1;
-      const game = { number, attempts: 0, maxAttempts: 5 };
-      client.guessGames.set(interaction.user.id, game);
-
-      await interaction.reply('🎯 I\'m thinking of a number between **1 and 100**. You have **5 guesses**! Start guessing in this channel.');
-
-      const filter = m => m.author.id === interaction.user.id && !isNaN(m.content) && m.content.trim() !== '';
-      const collector = interaction.channel.createMessageCollector({ filter, time: 60000 });
-
+      games.set(key, { number, attempts: 0, maxAttempts: 5 });
+      setTimeout(() => { if (games.has(key)) games.delete(key); }, 120000);
+      await interaction.reply({ content: '🔢 I\'m thinking of a number between **1 and 100**. You have **5 guesses**. Reply with your guess in this channel!' });
+      const filter = m => m.author.id === interaction.user.id && !isNaN(parseInt(m.content)) && parseInt(m.content) >= 1 && parseInt(m.content) <= 100;
+      const collector = interaction.channel.createMessageCollector({ filter, time: 120000 });
       collector.on('collect', async msg => {
+        const game = games.get(key);
+        if (!game) return collector.stop();
         const guess = parseInt(msg.content);
         game.attempts++;
-
         if (guess === game.number) {
-          await msg.reply(`🎉 **Correct!** The number was **${game.number}**. You got it in ${game.attempts} ${game.attempts === 1 ? 'guess' : 'guesses'}!`);
-          client.guessGames.delete(interaction.user.id);
+          await msg.reply(`🎉 **Correct!** The number was **${game.number}**. You got it in ${game.attempts} guess(es)!`);
+          games.delete(key);
           collector.stop();
         } else if (game.attempts >= game.maxAttempts) {
-          await msg.reply(`😞 **Game over!** The number was **${game.number}**. Better luck next time!`);
-          client.guessGames.delete(interaction.user.id);
+          await msg.reply(`😞 Game over! The number was **${game.number}**.`);
+          games.delete(key);
           collector.stop();
-        } else if (guess < game.number) {
-          await msg.reply(`⬆️ **Higher!** You have ${game.maxAttempts - game.attempts} ${game.maxAttempts - game.attempts === 1 ? 'guess' : 'guesses'} left.`);
         } else {
-          await msg.reply(`⬇️ **Lower!** You have ${game.maxAttempts - game.attempts} ${game.maxAttempts - game.attempts === 1 ? 'guess' : 'guesses'} left.`);
+          const hint = guess < game.number ? 'higher' : 'lower';
+          await msg.reply(`❌ Wrong! Try **${hint}**. (${game.attempts}/${game.maxAttempts} guesses used)`);
         }
       });
-
       collector.on('end', (collected, reason) => {
-        if (reason === 'time' && client.guessGames.has(interaction.user.id)) {
-          interaction.followUp({ content: `⏰ Time\'s up! The number was **${game.number}**.`, flags: MessageFlags.Ephemeral });
-          client.guessGames.delete(interaction.user.id);
+        if (reason === 'time' && games.has(key)) {
+          games.delete(key);
         }
       });
     } catch (error) {
       console.error('guessnumber command error:', error);
-      if (client.guessGames) client.guessGames.delete(interaction.user.id);
-      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
+      await interaction.reply({ content: 'Failed to start the game.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {
     try {
-      if (!client.guessGames) client.guessGames = new Map();
-      if (client.guessGames.has(message.author.id)) {
-        return message.reply('You already have an active game! Finish it first.');
-      }
-
+      const key = `${message.author.id}:${message.guild.id}`;
+      if (games.has(key)) return message.reply('You already have an active game!');
       const number = Math.floor(Math.random() * 100) + 1;
-      const game = { number, attempts: 0, maxAttempts: 5 };
-      client.guessGames.set(message.author.id, game);
-
-      await message.reply('🎯 I\'m thinking of a number between **1 and 100**. You have **5 guesses**! Start guessing in this channel.');
-
-      const filter = m => m.author.id === message.author.id && !isNaN(m.content) && m.content.trim() !== '';
-      const collector = message.channel.createMessageCollector({ filter, time: 60000 });
-
+      games.set(key, { number, attempts: 0, maxAttempts: 5 });
+      setTimeout(() => { if (games.has(key)) games.delete(key); }, 120000);
+      await message.channel.send('🔢 I\'m thinking of a number between **1 and 100**. You have **5 guesses**. Reply with your guess!');
+      const filter = m => m.author.id === message.author.id && !isNaN(parseInt(m.content)) && parseInt(m.content) >= 1 && parseInt(m.content) <= 100;
+      const collector = message.channel.createMessageCollector({ filter, time: 120000 });
       collector.on('collect', async msg => {
+        const game = games.get(key);
+        if (!game) return collector.stop();
         const guess = parseInt(msg.content);
         game.attempts++;
-
         if (guess === game.number) {
-          await msg.reply(`🎉 **Correct!** The number was **${game.number}**. You got it in ${game.attempts} ${game.attempts === 1 ? 'guess' : 'guesses'}!`);
-          client.guessGames.delete(message.author.id);
+          await msg.reply(`🎉 **Correct!** The number was **${game.number}**. You got it in ${game.attempts} guess(es)!`);
+          games.delete(key);
           collector.stop();
         } else if (game.attempts >= game.maxAttempts) {
-          await msg.reply(`😞 **Game over!** The number was **${game.number}**. Better luck next time!`);
-          client.guessGames.delete(message.author.id);
+          await msg.reply(`😞 Game over! The number was **${game.number}**.`);
+          games.delete(key);
           collector.stop();
-        } else if (guess < game.number) {
-          await msg.reply(`⬆️ **Higher!** You have ${game.maxAttempts - game.attempts} ${game.maxAttempts - game.attempts === 1 ? 'guess' : 'guesses'} left.`);
         } else {
-          await msg.reply(`⬇️ **Lower!** You have ${game.maxAttempts - game.attempts} ${game.maxAttempts - game.attempts === 1 ? 'guess' : 'guesses'} left.`);
-        }
-      });
-
-      collector.on('end', (collected, reason) => {
-        if (reason === 'time' && client.guessGames.has(message.author.id)) {
-          message.channel.send(`⏰ Time\'s up! The number was **${game.number}**.`);
-          client.guessGames.delete(message.author.id);
+          const hint = guess < game.number ? 'higher' : 'lower';
+          await msg.reply(`❌ Wrong! Try **${hint}**. (${game.attempts}/${game.maxAttempts} guesses used)`);
         }
       });
     } catch (error) {
       console.error('guessnumber prefix error:', error);
-      if (client.guessGames) client.guessGames.delete(message.author.id);
-      await message.reply('There was an error executing this command.');
+      await message.reply('Failed to start the game.');
     }
   },
 };

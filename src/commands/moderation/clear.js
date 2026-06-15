@@ -1,5 +1,5 @@
-const { SlashCommandBuilder, MessageFlags } = require('discord.js');
-const { t } = require('../../utils/i18n');
+const { SlashCommandBuilder, PermissionFlagsBits, MessageFlags } = require('discord.js');
+const { successEmbed, errorEmbed } = require('../../utils/embeds');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -16,18 +16,19 @@ module.exports = {
       option.setName('user')
         .setDescription('Only clear messages from this user')
         .setRequired(false)
-    ),
+    )
+    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
   category: 'Moderation',
-  usage: '/clear <amount> [user]',
   description: 'Bulk delete messages, optionally filtered by user',
   permissions: ['Administrator'],
   cooldown: 5,
+
   async execute(interaction, client) {
     try {
       const amount = interaction.options.getInteger('amount');
       const targetUser = interaction.options.getUser('user');
 
-      const messages = await interaction.channel.messages.fetch({ limit: amount + 1 });
+      const messages = await interaction.channel.messages.fetch({ limit: Math.min(amount, 100) + 1 });
 
       let deleted;
       if (targetUser) {
@@ -38,23 +39,18 @@ module.exports = {
       }
 
       const count = deleted.size;
-      const reply = await t(interaction.guild.id, 'moderation.clear.success', {
-        defaultValue: '✅ Cleared {{count}} messages.',
-        count
-      });
-
-      await interaction.reply({ content: reply, flags: MessageFlags.Ephemeral });
+      const reply = await interaction.reply({ embeds: [successEmbed(`Cleared ${count} messages.`)], flags: MessageFlags.Ephemeral });
       setTimeout(() => interaction.deleteReply().catch(() => {}), 5000);
     } catch (error) {
       console.error('clear command error:', error);
-      const errReply = { content: '❌ Error: ' + (error.message || 'Unknown error') };
       if (interaction.replied) {
-        await interaction.editReply(errReply).catch(() => {});
+        await interaction.editReply({ embeds: [errorEmbed(error.message || 'Unknown error')] }).catch(() => {});
       } else {
-        await interaction.reply(errReply).catch(() => {});
+        await interaction.reply({ embeds: [errorEmbed(error.message || 'Unknown error')] }).catch(() => {});
       }
     }
   },
+
   async prefixExecute(message, args, client) {
     try {
       const amount = parseInt(args[0], 10);
@@ -63,7 +59,7 @@ module.exports = {
       }
 
       const targetUser = message.mentions.users.first();
-      const messages = await message.channel.messages.fetch({ limit: amount });
+      const messages = await message.channel.messages.fetch({ limit: amount + 1 });
 
       let deleted;
       if (targetUser) {
@@ -74,7 +70,7 @@ module.exports = {
       }
 
       const count = deleted.size;
-      const reply = await message.channel.send(`✅ Cleared ${count} messages.`);
+      const reply = await message.channel.send({ embeds: [successEmbed(`Cleared ${count} messages.`)] });
       setTimeout(() => reply.delete().catch(() => {}), 5000);
     } catch (error) {
       console.error('clear prefix error:', error);

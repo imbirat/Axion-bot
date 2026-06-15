@@ -1,15 +1,13 @@
 const chalk = require('chalk');
 
-function timestamp() {
-  return new Date().toISOString().replace('T', ' ').split('.')[0];
-}
-
 const logger = {
-  info: (...args) => console.log(chalk.cyan(`[${timestamp()}] [INFO]`), ...args),
-  warn: (...args) => console.log(chalk.yellow(`[${timestamp()}] [WARN]`), ...args),
-  error: (...args) => console.log(chalk.red(`[${timestamp()}] [ERROR]`), ...args),
-  success: (...args) => console.log(chalk.green(`[${timestamp()}] [SUCCESS]`), ...args),
-  debug: (...args) => console.log(chalk.magenta(`[${timestamp()}] [DEBUG]`), ...args),
+  info: (msg) => console.log(chalk.blue('[INFO]'), msg),
+  success: (msg) => console.log(chalk.green('[OK]'), msg),
+  warn: (msg) => console.log(chalk.yellow('[WARN]'), msg),
+  error: (msg) => console.log(chalk.red('[ERROR]'), msg),
+  cmd: (msg) => console.log(chalk.cyan('[CMD]'), msg),
+  event: (msg) => console.log(chalk.magenta('[EVT]'), msg),
+  db: (msg) => console.log(chalk.green('[DB]'), msg),
 };
 
 module.exports = logger;

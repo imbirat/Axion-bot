@@ -1,52 +1,40 @@
-const { SlashCommandBuilder, EmbedBuilder , MessageFlags} = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('ping')
-    .setDescription('Check the bot latency'),
+    .setDescription('Shows bot latency'),
   category: 'Utilities',
   usage: '/ping',
-  description: 'Check the bot response time and WebSocket latency',
-  permissions: [],
+  description: 'Check the bot\'s response time and API latency',
+  permissions: 'Everyone',
   cooldown: 3,
+
   async execute(interaction, client) {
-    try {
-      const sent = (await interaction.reply({ content: 'Pinging...', withResponse: true })).resource.message;
-      const roundtrip = sent.createdTimestamp - interaction.createdTimestamp;
-
-      const embed = new EmbedBuilder()
-        .setColor(0x5865F2)
-        .setTitle('🏓 Pong!')
-        .addFields(
-          { name: 'WebSocket Latency', value: `\`${client.ws.ping}ms\``, inline: true },
-          { name: 'Round-trip Latency', value: `\`${roundtrip}ms\``, inline: true }
-        )
-        .setTimestamp();
-
-      await interaction.editReply({ content: null, embeds: [embed] });
-    } catch (error) {
-      console.error('ping command error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
-    }
+    const sent = await interaction.reply({ content: 'Pinging...', fetchReply: true, ephemeral: false });
+    const latency = sent.createdTimestamp - interaction.createdTimestamp;
+    const apiLatency = Math.round(client.ws.ping);
+    const embed = new EmbedBuilder()
+      .setColor('#57F287')
+      .setTitle('🏓 Pong!')
+      .addFields(
+        { name: 'Bot Latency', value: `\`${latency}ms\``, inline: true },
+        { name: 'API Latency', value: `\`${apiLatency}ms\``, inline: true }
+      );
+    await interaction.editReply({ content: null, embeds: [embed] });
   },
+
   async prefixExecute(message, args, client) {
-    try {
-      const sent = await message.channel.send('Pinging...');
-      const roundtrip = sent.createdTimestamp - message.createdTimestamp;
-
-      const embed = new EmbedBuilder()
-        .setColor(0x5865F2)
-        .setTitle('🏓 Pong!')
-        .addFields(
-          { name: 'WebSocket Latency', value: `\`${client.ws.ping}ms\``, inline: true },
-          { name: 'Round-trip Latency', value: `\`${roundtrip}ms\``, inline: true }
-        )
-        .setTimestamp();
-
-      await sent.edit({ content: null, embeds: [embed] });
-    } catch (error) {
-      console.error('ping prefix error:', error);
-      await message.reply('There was an error executing this command.');
-    }
+    const sent = await message.channel.send('Pinging...');
+    const latency = sent.createdTimestamp - message.createdTimestamp;
+    const apiLatency = Math.round(client.ws.ping);
+    const embed = new EmbedBuilder()
+      .setColor('#57F287')
+      .setTitle('🏓 Pong!')
+      .addFields(
+        { name: 'Bot Latency', value: `\`${latency}ms\``, inline: true },
+        { name: 'API Latency', value: `\`${apiLatency}ms\``, inline: true }
+      );
+    await sent.edit({ content: null, embeds: [embed] });
   },
 };

@@ -2,7 +2,9 @@ require('dotenv').config();
 const { Client, GatewayIntentBits, Partials, Collection } = require('discord.js');
 const mongoose = require('mongoose');
 const { loadCommands } = require('./handlers/commandHandler');
-const { loadEvents } = require('./eventHandler');
+const { loadEvents }   = require('./handlers/eventHandler');
+const { loadComponents } = require('./handlers/componentHandler');
+const { loadScheduledMessages } = require('./services/schedulerService');
 const chalk = require('chalk');
 
 const client = new Client({
@@ -18,8 +20,8 @@ const client = new Client({
   partials: [Partials.Message, Partials.Channel, Partials.Reaction],
 });
 
-client.commands = new Collection();
-client.cooldowns = new Collection();
+client.commands   = new Collection();
+client.cooldowns  = new Collection();
 client.helpSessions = new Map();
 
 (async () => {
@@ -30,7 +32,27 @@ client.helpSessions = new Map();
     console.error(chalk.red('[DB] Connection failed:'), err);
     process.exit(1);
   }
+
   await loadCommands(client);
   await loadEvents(client);
+  loadComponents();
+  await loadScheduledMessages(client);
+
   await client.login(process.env.DISCORD_TOKEN);
 })();
+
+process.on('SIGINT', async () => {
+  console.log(chalk.yellow('\n[SHUTDOWN] Closing connections...'));
+  await mongoose.disconnect();
+  client.destroy();
+  process.exit(0);
+});
+
+process.on('SIGTERM', async () => {
+  console.log(chalk.yellow('\n[SHUTDOWN] Closing connections...'));
+  await mongoose.disconnect();
+  client.destroy();
+  process.exit(0);
+});
+
+module.exports = client;

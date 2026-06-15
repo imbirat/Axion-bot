@@ -3,39 +3,30 @@ const GuildConfig = require('../../models/GuildConfig');
 
 module.exports = {
   name: Events.GuildMemberRemove,
-  once: false,
-  async execute(member) {
+
+  async execute(member, client) {
     if (member.user.bot) return;
 
-    let config;
-    try {
-      config = await GuildConfig.findOne({ guildId: member.guild.id });
-    } catch (err) {
-      return;
-    }
+    const config = await GuildConfig.findOne({ guildId: member.guild.id });
     if (!config) return;
 
-    if (config.farewellChannel) {
-      const channel = member.guild.channels.cache.get(config.farewellChannel);
-      if (channel) {
-        const message = (config.farewellMessage || 'Goodbye {user}, we will miss you!')
-          .replace(/{user}/g, member.user.tag)
-          .replace(/{server}/g, member.guild.name)
-          .replace(/{membercount}/g, member.guild.memberCount);
+    const channel = config.farewellChannel ? member.guild.channels.cache.get(config.farewellChannel) : null;
+    if (!channel) return;
 
-        if (config.farewellEmbed) {
-          const embed = new EmbedBuilder()
-            .setColor(0xED4245)
-            .setTitle('Goodbye!')
-            .setDescription(message)
-            .setThumbnail(member.user.displayAvatarURL({ dynamic: true }))
-            .setFooter({ text: `Member #${member.guild.memberCount}` })
-            .setTimestamp();
-          channel.send({ embeds: [embed] }).catch(() => {});
-        } else {
-          channel.send({ content: message }).catch(() => {});
-        }
-      }
+    const msg = (config.farewellMessage || 'Goodbye {user}!')
+      .replace(/{user}/g, member.user.username)
+      .replace(/{server}/g, member.guild.name)
+      .replace(/{membercount}/g, member.guild.memberCount);
+
+    if (config.farewellEmbed) {
+      const embed = new EmbedBuilder()
+        .setColor('#ED4245')
+        .setDescription(msg)
+        .setThumbnail(member.user.displayAvatarURL({ size: 128 }))
+        .setTimestamp();
+      channel.send({ embeds: [embed] });
+    } else {
+      channel.send({ content: msg });
     }
   },
 };

@@ -1,82 +1,24 @@
 const UserProfile = require('../models/UserProfile');
 
-function xpForLevel(level) {
-  return level * 100;
-}
+const voiceXpTimers = new Map();
 
-async function addXp(userId, guildId, amount) {
-  try {
-    const profile = await UserProfile.findOneAndUpdate(
-      { userId, guildId },
-      { $inc: { xp: amount } },
-      { upsert: true, new: true }
-    );
-
-    let leveledUp = false;
-    let newLevel = profile.level;
-
-    while (profile.xp >= xpForLevel(newLevel)) {
-      profile.xp -= xpForLevel(newLevel);
-      newLevel++;
-      leveledUp = true;
-    }
-
-    if (leveledUp) {
-      profile.level = newLevel;
-      await profile.save();
-    } else {
-      await UserProfile.updateOne(
+function addVoiceXp(userId, guildId) {
+  if (voiceXpTimers.has(`${userId}_${guildId}`)) return;
+  voiceXpTimers.set(`${userId}_${guildId}`, true);
+  const interval = setInterval(async () => {
+    try {
+      await UserProfile.findOneAndUpdate(
         { userId, guildId },
-        { xp: profile.xp }
+        { $inc: { xp: 2, voiceXp: 1 } },
+        { upsert: true }
       );
-    }
+    } catch (_) {}
+  }, 60000);
 
-    return { leveledUp, newLevel };
-  } catch (error) {
-    console.error('addXp error:', error);
-    throw error;
-  }
+  setTimeout(() => {
+    clearInterval(interval);
+    voiceXpTimers.delete(`${userId}_${guildId}`);
+  }, 1800000);
 }
 
-async function removeXp(userId, guildId, amount) {
-  try {
-    const profile = await UserProfile.findOneAndUpdate(
-      { userId, guildId },
-      { $inc: { xp: -amount } },
-      { upsert: true, new: true }
-    );
-
-    if (profile.xp < 0) {
-      profile.xp = 0;
-      await profile.save();
-    }
-
-    return profile;
-  } catch (error) {
-    console.error('removeXp error:', error);
-    throw error;
-  }
-}
-
-async function getProfile(userId, guildId) {
-  try {
-    return await UserProfile.findOne({ userId, guildId });
-  } catch (error) {
-    console.error('getProfile error:', error);
-    throw error;
-  }
-}
-
-async function getLeaderboard(guildId, limit = 10) {
-  try {
-    return await UserProfile.find({ guildId })
-      .sort({ level: -1, xp: -1 })
-      .limit(limit)
-      .lean();
-  } catch (error) {
-    console.error('getLeaderboard error:', error);
-    throw error;
-  }
-}
-
-module.exports = { addXp, removeXp, getProfile, getLeaderboard };
+module.exports = { addVoiceXp };

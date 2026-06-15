@@ -1,40 +1,31 @@
-const fs = require('fs');
 const path = require('path');
-const chalk = require('chalk');
+const fs   = require('fs');
 
 async function loadEvents(client) {
   const eventsPath = path.join(__dirname, '..', 'events');
-  if (!fs.existsSync(eventsPath)) {
-    fs.mkdirSync(eventsPath, { recursive: true });
-    return;
+  const eventFiles = getAllFiles(eventsPath);
+  let count = 0;
+
+  for (const file of eventFiles) {
+    const event = require(file);
+    if (!event?.name) continue;
+    if (event.once) client.once(event.name, (...args) => event.execute(...args, client));
+    else            client.on(event.name,   (...args) => event.execute(...args, client));
+    count++;
   }
-  const eventFiles = [];
-  function walk(dir) {
-    const entries = fs.readdirSync(dir, { withFileTypes: true });
-    for (const entry of entries) {
-      const fullPath = path.join(dir, entry.name);
-      if (entry.isDirectory()) {
-        walk(fullPath);
-      } else if (entry.isFile() && entry.name.endsWith('.js')) {
-        eventFiles.push(fullPath);
-      }
-    }
+
+  console.log(`[EVT] Loaded ${count} events`);
+}
+
+function getAllFiles(dir) {
+  let results = [];
+  if (!fs.existsSync(dir)) return results;
+  for (const item of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, item.name);
+    if (item.isDirectory()) results = results.concat(getAllFiles(full));
+    else if (item.name.endsWith('.js')) results.push(full);
   }
-  walk(eventsPath);
-  for (const filePath of eventFiles) {
-    try {
-      const event = require(filePath);
-      const eventName = event.name || path.basename(filePath, '.js');
-      if (event.once) {
-        client.once(eventName, (...args) => event.execute(...args, client));
-      } else {
-        client.on(eventName, (...args) => event.execute(...args, client));
-      }
-      console.log(chalk.green(`[Events] Loaded: ${eventName}`));
-    } catch (err) {
-      console.error(chalk.red(`[Events] Failed to load ${filePath}:`), err);
-    }
-  }
+  return results;
 }
 
 module.exports = { loadEvents };

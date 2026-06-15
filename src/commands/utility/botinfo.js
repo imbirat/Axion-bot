@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle , MessageFlags} = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags } = require('discord.js');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -12,14 +12,14 @@ module.exports = {
   async execute(interaction, client) {
     try {
       const owner = await client.application.fetch();
-      const ownerTag = owner.owner ? `${owner.owner.username}` : 'Unknown';
+      const ownerTag = owner.owner ? owner.owner.username : 'Unknown';
       const serverCount = client.guilds.cache.size;
-      const ping = client.ws.ping;
+      const ping = Math.round(client.ws.ping);
 
       const embed = new EmbedBuilder()
         .setColor(0x5865F2)
         .setTitle('Axion')
-        .setDescription(`Axion is an all-in-one bot providing premium features for free.\n\nNode.js (22.x.x)     Ping: ${ping}ms\nOwner: @${ownerTag}    Servers: ${serverCount}`)
+        .setDescription(`Axion is an all-in-one bot providing premium features for free.\n\nnode.js (22.x.x)     ping: ${ping}ms\nowner: @${ownerTag}    servers: ${serverCount}`)
         .setFooter({ text: 'made by Axion-team' })
         .setTimestamp();
 
@@ -43,14 +43,14 @@ module.exports = {
   async prefixExecute(message, args, client) {
     try {
       const owner = await client.application.fetch();
-      const ownerTag = owner.owner ? `${owner.owner.username}` : 'Unknown';
+      const ownerTag = owner.owner ? owner.owner.username : 'Unknown';
       const serverCount = client.guilds.cache.size;
-      const ping = client.ws.ping;
+      const ping = Math.round(client.ws.ping);
 
       const embed = new EmbedBuilder()
         .setColor(0x5865F2)
         .setTitle('Axion')
-        .setDescription(`Axion is an all-in-one bot providing premium features for free.\n\nNode.js (22.x.x)     Ping: ${ping}ms\nOwner: @${ownerTag}    Servers: ${serverCount}`)
+        .setDescription(`Axion is an all-in-one bot providing premium features for free.\n\nnode.js (22.x.x)     ping: ${ping}ms\nowner: @${ownerTag}    servers: ${serverCount}`)
         .setFooter({ text: 'made by Axion-team' })
         .setTimestamp();
 

@@ -1,10 +1,10 @@
-const { SlashCommandBuilder , MessageFlags} = require('discord.js');
-const { t } = require('../../utils/i18n');
+const { SlashCommandBuilder, PermissionFlagsBits, MessageFlags } = require('discord.js');
+const { successEmbed, errorEmbed } = require('../../utils/embeds');
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('nickname')
-    .setDescription('Change a user\'s nickname')
+    .setDescription("Change a user's nickname")
     .addUserOption(option =>
       option.setName('user')
         .setDescription('The user to change nickname of')
@@ -14,12 +14,13 @@ module.exports = {
       option.setName('name')
         .setDescription('The new nickname')
         .setRequired(true)
-    ),
+    )
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageNicknames),
   category: 'Moderation',
-  usage: '/nickname <user> <name>',
-  description: 'Change the nickname of a user',
+  description: "Change the nickname of a user",
   permissions: ['ManageNicknames'],
   cooldown: 5,
+
   async execute(interaction, client) {
     try {
       const targetUser = interaction.options.getUser('user');
@@ -27,24 +28,22 @@ module.exports = {
       const member = interaction.guild.members.cache.get(targetUser.id);
 
       if (!member) {
-        return interaction.reply({ content: await t(interaction.guild.id, 'moderation.user_not_found', { defaultValue: 'Could not find that user in this server.' }), flags: MessageFlags.Ephemeral });
+        return interaction.reply({ embeds: [errorEmbed('Could not find that user in this server.')], flags: MessageFlags.Ephemeral });
       }
 
       if (member.roles.highest.position >= interaction.member.roles.highest.position && interaction.member.id !== interaction.guild.ownerId) {
-        return interaction.reply({ content: await t(interaction.guild.id, 'moderation.higher_role', { defaultValue: 'You cannot change the nickname of a user with a higher or equal role.' }), flags: MessageFlags.Ephemeral });
+        return interaction.reply({ embeds: [errorEmbed('You cannot change the nickname of a user with a higher or equal role.')], flags: MessageFlags.Ephemeral });
       }
 
       await member.setNickname(name);
 
-      const reply = await t(interaction.guild.id, 'moderation.nickname.success', {
-        defaultValue: '✅ Nickname changed.'
-      });
-      await interaction.reply({ content: reply });
+      await interaction.reply({ embeds: [successEmbed('Nickname changed.')] });
     } catch (error) {
       console.error('nickname command error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
+      await interaction.reply({ embeds: [errorEmbed('There was an error executing this command.')], flags: MessageFlags.Ephemeral });
     }
   },
+
   async prefixExecute(message, args, client) {
     try {
       const targetUser = message.mentions.users.first();
@@ -61,7 +60,7 @@ module.exports = {
       }
 
       await member.setNickname(name);
-      await message.channel.send('✅ Nickname changed.');
+      await message.channel.send({ embeds: [successEmbed('Nickname changed.')] });
     } catch (error) {
       console.error('nickname prefix error:', error);
       await message.reply('There was an error executing this command.');

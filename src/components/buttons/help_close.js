@@ -1,8 +1,14 @@
-const { handleHelpInteraction } = require('../helpers/helpViews');
+const { MessageFlags } = require('discord.js');
 
 module.exports = {
   customId: 'help_close',
   async execute(interaction, client) {
-    await handleHelpInteraction(interaction);
+    const key = `${interaction.user.id}_${interaction.message.id}`;
+    const session = client.helpSessions?.get(key);
+    if (!session) {
+      return interaction.reply({ content: 'Session expired. Run /help again.', flags: MessageFlags.Ephemeral });
+    }
+    client.helpSessions.delete(key);
+    await interaction.deleteReply();
   },
 };

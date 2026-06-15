@@ -1,26 +1,30 @@
-const { EmbedBuilder , MessageFlags} = require('discord.js');
-const { claimTicket } = require('../../services/ticketService');
+const { EmbedBuilder, MessageFlags } = require('discord.js');
+const Ticket = require('../../models/Ticket');
 
 module.exports = {
   customId: 'ticket_claim',
   async execute(interaction, client) {
-    try {
-      const result = await claimTicket(interaction);
-      if (result.error) {
-        return interaction.reply({ content: `❌ ${result.error}`, flags: MessageFlags.Ephemeral });
-      }
-
-      const embed = new EmbedBuilder()
-        .setColor(0x57F287)
-        .setTitle('Ticket Claimed')
-        .setDescription(`This ticket has been claimed by <@${interaction.user.id}>.`)
-        .setTimestamp();
-
-      await interaction.channel.send({ embeds: [embed] });
-      await interaction.reply({ content: '✅ Claimed', flags: MessageFlags.Ephemeral });
-    } catch (error) {
-      console.error('ticket_claim error:', error);
-      await interaction.reply({ content: 'Failed to claim ticket.', flags: MessageFlags.Ephemeral });
+    const ticket = await Ticket.findOne({ channelId: interaction.channel.id });
+    if (!ticket) {
+      return interaction.reply({ content: 'This is not a ticket channel.', flags: MessageFlags.Ephemeral });
     }
-  }
+    if (ticket.claimedBy) {
+      return interaction.reply({ content: `Ticket already claimed by <@${ticket.claimedBy}>.`, flags: MessageFlags.Ephemeral });
+    }
+
+    ticket.claimedBy = interaction.user.id;
+    ticket.status = 'claimed';
+    await ticket.save();
+
+    await interaction.channel.setName(`claim-${ticket.ticketNumber}`);
+
+    const embed = new EmbedBuilder()
+      .setColor(0x57F287)
+      .setTitle('Ticket Claimed')
+      .setDescription(`Claimed by <@${interaction.user.id}>`)
+      .setTimestamp();
+
+    await interaction.channel.send({ embeds: [embed] });
+    await interaction.reply({ content: 'Ticket claimed.', flags: MessageFlags.Ephemeral });
+  },
 };

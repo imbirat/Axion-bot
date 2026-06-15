@@ -1,80 +1,66 @@
 {
   "errors": {
     "no_permission": "❌ Você não tem permissão para usar este comando.",
-    "no_admin": "❌ Você precisa de permissão de Administrador.",
     "user_not_found": "❌ Usuário não encontrado.",
     "generic": "❌ Ocorreu um erro. Tente novamente.",
-    "invalid_input": "❌ Entrada inválida.",
-    "not_in_guild": "❌ Este comando só pode ser usado em um servidor."
+    "cooldown": "⏳ Aguarde **{time}s** antes de usar isso novamente.",
+    "invalid_args": "❌ Argumentos inválidos. Use o comando corretamente.",
+    "not_in_server": "❌ Este comando só pode ser usado em um servidor."
   },
   "moderation": {
     "banned": "✅ **{user}** foi banido. Motivo: {reason}",
     "kicked": "✅ **{user}** foi expulso. Motivo: {reason}",
     "warned": "⚠️ **{user}** foi advertido. Motivo: {reason}",
-    "muted": "🔇 **{user}** foi mutado por {duration}.",
-    "unmuted": "🔈 **{user}** foi desmutado.",
-    "locked": "🔒 Canal trancado.",
-    "unlocked": "🔓 Canal destrancado.",
-    "jailed": "🔒 **{user}** foi preso.",
-    "unjailed": "🔓 **{user}** foi solto.",
-    "nickname_set": "✅ Apelido alterado.",
-    "slowmode_set": "✅ Modo lento definido para {seconds}s.",
-    "cleared": "✅ {count} mensagens limpas."
+    "muted": "🔇 **{user}** foi silenciado por {duration}.",
+    "unmuted": "🔊 **{user}** foi dessilenciado.",
+    "locked": "🔒 **{channel}** foi bloqueado.",
+    "unlocked": "🔓 **{channel}** foi desbloqueado.",
+    "cleared": "✅ **{count}** mensagens limpas.",
+    "nickname_set": "✅ Apelido de **{user}** alterado para **{nickname}**.",
+    "slowmode_set": "✅ Modo lento definido para **{seconds}s**."
   },
   "economy": {
-    "daily_claimed": "✅ Você resgatou suas **{amount}** moedas diárias!",
-    "daily_cooldown": "⏰ Você já resgatou sua recompensa diária. Volte em **{time}**.",
-    "work_earned": "💼 Você trabalhou e ganhou **{amount}** moedas!",
+    "daily_claimed": "✅ Você resgatou **{amount}** moedas diárias!",
+    "daily_cooldown": "⏰ Você já resgatou suas moedas diárias. Volte em **{time}**.",
     "insufficient_funds": "❌ Você não tem moedas suficientes.",
-    "gave": "✅ Você deu **{amount}** moedas para **{user}**.",
-    "deposited": "✅ Depositou **{amount}** moedas no banco.",
-    "coinflip_win": "🪙 Deu **{side}**! Você ganhou **{amount}** moedas!",
-    "coinflip_lose": "🪙 Deu **{side}**! Você perdeu **{amount}** moedas."
+    "deposited": "✅ Depositou **{amount}** moedas no seu banco.",
+    "gave": "✅ Deu **{amount}** moedas para {user}.",
+    "worked": "💼 Você trabalhou e ganhou **{amount}** moedas!",
+    "fished": "🎣 Você foi pescar e pegou **{amount}** moedas!",
+    "coinflip_win": "🎉 Você ganhou **{amount}** moedas!",
+    "coinflip_lose": "😢 Você perdeu **{amount}** moedas."
   },
   "leveling": {
     "level_up": "🎉 {user} acabou de alcançar o **Nível {level}**!",
-    "xp_added": "✅ {amount} XP adicionados a {user}.",
-    "xp_removed": "✅ {amount} XP removidos de {user}."
+    "profile": "**{user}** - Nível {level}\nXP: {xp}/{xpNeeded}\nMensagens: {messages}",
+    "leaderboard_title": "🏆 Ranking de XP"
   },
   "starboard": {
-    "setup_done": "⭐ Starboard configurado! Canal: {channel}, Limiar: {threshold}.",
-    "disabled": "⭐ Starboard desativado."
-  },
-  "counting": {
-    "ruined": "❌ {user} estragou a contagem em **{count}**! A contagem volta a 0.",
-    "milestone": "🎉 A contagem chegou a **{count}**! Muito bem!"
-  },
-  "bumper": {
-    "time_to_bump": "⏰ Hora de fazer bump!",
-    "bump_detected": "✅ Bump detectado! Vou lembrá-lo em 2 horas."
+    "setup_done": "⭐ Starboard configurado! Canal: {channel}, Limite: {threshold}.",
+    "emoji_set": "⭐ Emoji do starboard alterado para {emoji}.",
+    "disabled": "⭐ Starboard foi desativado.",
+    "config_embed": "**Configurações do Starboard**\nCanal: {channel}\nLimite: {threshold}\nEmoji: {emoji}\nAtivado: {enabled}"
   },
   "reports": {
     "submitted": "✅ Sua denúncia foi enviada anonimamente.",
     "resolved": "✅ Denúncia resolvida por {mod}.",
-    "dismissed": "❌ Denúncia rejeitada por {mod}."
+    "dismissed": "❌ Denúncia rejeitada por {mod}.",
+    "setup_done": "✅ Canal de denúncias configurado: {channel}."
   },
   "scheduler": {
     "scheduled": "✅ Mensagem agendada para {time} em {channel}.",
     "cancelled": "✅ Mensagem agendada cancelada.",
     "not_found": "❌ Nenhuma mensagem agendada encontrada com esse ID."
   },
-  "verification": {
-    "setup_done": "✅ Verificação configurada.",
+  "verify": {
+    "success": "✅ Você foi verificado! Bem-vindo ao servidor.",
     "already_verified": "✅ Você já está verificado.",
-    "verified": "✅ Você foi verificado! Bem-vindo ao servidor."
-  },
-  "ticket": {
-    "created": "✅ Ticket criado: {channel}",
-    "closed": "🔒 Ticket fechado por {moderator}.",
-    "claimed": "👤 Ticket reivindicado por {user}.",
-    "already_open": "❌ Você já tem um ticket aberto."
+    "setup_done": "✅ Sistema de verificação configurado! Canal: {channel}, Cargo: {role}."
   },
   "config": {
-    "channel_set": "✅ Canal de {type} definido para {channel}.",
-    "prefix_set": "✅ Prefixo definido para {prefix}.",
-    "language_set": "✅ Idioma do servidor definido para **{language}**."
-  },
-  "antinuke": { "enabled": "✅ Anti-Nuke ativado.", "disabled": "✅ Anti-Nuke desativado." },
-  "automod": { "enabled": "✅ Auto-Mod ativado.", "disabled": "✅ Auto-Mod desativado." },
-  "logging": { "enabled": "✅ Registro ativado em {channel}.", "disabled": "✅ Registro desativado." }
+    "prefix_set": "✅ Prefixo alterado para **{prefix}**.",
+    "channel_set": "✅ Canal de **{type}** definido: {channel}.",
+    "language_set": "✅ Idioma do servidor definido para **{language}**.",
+    "message_set": "✅ Mensagem personalizada de {type} salva."
+  }
 }

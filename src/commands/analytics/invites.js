@@ -1,86 +1,98 @@
-const { SlashCommandBuilder, EmbedBuilder , MessageFlags} = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, MessageFlags } = require('discord.js');
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('invites')
-    .setDescription('Show invite counts for the server or a user')
+    .setDescription('View invite tracking')
     .addUserOption(opt =>
       opt.setName('user')
         .setDescription('User to check invites for')
         .setRequired(false)),
   category: 'Analytics',
   usage: '/invites [user]',
-  description: 'Show invite counts grouped by inviter',
+  description: 'Shows invite counts for the server or a specific user',
   permissions: [],
   cooldown: 5,
   async execute(interaction, client) {
     try {
       const target = interaction.options.getUser('user');
-      const invites = await interaction.guild.invites.fetch();
-
-      const inviteMap = new Map();
-      for (const invite of invites.values()) {
-        if (!invite.inviter) continue;
-        if (target && invite.inviter.id !== target.id) continue;
-
-        const existing = inviteMap.get(invite.inviter.id) || { user: invite.inviter, total: 0, fake: 0, left: 0 };
-        existing.total += invite.uses;
-        inviteMap.set(invite.inviter.id, existing);
+      const guild = interaction.guild;
+      const invites = await guild.invites.fetch();
+      if (target) {
+        const userInvites = invites.filter(inv => inv.inviter?.id === target.id);
+        const total = userInvites.reduce((sum, inv) => sum + (inv.uses || 0), 0);
+        const embed = new EmbedBuilder()
+          .setColor(0x5865F2)
+          .setTitle(`📨 Invites for ${target.username}`)
+          .setDescription(`**Total invites:** ${total}`)
+          .setTimestamp();
+        await interaction.reply({ embeds: [embed] });
+      } else {
+        const topInvites = invites
+          .filter(inv => inv.inviter)
+          .reduce((acc, inv) => {
+            const id = inv.inviter.id;
+            acc[id] = (acc[id] || 0) + (inv.uses || 0);
+            return acc;
+          }, {});
+        const sorted = Object.entries(topInvites).sort((a, b) => b[1] - a[1]).slice(0, 10);
+        if (!sorted.length) {
+          return interaction.reply({ content: 'No invites found.', flags: MessageFlags.Ephemeral });
+        }
+        const lines = sorted.map(([id, count], i) => {
+          const member = guild.members.cache.get(id);
+          return `**${i + 1}.** ${member ? member.displayName : id} — ${count} invites`;
+        });
+        const embed = new EmbedBuilder()
+          .setColor(0x5865F2)
+          .setTitle('📨 Top Invites')
+          .setDescription(lines.join('\n'))
+          .setTimestamp();
+        await interaction.reply({ embeds: [embed] });
       }
-
-      if (inviteMap.size === 0) {
-        return interaction.reply({ content: target ? 'That user has no invites.' : 'No invites found.', flags: MessageFlags.Ephemeral });
-      }
-
-      const sorted = [...inviteMap.values()].sort((a, b) => b.total - a.total);
-      const description = sorted.map((entry, i) =>
-        `**${i + 1}.** ${entry.user} — **${entry.total}** invites`
-      ).join('\n');
-
-      const embed = new EmbedBuilder()
-        .setColor(0x5865F2)
-        .setTitle(target ? `${target.username}'s Invites` : `${interaction.guild.name} Invites`)
-        .setDescription(description);
-
-      await interaction.reply({ embeds: [embed] });
     } catch (error) {
-      console.error('invites error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
+      console.error('invites command error:', error);
+      await interaction.reply({ content: 'There was an error fetching invite data.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {
     try {
       const target = message.mentions.users.first();
-      const invites = await message.guild.invites.fetch();
-
-      const inviteMap = new Map();
-      for (const invite of invites.values()) {
-        if (!invite.inviter) continue;
-        if (target && invite.inviter.id !== target.id) continue;
-
-        const existing = inviteMap.get(invite.inviter.id) || { user: invite.inviter, total: 0, fake: 0, left: 0 };
-        existing.total += invite.uses;
-        inviteMap.set(invite.inviter.id, existing);
+      const guild = message.guild;
+      const invites = await guild.invites.fetch();
+      if (target) {
+        const userInvites = invites.filter(inv => inv.inviter?.id === target.id);
+        const total = userInvites.reduce((sum, inv) => sum + (inv.uses || 0), 0);
+        const embed = new EmbedBuilder()
+          .setColor(0x5865F2)
+          .setTitle(`📨 Invites for ${target.username}`)
+          .setDescription(`**Total invites:** ${total}`)
+          .setTimestamp();
+        await message.channel.send({ embeds: [embed] });
+      } else {
+        const topInvites = invites
+          .filter(inv => inv.inviter)
+          .reduce((acc, inv) => {
+            const id = inv.inviter.id;
+            acc[id] = (acc[id] || 0) + (inv.uses || 0);
+            return acc;
+          }, {});
+        const sorted = Object.entries(topInvites).sort((a, b) => b[1] - a[1]).slice(0, 10);
+        if (!sorted.length) return message.reply('No invites found.');
+        const lines = sorted.map(([id, count], i) => {
+          const member = guild.members.cache.get(id);
+          return `**${i + 1}.** ${member ? member.displayName : id} — ${count} invites`;
+        });
+        const embed = new EmbedBuilder()
+          .setColor(0x5865F2)
+          .setTitle('📨 Top Invites')
+          .setDescription(lines.join('\n'))
+          .setTimestamp();
+        await message.channel.send({ embeds: [embed] });
       }
-
-      if (inviteMap.size === 0) {
-        return message.reply(target ? 'That user has no invites.' : 'No invites found.');
-      }
-
-      const sorted = [...inviteMap.values()].sort((a, b) => b.total - a.total);
-      const description = sorted.map((entry, i) =>
-        `**${i + 1}.** ${entry.user} — **${entry.total}** invites`
-      ).join('\n');
-
-      const embed = new EmbedBuilder()
-        .setColor(0x5865F2)
-        .setTitle(target ? `${target.username}'s Invites` : `${message.guild.name} Invites`)
-        .setDescription(description);
-
-      await message.channel.send({ embeds: [embed] });
     } catch (error) {
       console.error('invites prefix error:', error);
-      await message.reply('There was an error executing this command.');
+      await message.reply('There was an error fetching invite data.');
     }
-  }
+  },
 };

@@ -3,19 +3,17 @@ const mongoose = require('mongoose');
 const giveawaySchema = new mongoose.Schema({
   guildId: { type: String, required: true },
   channelId: { type: String, required: true },
-  messageId: { type: String },
+  messageId: { type: String, required: true },
   prize: { type: String, required: true },
-  winners: { type: Number, required: true },
+  winners: { type: Number, default: 1 },
   endsAt: { type: Date, required: true },
   ended: { type: Boolean, default: false },
-  hostedBy: { type: String },
-  entries: [{ type: String }],
-  roleRequirement: { type: String },
-  inviteRequirement: { type: Number },
-  bonusEntries: [{
-    roleId: { type: String },
-    entries: { type: Number }
-  }]
-}, { timestamps: true });
+  hostedBy: String,
+  entries: [String],
+  roleRequirement: String,
+  inviteRequirement: Number,
+  bonusEntries: [{ roleId: String, entries: Number }],
+  createdAt: { type: Date, default: Date.now },
+});
 
 module.exports = mongoose.model('Giveaway', giveawaySchema);

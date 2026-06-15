@@ -1,9 +1,11 @@
-const { SlashCommandBuilder , MessageFlags} = require('discord.js');
+const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 const ms = require('ms');
+
+const reminders = new Map();
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName('reminder')
+    .setName('setreminder')
     .setDescription('Set a reminder')
     .addStringOption(option =>
       option.setName('time')
@@ -16,7 +18,7 @@ module.exports = {
         .setRequired(true)
     ),
   category: 'Utilities',
-  usage: '/reminder <time> <message>',
+  usage: '/setreminder <time> <message>',
   description: 'Set a reminder and get DM\'d when the time is up',
   permissions: [],
   cooldown: 10,
@@ -38,9 +40,13 @@ module.exports = {
         return interaction.reply({ content: 'Time cannot exceed 30 days.', flags: MessageFlags.Ephemeral });
       }
 
+      const reminderId = `${interaction.user.id}_${Date.now()}`;
+      reminders.set(reminderId, { userId: interaction.user.id, message, time: Date.now() + duration });
+
       await interaction.reply({ content: `✅ I'll remind you about "${message}" in ${timeStr}.` });
 
       setTimeout(async () => {
+        reminders.delete(reminderId);
         try {
           await interaction.user.send(`⏰ **Reminder:** ${message}`);
         } catch {
@@ -58,7 +64,7 @@ module.exports = {
   async prefixExecute(message, args, client) {
     try {
       if (args.length < 2) {
-        return message.reply('Usage: .reminder <time> <message> (e.g. .reminder 10m Take a break)');
+        return message.reply('Usage: .setreminder <time> <message> (e.g. .setreminder 10m Take a break)');
       }
 
       const timeStr = args[0];
@@ -77,9 +83,13 @@ module.exports = {
         return message.reply('Time cannot exceed 30 days.');
       }
 
+      const reminderId = `${message.author.id}_${Date.now()}`;
+      reminders.set(reminderId, { userId: message.author.id, message: reminderMsg, time: Date.now() + duration });
+
       await message.channel.send(`✅ I'll remind you about "${reminderMsg}" in ${timeStr}.`);
 
       setTimeout(async () => {
+        reminders.delete(reminderId);
         try {
           await message.author.send(`⏰ **Reminder:** ${reminderMsg}`);
         } catch {

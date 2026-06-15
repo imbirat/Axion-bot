@@ -1,6 +1,6 @@
-const { SlashCommandBuilder , MessageFlags} = require('discord.js');
-const { t } = require('../../utils/i18n');
+const { SlashCommandBuilder, PermissionFlagsBits, MessageFlags } = require('discord.js');
 const UserProfile = require('../../models/UserProfile');
+const { successEmbed, errorEmbed } = require('../../utils/embeds');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -15,12 +15,13 @@ module.exports = {
       option.setName('reason')
         .setDescription('Reason for the warning')
         .setRequired(true)
-    ),
+    )
+    .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers),
   category: 'Moderation',
-  usage: '/warn <user> <reason>',
   description: 'Warn a user and store the warning in their profile',
   permissions: ['ModerateMembers'],
   cooldown: 5,
+
   async execute(interaction, client) {
     try {
       const targetUser = interaction.options.getUser('user');
@@ -38,17 +39,15 @@ module.exports = {
       });
       await profile.save();
 
-      const reply = await t(interaction.guild.id, 'moderation.warn.success', {
-        defaultValue: '⚠️ **{{user}}** has been warned. Reason: {{reason}}',
-        user: targetUser.tag,
-        reason
-      });
-      await interaction.reply({ content: reply });
+      await targetUser.send({ embeds: [errorEmbed(`You have been warned in **${interaction.guild.name}**.\n**Reason:** ${reason}`)] }).catch(() => {});
+
+      await interaction.reply({ embeds: [successEmbed(`**${targetUser.tag}** has been warned. Reason: ${reason}`)] });
     } catch (error) {
       console.error('warn command error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
+      await interaction.reply({ embeds: [errorEmbed('There was an error executing this command.')], flags: MessageFlags.Ephemeral });
     }
   },
+
   async prefixExecute(message, args, client) {
     try {
       const targetUser = message.mentions.users.first();
@@ -69,7 +68,9 @@ module.exports = {
       });
       await profile.save();
 
-      await message.channel.send(`⚠️ **${targetUser.tag}** has been warned. Reason: ${reason}`);
+      await targetUser.send({ embeds: [errorEmbed(`You have been warned in **${message.guild.name}**.\n**Reason:** ${reason}`)] }).catch(() => {});
+
+      await message.channel.send({ embeds: [successEmbed(`**${targetUser.tag}** has been warned. Reason: ${reason}`)] });
     } catch (error) {
       console.error('warn prefix error:', error);
       await message.reply('There was an error executing this command.');

@@ -4,58 +4,47 @@ const GuildConfig = require('../../models/GuildConfig');
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('setprefix')
-    .setDescription('Set the server prefix')
-    .addStringOption(option =>
-      option.setName('prefix')
-        .setDescription('The new prefix (single character: ., /, ?, !, ,)')
-        .setRequired(true)
-    ),
+    .setDescription('Set the command prefix for the server')
+    .addStringOption(opt =>
+      opt.setName('prefix')
+        .setDescription('New prefix (single character)')
+        .setRequired(true))
+    .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
   category: 'Config',
   usage: '/setprefix <prefix>',
-  description: 'Set the custom prefix for the server',
+  description: 'Update the server command prefix (admin only)',
   permissions: ['Administrator'],
   cooldown: 5,
   async execute(interaction, client) {
     try {
       const prefix = interaction.options.getString('prefix');
-      const validPrefixes = ['.', '/', '?', '!', ','];
-      if (!validPrefixes.includes(prefix)) {
-        return interaction.reply({ content: 'Invalid prefix. Valid prefixes: ., /, ?, !, ,', flags: MessageFlags.Ephemeral });
+      if (prefix.length !== 1) {
+        return interaction.reply({ content: '❌ Prefix must be a single character.', flags: MessageFlags.Ephemeral });
       }
-      await interaction.deferReply();
       await GuildConfig.findOneAndUpdate(
         { guildId: interaction.guild.id },
-        { $set: { prefix: [prefix, '/'] } },
+        { $addToSet: { prefix } },
         { upsert: true }
       );
-      await interaction.editReply({ content: `✅ Prefix set to ${prefix}` });
+      await interaction.reply({ content: `✅ Prefix \`${prefix}\` has been added to the server prefix list.`, flags: MessageFlags.Ephemeral });
     } catch (error) {
       console.error('setprefix command error:', error);
-      const reply = { content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral };
-      if (interaction.deferred) {
-        await interaction.editReply(reply).catch(() => {});
-      } else {
-        await interaction.reply(reply).catch(() => {});
-      }
+      await interaction.reply({ content: 'There was an error setting the prefix.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {
     try {
       const prefix = args[0];
-      if (!prefix) return message.reply('Usage: setprefix <prefix>');
-      const validPrefixes = ['.', '/', '?', '!', ','];
-      if (!validPrefixes.includes(prefix)) {
-        return message.reply('Invalid prefix. Valid prefixes: ., /, ?, !, ,');
-      }
+      if (!prefix || prefix.length !== 1) return message.reply('❌ Usage: setprefix <prefix> (single character)');
       await GuildConfig.findOneAndUpdate(
         { guildId: message.guild.id },
-        { $set: { prefix: [prefix, '/'] } },
+        { $addToSet: { prefix } },
         { upsert: true }
       );
-      await message.channel.send(`✅ Prefix set to ${prefix}`);
+      await message.reply(`✅ Prefix \`${prefix}\` has been added.`);
     } catch (error) {
       console.error('setprefix prefix error:', error);
-      await message.reply('There was an error executing this command.');
+      await message.reply('There was an error setting the prefix.');
     }
   },
 };

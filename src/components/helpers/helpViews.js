@@ -195,25 +195,24 @@ function buildCommandDetail(category, command) {
   return { flags: MessageFlags.IsComponentsV2, components: [container] };
 }
 
-const helpSessions = new Map();
-
-function getSession(userId, messageId) {
-  return helpSessions.get(`${userId}_${messageId}`);
+function getSession(client, userId, messageId) {
+  return client.helpSessions?.get(`${userId}_${messageId}`);
 }
 
-function setSession(userId, messageId, data) {
+function setSession(client, userId, messageId, data) {
+  if (!client.helpSessions) client.helpSessions = new Map();
   const key = `${userId}_${messageId}`;
-  helpSessions.set(key, data);
-  setTimeout(() => helpSessions.delete(key), 2 * 60 * 1000);
+  client.helpSessions.set(key, data);
+  setTimeout(() => client.helpSessions.delete(key), 2 * 60 * 1000);
   return data;
 }
 
-function deleteSession(userId, messageId) {
-  helpSessions.delete(`${userId}_${messageId}`);
+function deleteSession(client, userId, messageId) {
+  client.helpSessions?.delete(`${userId}_${messageId}`);
 }
 
 async function handleHelpInteraction(interaction) {
-  const session = getSession(interaction.user.id, interaction.message.id);
+  const session = getSession(interaction.client, interaction.user.id, interaction.message.id);
   if (!session || session.userId !== interaction.user.id) {
     return interaction.reply({ content: '❌ This menu is not for you.', flags: MessageFlags.Ephemeral });
   }
@@ -254,9 +253,9 @@ async function handleHelpInteraction(interaction) {
     session.mainPage = (session.mainPage ?? 0) + 1;
     await interaction.editReply(buildMainPage(interaction.client, interaction.guild, session.mainPage));
   } else if (customId === 'help_close') {
-    deleteSession(interaction.user.id, interaction.message.id);
+    deleteSession(interaction.client, interaction.user.id, interaction.message.id);
     await interaction.deleteReply();
   }
 }
 
-module.exports = { buildMainPage, buildCategoryPage, buildCommandDetail, helpSessions, getSession, setSession, deleteSession, handleHelpInteraction };
+module.exports = { buildMainPage, buildCategoryPage, buildCommandDetail, getSession, setSession, deleteSession, handleHelpInteraction };

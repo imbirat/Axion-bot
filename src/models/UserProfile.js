@@ -7,22 +7,20 @@ const userProfileSchema = new mongoose.Schema({
   level: { type: Number, default: 1 },
   balance: { type: Number, default: 0 },
   bank: { type: Number, default: 0 },
-  lastDaily: { type: Date },
-  lastWork: { type: Date },
-  lastFish: { type: Date },
-  lastRob: { type: Date },
+  lastDaily: Date,
+  lastWork: Date,
+  lastFish: Date,
   afk: { type: Boolean, default: false },
-  afkReason: { type: String },
-  afkSince: { type: Date },
-  warns: [{
-    reason: { type: String },
-    moderator: { type: String },
-    date: { type: Date }
-  }],
-  previousRoles: [{ type: String }],
+  afkReason: String,
+  afkSince: Date,
+  warns: [{ reason: String, moderator: String, date: { type: Date, default: Date.now } }],
   jailed: { type: Boolean, default: false },
-  muted: { type: Boolean, default: false }
-}, { timestamps: true });
+  roles: [String],
+  muted: { type: Boolean, default: false },
+  voiceXp: { type: Number, default: 0 },
+  totalMessages: { type: Number, default: 0 },
+  joinDate: { type: Date, default: Date.now },
+});
 
 userProfileSchema.index({ userId: 1, guildId: 1 }, { unique: true });
 

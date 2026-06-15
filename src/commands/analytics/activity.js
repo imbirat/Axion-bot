@@ -1,68 +1,68 @@
-const { SlashCommandBuilder, EmbedBuilder , MessageFlags} = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, MessageFlags } = require('discord.js');
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('activity')
-    .setDescription('Show server activity stats'),
+    .setDescription('View server activity stats'),
   category: 'Analytics',
   usage: '/activity',
-  description: 'Show server activity stats including messages today and active voice users',
+  description: 'Shows server activity statistics including online members',
   permissions: [],
   cooldown: 10,
   async execute(interaction, client) {
     try {
       const guild = interaction.guild;
-      const channels = guild.channels.cache;
-
-      const textChannels = channels.filter(c => c.isTextBased());
-      const voiceChannels = channels.filter(c => c.isVoice());
-
-      const activeVoice = voiceChannels.reduce((count, c) => count + c.members.size, 0);
-
+      await guild.members.fetch();
+      const members = guild.members.cache;
+      const online = members.filter(m => m.presence?.status === 'online').size;
+      const idle = members.filter(m => m.presence?.status === 'idle').size;
+      const dnd = members.filter(m => m.presence?.status === 'dnd').size;
+      const offline = members.filter(m => !m.presence || m.presence.status === 'offline').size;
+      const total = members.size;
       const embed = new EmbedBuilder()
         .setColor(0x5865F2)
-        .setTitle(`${guild.name} Activity Stats`)
+        .setTitle('📊 Server Activity')
         .addFields(
-          { name: 'Total Members', value: `${guild.memberCount}`, inline: true },
-          { name: 'Online Members', value: `${guild.members.cache.filter(m => m.presence?.status !== 'offline').size}`, inline: true },
-          { name: 'Voice Users', value: `${activeVoice}`, inline: true },
-          { name: 'Text Channels', value: `${textChannels.size}`, inline: true },
-          { name: 'Voice Channels', value: `${voiceChannels.size}`, inline: true },
-          { name: 'Total Channels', value: `${guild.channels.cache.size}`, inline: true }
-        );
-
+          { name: '🟢 Online', value: `${online}`, inline: true },
+          { name: '🟡 Idle', value: `${idle}`, inline: true },
+          { name: '🔴 Do Not Disturb', value: `${dnd}`, inline: true },
+          { name: '⚫ Offline', value: `${offline}`, inline: true },
+          { name: '📈 Total', value: `${total}`, inline: true },
+          { name: '📊 Active %', value: `${((online + idle + dnd) / total * 100).toFixed(1)}%`, inline: true }
+        )
+        .setTimestamp();
       await interaction.reply({ embeds: [embed] });
     } catch (error) {
-      console.error('activity error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
+      console.error('activity command error:', error);
+      await interaction.reply({ content: 'There was an error fetching activity stats.', flags: MessageFlags.Ephemeral });
     }
   },
   async prefixExecute(message, args, client) {
     try {
       const guild = message.guild;
-      const channels = guild.channels.cache;
-
-      const textChannels = channels.filter(c => c.isTextBased());
-      const voiceChannels = channels.filter(c => c.isVoice());
-
-      const activeVoice = voiceChannels.reduce((count, c) => count + c.members.size, 0);
-
+      await guild.members.fetch();
+      const members = guild.members.cache;
+      const online = members.filter(m => m.presence?.status === 'online').size;
+      const idle = members.filter(m => m.presence?.status === 'idle').size;
+      const dnd = members.filter(m => m.presence?.status === 'dnd').size;
+      const offline = members.filter(m => !m.presence || m.presence.status === 'offline').size;
+      const total = members.size;
       const embed = new EmbedBuilder()
         .setColor(0x5865F2)
-        .setTitle(`${guild.name} Activity Stats`)
+        .setTitle('📊 Server Activity')
         .addFields(
-          { name: 'Total Members', value: `${guild.memberCount}`, inline: true },
-          { name: 'Online Members', value: `${guild.members.cache.filter(m => m.presence?.status !== 'offline').size}`, inline: true },
-          { name: 'Voice Users', value: `${activeVoice}`, inline: true },
-          { name: 'Text Channels', value: `${textChannels.size}`, inline: true },
-          { name: 'Voice Channels', value: `${voiceChannels.size}`, inline: true },
-          { name: 'Total Channels', value: `${guild.channels.cache.size}`, inline: true }
-        );
-
+          { name: '🟢 Online', value: `${online}`, inline: true },
+          { name: '🟡 Idle', value: `${idle}`, inline: true },
+          { name: '🔴 Do Not Disturb', value: `${dnd}`, inline: true },
+          { name: '⚫ Offline', value: `${offline}`, inline: true },
+          { name: '📈 Total', value: `${total}`, inline: true },
+          { name: '📊 Active %', value: `${((online + idle + dnd) / total * 100).toFixed(1)}%`, inline: true }
+        )
+        .setTimestamp();
       await message.channel.send({ embeds: [embed] });
     } catch (error) {
       console.error('activity prefix error:', error);
-      await message.reply('There was an error executing this command.');
+      await message.reply('There was an error fetching activity stats.');
     }
-  }
+  },
 };

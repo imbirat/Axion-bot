@@ -4,12 +4,8 @@ const reactionRoleSchema = new mongoose.Schema({
   guildId: { type: String, required: true },
   messageId: { type: String, required: true },
   channelId: { type: String, required: true },
-  roles: [{
-    emoji: { type: String },
-    roleId: { type: String },
-    label: { type: String }
-  }],
-  type: { type: String, enum: ['reaction', 'button'], required: true }
-}, { timestamps: true });
+  roles: [{ emoji: String, roleId: String, label: String }],
+  type: { type: String, enum: ['reaction', 'button'], required: true },
+});
 
 module.exports = mongoose.model('ReactionRole', reactionRoleSchema);

@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, PermissionsBitField , MessageFlags} = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, PermissionsBitField, MessageFlags } = require('discord.js');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -21,10 +21,10 @@ module.exports = {
 
       const embed = new EmbedBuilder()
         .setColor(0x5865F2)
-        .setTitle(`${target.username}`)
+        .setTitle(target.username)
         .setThumbnail(target.displayAvatarURL({ size: 1024 }))
         .addFields(
-          { name: 'Username', value: `${target.username}`, inline: true },
+          { name: 'Username', value: target.username, inline: true },
           { name: 'Display Name', value: member ? member.displayName : target.username, inline: true },
           { name: 'ID', value: target.id, inline: true },
           { name: 'Avatar URL', value: `[Click here](${target.displayAvatarURL({ size: 4096 })})`, inline: false }
@@ -81,10 +81,10 @@ module.exports = {
 
       const embed = new EmbedBuilder()
         .setColor(0x5865F2)
-        .setTitle(`${target.username}`)
+        .setTitle(target.username)
         .setThumbnail(target.displayAvatarURL({ size: 1024 }))
         .addFields(
-          { name: 'Username', value: `${target.username}`, inline: true },
+          { name: 'Username', value: target.username, inline: true },
           { name: 'Display Name', value: member ? member.displayName : target.username, inline: true },
           { name: 'ID', value: target.id, inline: true },
           { name: 'Avatar URL', value: `[Click here](${target.displayAvatarURL({ size: 4096 })})`, inline: false }

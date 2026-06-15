@@ -1,16 +1,16 @@
 const mongoose = require('mongoose');
 
-const tempVcSchema = new mongoose.Schema({
-  guildId: { type: String, required: true },
+const tempVCSchema = new mongoose.Schema({
+  guildId: { type: String, required: true, unique: true },
   joinChannelId: { type: String, required: true },
-  categoryId: { type: String },
+  categoryId: String,
   nameTemplate: { type: String, default: "{user}'s VC" },
   userLimit: { type: Number, default: 0 },
   activeChannels: [{
-    channelId: { type: String },
-    ownerId: { type: String },
-    createdAt: { type: Date }
-  }]
-}, { timestamps: true });
+    channelId: String,
+    ownerId: String,
+    createdAt: { type: Date, default: Date.now },
+  }],
+});
 
-module.exports = mongoose.model('TempVC', tempVcSchema);
+module.exports = mongoose.model('TempVC', tempVCSchema);

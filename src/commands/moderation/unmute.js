@@ -1,5 +1,9 @@
-const { SlashCommandBuilder , MessageFlags} = require('discord.js');
-const { t } = require('../../utils/i18n');
+const { SlashCommandBuilder, PermissionFlagsBits, MessageFlags } = require('discord.js');
+const GuildConfig = require('../../models/GuildConfig');
+const UserProfile = require('../../models/UserProfile');
+const { successEmbed, errorEmbed } = require('../../utils/embeds');
+
+const muteTimeouts = new Map();
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -9,37 +13,49 @@ module.exports = {
       option.setName('user')
         .setDescription('The user to unmute')
         .setRequired(true)
-    ),
+    )
+    .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers),
   category: 'Moderation',
-  usage: '/unmute <user>',
-  description: 'Remove a timeout from a user',
+  description: 'Unmute a user by removing the mute role',
   permissions: ['ModerateMembers'],
   cooldown: 5,
+
   async execute(interaction, client) {
     try {
       const targetUser = interaction.options.getUser('user');
       const member = interaction.guild.members.cache.get(targetUser.id);
 
       if (!member) {
-        return interaction.reply({ content: await t(interaction.guild.id, 'moderation.user_not_found', { defaultValue: 'Could not find that user in this server.' }), flags: MessageFlags.Ephemeral });
+        return interaction.reply({ embeds: [errorEmbed('Could not find that user in this server.')], flags: MessageFlags.Ephemeral });
       }
 
-      if (!member.communicationDisabledUntil) {
-        return interaction.reply({ content: await t(interaction.guild.id, 'moderation.not_muted', { defaultValue: 'That user is not muted.' }), flags: MessageFlags.Ephemeral });
+      const config = await GuildConfig.findOne({ guildId: interaction.guild.id });
+      if (config?.muteRole) {
+        const muteRole = interaction.guild.roles.cache.get(config.muteRole);
+        if (muteRole && member.roles.cache.has(muteRole.id)) {
+          await member.roles.remove(muteRole, 'Unmuted');
+        }
       }
 
-      await member.timeout(null);
+      const key = `${interaction.guild.id}-${targetUser.id}`;
+      const existing = muteTimeouts.get(key);
+      if (existing) {
+        clearTimeout(existing);
+        muteTimeouts.delete(key);
+      }
 
-      const reply = await t(interaction.guild.id, 'moderation.unmute.success', {
-        defaultValue: '🔈 **{{user}}** has been unmuted.',
-        user: targetUser.tag
-      });
-      await interaction.reply({ content: reply });
+      await UserProfile.findOneAndUpdate(
+        { userId: targetUser.id, guildId: interaction.guild.id },
+        { $set: { muted: false } }
+      );
+
+      await interaction.reply({ embeds: [successEmbed(`**${targetUser.tag}** has been unmuted.`)] });
     } catch (error) {
       console.error('unmute command error:', error);
-      await interaction.reply({ content: 'There was an error executing this command.', flags: MessageFlags.Ephemeral });
+      await interaction.reply({ embeds: [errorEmbed('There was an error executing this command.')], flags: MessageFlags.Ephemeral });
     }
   },
+
   async prefixExecute(message, args, client) {
     try {
       const targetUser = message.mentions.users.first();
@@ -48,12 +64,27 @@ module.exports = {
       const member = message.guild.members.cache.get(targetUser.id);
       if (!member) return message.reply('Could not find that user in this server.');
 
-      if (!member.communicationDisabledUntil) {
-        return message.reply('That user is not muted.');
+      const config = await GuildConfig.findOne({ guildId: message.guild.id });
+      if (config?.muteRole) {
+        const muteRole = message.guild.roles.cache.get(config.muteRole);
+        if (muteRole && member.roles.cache.has(muteRole.id)) {
+          await member.roles.remove(muteRole, 'Unmuted');
+        }
       }
 
-      await member.timeout(null);
-      await message.channel.send(`🔈 **${targetUser.tag}** has been unmuted.`);
+      const key = `${message.guild.id}-${targetUser.id}`;
+      const existing = muteTimeouts.get(key);
+      if (existing) {
+        clearTimeout(existing);
+        muteTimeouts.delete(key);
+      }
+
+      await UserProfile.findOneAndUpdate(
+        { userId: targetUser.id, guildId: message.guild.id },
+        { $set: { muted: false } }
+      );
+
+      await message.channel.send({ embeds: [successEmbed(`**${targetUser.tag}** has been unmuted.`)] });
     } catch (error) {
       console.error('unmute prefix error:', error);
       await message.reply('There was an error executing this command.');

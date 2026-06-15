@@ -19,11 +19,12 @@ module.exports = {
       await interaction.deferReply();
       const prompt = interaction.options.getString('prompt');
       const result = await geminiService.createImage(prompt);
+      if (result.error) throw new Error(result.error);
       const embed = new EmbedBuilder()
         .setColor(0x5865F2)
         .setTitle('🎨 Generated Image')
         .setDescription(`Prompt: ${prompt}`)
-        .setImage(result?.image?.url || null)
+        .setImage(result.image.url)
         .setTimestamp();
       await interaction.editReply({ embeds: [embed] });
     } catch (error) {
@@ -36,11 +37,12 @@ module.exports = {
       if (!args.length) return message.reply('Please provide a prompt for the image.');
       const prompt = args.join(' ');
       const result = await geminiService.createImage(prompt);
+      if (result.error) throw new Error(result.error);
       const embed = new EmbedBuilder()
         .setColor(0x5865F2)
         .setTitle('🎨 Generated Image')
         .setDescription(`Prompt: ${prompt}`)
-        .setImage(result?.image?.url || null)
+        .setImage(result.image.url)
         .setTimestamp();
       await message.channel.send({ embeds: [embed] });
     } catch (error) {

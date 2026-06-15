@@ -1,4 +1,5 @@
 const { GoogleGenerativeAI } = require('@google/generative-ai');
+const axios = require('axios');
 
 let genAI = null;
 let model = null;
@@ -27,23 +28,10 @@ async function ask(prompt) {
 }
 
 async function createImage(prompt) {
-  if (!model) {
-    if (!initGemini()) return { error: 'Gemini API key not configured.' };
-  }
   try {
-    const result = await model.generateContent({
-      contents: [{ role: 'user', parts: [{ text: prompt }] }],
-      generationConfig: {
-        responseModalities: ['Text', 'Image'],
-      },
-    });
-    const response = result.response;
-    for (const part of response.candidates[0]?.content?.parts || []) {
-      if (part.inlineData) {
-        return { data: part.inlineData.data, mimeType: part.inlineData.mimeType };
-      }
-    }
-    return { text: response.text() };
+    const encoded = encodeURIComponent(prompt);
+    const url = `https://image.pollinations.ai/prompt/${encoded}`;
+    return { image: { url } };
   } catch (err) {
     console.error('[GEMINI] Image error:', err);
     return { error: 'Failed to generate image.' };

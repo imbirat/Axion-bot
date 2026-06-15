@@ -35,14 +35,24 @@ module.exports = {
     }
     const { channel, content } = extractChannelContent(message);
     if (!channel) return message.reply('Usage: container <#channel> <content>');
-    if (!content) return message.reply('Please provide container content.');
-    try {
-      const container = parseContainer(content);
-      await channel.send({ flags: MessageFlags.IsComponentsV2, components: [container] });
-      await message.reply(`✅ Container sent to ${channel}.`);
-    } catch (err) {
-      await message.reply(`❌ ${err.message}`);
+    if (content) {
+      try {
+        const container = parseContainer(content);
+        await channel.send({ flags: MessageFlags.IsComponentsV2, components: [container] });
+        return message.reply(`✅ Container sent to ${channel}.`);
+      } catch (err) {
+        return message.reply(`❌ ${err.message}`);
+      }
     }
+    const { ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+    const row = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setCustomId(`container_builder_trigger_${channel.id}`)
+        .setLabel('Open Container Builder')
+        .setStyle(ButtonStyle.Primary)
+        .setEmoji('📦')
+    );
+    await message.reply({ content: `Click below to build a container for ${channel}.`, components: [row] });
   },
 };
 

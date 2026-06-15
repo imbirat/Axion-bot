@@ -35,14 +35,24 @@ module.exports = {
     }
     const { channel, content } = extractChannelContent(message);
     if (!channel) return message.reply('Usage: embed <#channel> <content>');
-    if (!content) return message.reply('Please provide embed content.');
-    try {
-      const embed = parseEmbed(content);
-      await channel.send({ embeds: [embed] });
-      await message.reply(`✅ Embed sent to ${channel}.`);
-    } catch (err) {
-      await message.reply(`❌ ${err.message}`);
+    if (content) {
+      try {
+        const embed = parseEmbed(content);
+        await channel.send({ embeds: [embed] });
+        return message.reply(`✅ Embed sent to ${channel}.`);
+      } catch (err) {
+        return message.reply(`❌ ${err.message}`);
+      }
     }
+    const { ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+    const row = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setCustomId(`embed_builder_trigger_${channel.id}`)
+        .setLabel('Open Embed Builder')
+        .setStyle(ButtonStyle.Primary)
+        .setEmoji('📦')
+    );
+    await message.reply({ content: `Click below to build an embed for ${channel}.`, components: [row] });
   },
 };
 

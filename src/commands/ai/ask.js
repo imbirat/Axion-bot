@@ -12,7 +12,7 @@ module.exports = {
   category: 'AI',
   usage: '/ask <prompt>',
   description: 'Ask the Gemini AI a question and get a response',
-  permissions: 'Everyone',
+  permissions: [],
   cooldown: 10,
   async execute(interaction, client) {
     try {

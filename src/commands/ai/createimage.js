@@ -12,7 +12,7 @@ module.exports = {
   category: 'AI',
   usage: '/createimage <prompt>',
   description: 'Generate an image based on a text prompt using Gemini AI',
-  permissions: 'Everyone',
+  permissions: [],
   cooldown: 30,
   async execute(interaction, client) {
     try {

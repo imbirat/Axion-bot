@@ -8,7 +8,7 @@ module.exports = {
   category: 'Economy',
   usage: '/fish',
   description: 'Go fishing and catch fish (20-100), a boot (nothing), or treasure (200-500) — 30min cooldown',
-  permissions: 'Everyone',
+  permissions: [],
   cooldown: 3,
   async execute(interaction, client) {
     try {

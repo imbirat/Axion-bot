@@ -26,7 +26,7 @@ module.exports = {
   category: 'Leveling',
   usage: '/profile [user]',
   description: 'Shows XP profile card with level, XP, XP to next level, and rank',
-  permissions: 'Everyone',
+  permissions: [],
   cooldown: 3,
   async execute(interaction, client) {
     try {

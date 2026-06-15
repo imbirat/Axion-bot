@@ -24,11 +24,10 @@ module.exports = {
   cooldown: 5,
   async execute(interaction, client) {
     try {
-      await interaction.reply({ content: '⏳ Clearing messages...' });
       const amount = interaction.options.getInteger('amount');
       const targetUser = interaction.options.getUser('user');
 
-      const messages = await interaction.channel.messages.fetch({ limit: amount });
+      const messages = await interaction.channel.messages.fetch({ limit: amount + 1 });
 
       let deleted;
       if (targetUser) {
@@ -44,8 +43,8 @@ module.exports = {
         count
       });
 
-      await interaction.editReply({ content: reply });
-      interaction.fetchReply().then(msg => setTimeout(() => msg.delete().catch(() => {}), 5000)).catch(() => {});
+      await interaction.reply({ content: reply, flags: MessageFlags.Ephemeral });
+      setTimeout(() => interaction.deleteReply().catch(() => {}), 5000);
     } catch (error) {
       console.error('clear command error:', error);
       const errReply = { content: '❌ Error: ' + (error.message || 'Unknown error') };

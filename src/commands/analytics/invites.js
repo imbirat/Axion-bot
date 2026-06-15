@@ -11,7 +11,7 @@ module.exports = {
   category: 'Analytics',
   usage: '/invites [user]',
   description: 'Show invite counts grouped by inviter',
-  permissions: 'Everyone',
+  permissions: [],
   cooldown: 5,
   async execute(interaction, client) {
     try {

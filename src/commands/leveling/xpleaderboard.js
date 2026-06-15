@@ -8,7 +8,7 @@ module.exports = {
   category: 'Leveling',
   usage: '/leaderboard',
   description: 'View the top 10 users ranked by XP and level',
-  permissions: 'Everyone',
+  permissions: [],
   cooldown: 5,
   async execute(interaction, client) {
     try {

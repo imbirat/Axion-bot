@@ -7,7 +7,7 @@ module.exports = {
   category: 'Analytics',
   usage: '/serverstats',
   description: 'Show server growth stats including member count and join/leave ratio',
-  permissions: 'Everyone',
+  permissions: [],
   cooldown: 10,
   async execute(interaction, client) {
     try {

@@ -8,7 +8,7 @@ module.exports = {
   category: 'Economy',
   usage: '/leaderboard',
   description: 'View the top 10 users ranked by total wealth (balance + bank)',
-  permissions: 'Everyone',
+  permissions: [],
   cooldown: 5,
   async execute(interaction, client) {
     try {

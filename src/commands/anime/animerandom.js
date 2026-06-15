@@ -8,7 +8,7 @@ module.exports = {
   category: 'Anime',
   usage: '/animerandom',
   description: 'Fetch a random anime from Jikan API',
-  permissions: 'Everyone',
+  permissions: [],
   cooldown: 5,
   async execute(interaction, client) {
     try {

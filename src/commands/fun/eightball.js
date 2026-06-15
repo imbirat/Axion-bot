@@ -20,7 +20,7 @@ module.exports = {
   category: 'Fun',
   usage: '/8ball <question>',
   description: 'Ask the magic 8-ball a question and receive a mystical answer',
-  permissions: 'Everyone',
+  permissions: [],
   cooldown: 3,
   async execute(interaction, client) {
     try {

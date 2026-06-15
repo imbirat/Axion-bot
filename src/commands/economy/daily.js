@@ -8,7 +8,7 @@ module.exports = {
   category: 'Economy',
   usage: '/daily',
   description: 'Claim a random daily reward between 100 and 500 coins (24h cooldown)',
-  permissions: 'Everyone',
+  permissions: [],
   cooldown: 3,
   async execute(interaction, client) {
     try {

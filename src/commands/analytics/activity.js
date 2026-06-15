@@ -7,7 +7,7 @@ module.exports = {
   category: 'Analytics',
   usage: '/activity',
   description: 'Show server activity stats including messages today and active voice users',
-  permissions: 'Everyone',
+  permissions: [],
   cooldown: 10,
   async execute(interaction, client) {
     try {

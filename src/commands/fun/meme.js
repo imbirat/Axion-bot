@@ -8,7 +8,7 @@ module.exports = {
   category: 'Fun',
   usage: '/meme',
   description: 'Fetch a random meme from Reddit',
-  permissions: 'Everyone',
+  permissions: [],
   cooldown: 3,
   async execute(interaction, client) {
     try {

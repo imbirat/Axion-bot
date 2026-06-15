@@ -14,7 +14,7 @@ module.exports = {
   category: 'Economy',
   usage: '/coinflip <amount>',
   description: 'Bet coins on a 50/50 coin flip — double your bet on win, lose it all on loss',
-  permissions: 'Everyone',
+  permissions: [],
   cooldown: 3,
   async execute(interaction, client) {
     try {

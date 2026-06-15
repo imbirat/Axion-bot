@@ -8,7 +8,7 @@ module.exports = {
   category: 'Anime',
   usage: '/animequote',
   description: 'Fetch a random anime quote from AnimeChan',
-  permissions: 'Everyone',
+  permissions: [],
   cooldown: 3,
   async execute(interaction, client) {
     try {

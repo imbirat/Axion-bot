@@ -40,7 +40,7 @@ module.exports = {
   category: 'Social',
   usage: '/truth',
   description: 'Receive a random truth question',
-  permissions: 'Everyone',
+  permissions: [],
   cooldown: 3,
   async execute(interaction, client) {
     try {

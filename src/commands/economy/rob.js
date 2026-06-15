@@ -13,7 +13,7 @@ module.exports = {
   category: 'Economy',
   usage: '/rob <user>',
   description: 'Attempt to rob another user — 40% success chance, steal 10-25% of their balance (30min cooldown)',
-  permissions: 'Everyone',
+  permissions: [],
   cooldown: 3,
   async execute(interaction, client) {
     try {

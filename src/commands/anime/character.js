@@ -12,7 +12,7 @@ module.exports = {
   category: 'Anime',
   usage: '/character <name>',
   description: 'Search for an anime character and display their information',
-  permissions: 'Everyone',
+  permissions: [],
   cooldown: 5,
   async execute(interaction, client) {
     try {

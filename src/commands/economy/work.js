@@ -8,7 +8,7 @@ module.exports = {
   category: 'Economy',
   usage: '/work',
   description: 'Work and earn between 50 and 200 coins (1h cooldown)',
-  permissions: 'Everyone',
+  permissions: [],
   cooldown: 3,
   async execute(interaction, client) {
     try {

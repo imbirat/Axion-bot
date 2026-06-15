@@ -8,7 +8,7 @@ module.exports = {
   category: 'Economy',
   usage: '/bank',
   description: 'View your bank balance and total net worth',
-  permissions: 'Everyone',
+  permissions: [],
   cooldown: 3,
   async execute(interaction, client) {
     try {

@@ -19,7 +19,7 @@ module.exports = {
   category: 'Economy',
   usage: '/give <user> <amount>',
   description: 'Give coins from your wallet to another user',
-  permissions: 'Everyone',
+  permissions: [],
   cooldown: 3,
   async execute(interaction, client) {
     try {

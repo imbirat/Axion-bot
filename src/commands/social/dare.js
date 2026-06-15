@@ -40,7 +40,7 @@ module.exports = {
   category: 'Social',
   usage: '/dare',
   description: 'Receive a random dare challenge',
-  permissions: 'Everyone',
+  permissions: [],
   cooldown: 3,
   async execute(interaction, client) {
     try {

@@ -39,7 +39,7 @@ module.exports = {
   category: 'AI',
   usage: '/summarize <url>',
   description: 'Fetch a YouTube video transcript and summarize it with AI',
-  permissions: 'Everyone',
+  permissions: [],
   cooldown: 30,
   async execute(interaction, client) {
     try {

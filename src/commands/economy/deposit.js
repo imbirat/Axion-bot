@@ -13,7 +13,7 @@ module.exports = {
   category: 'Economy',
   usage: '/deposit <amount|all>',
   description: 'Transfer coins from your wallet to your bank for safe keeping',
-  permissions: 'Everyone',
+  permissions: [],
   cooldown: 3,
   async execute(interaction, client) {
     try {

@@ -7,7 +7,7 @@ module.exports = {
   category: 'Social',
   usage: '/matchmaking',
   description: 'Pair two random server members and calculate their love meter',
-  permissions: 'Everyone',
+  permissions: [],
   cooldown: 10,
   async execute(interaction, client) {
     try {

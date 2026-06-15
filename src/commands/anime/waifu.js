@@ -8,7 +8,7 @@ module.exports = {
   category: 'Anime',
   usage: '/waifu',
   description: 'Fetch a random waifu image',
-  permissions: 'Everyone',
+  permissions: [],
   cooldown: 3,
   async execute(interaction, client) {
     try {

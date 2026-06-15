@@ -41,7 +41,7 @@ module.exports = {
   category: 'Social',
   usage: '/dailyquestion',
   description: 'Post a random thought-provoking question for discussion',
-  permissions: 'Everyone',
+  permissions: [],
   cooldown: 30,
   async execute(interaction, client) {
     try {

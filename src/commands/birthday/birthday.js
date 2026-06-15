@@ -29,7 +29,7 @@ module.exports = {
   category: 'Birthday',
   usage: '/birthday set|check|list',
   description: 'Set, check, or list birthdays',
-  permissions: 'Everyone',
+  permissions: [],
   cooldown: 3,
   async execute(interaction, client) {
     try {

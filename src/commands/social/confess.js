@@ -12,7 +12,7 @@ module.exports = {
   category: 'Social',
   usage: '/confess <message>',
   description: 'Send an anonymous confession to a configured channel',
-  permissions: 'Everyone',
+  permissions: [],
   cooldown: 30,
   async execute(interaction, client) {
     try {

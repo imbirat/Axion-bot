@@ -40,7 +40,7 @@ module.exports = {
   category: 'AI',
   usage: '/translate <text> <language>',
   description: 'Translate any text to another language using Gemini AI',
-  permissions: 'Everyone',
+  permissions: [],
   cooldown: 10,
   async execute(interaction, client) {
     try {

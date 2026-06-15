@@ -215,7 +215,7 @@ module.exports = {
   category: 'Polls',
   usage: '/advancedpoll create|end|results',
   description: 'Create, end, or view results for advanced polls',
-  permissions: 'Everyone',
+  permissions: [],
   cooldown: 5,
   async execute(interaction, client) {
     try {

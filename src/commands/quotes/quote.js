@@ -21,7 +21,7 @@ module.exports = {
   category: 'Quotes',
   usage: '/quote add|random|list',
   description: 'Add, view random, or list quotes',
-  permissions: 'Everyone',
+  permissions: [],
   cooldown: 3,
   async execute(interaction, client) {
     try {

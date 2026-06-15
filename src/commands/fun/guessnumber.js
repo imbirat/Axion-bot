@@ -7,7 +7,7 @@ module.exports = {
   category: 'Fun',
   usage: '/guessnumber',
   description: 'Guess the number between 1 and 100 with 5 attempts',
-  permissions: 'Everyone',
+  permissions: [],
   cooldown: 10,
   async execute(interaction, client) {
     try {

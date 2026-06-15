@@ -13,7 +13,7 @@ module.exports = {
   category: 'Economy',
   usage: '/profile [user]',
   description: 'View economy profile showing balance, bank, net worth, and daily streak info',
-  permissions: 'Everyone',
+  permissions: [],
   cooldown: 3,
   async execute(interaction, client) {
     try {

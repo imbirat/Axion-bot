@@ -236,6 +236,13 @@ const helpCategories = [
     ],
   },
   {
+    name: 'Embed Builder', emoji: '📦', description: 'Build and send rich embeds and containers',
+    commands: [
+      { name: 'embed', usage: '.embed <#channel> <content>', description: 'Build and send an embed', perms: 'Manage Messages', cooldown: '5s' },
+      { name: 'container', usage: '.container <#channel> <content>', description: 'Build and send a container (Components v2)', perms: 'Manage Messages', cooldown: '5s' },
+    ],
+  },
+  {
     name: 'Temp VC', emoji: '🔊', description: 'Temporary voice channels on demand',
     commands: [
       { name: 'tempvc setup', usage: '/tempvc setup <#channel>', description: 'Set up temp VCs', perms: 'Administrator', cooldown: '5s' },

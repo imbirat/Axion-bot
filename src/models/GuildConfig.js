@@ -46,6 +46,8 @@ const guildConfigSchema = new mongoose.Schema({
   automodAction: { type: String, enum: ['warn', 'mute', 'kick', 'none'], default: 'warn' },
   antinukeAction: { type: String, enum: ['ban', 'kick', 'none'], default: 'ban' },
   antinukeLogChannel: String,
+  aiChannel: String,
+  confessChannel: String,
 });
 
 module.exports = mongoose.model('GuildConfig', guildConfigSchema);

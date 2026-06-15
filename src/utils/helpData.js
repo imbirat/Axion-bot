@@ -238,8 +238,8 @@ const helpCategories = [
   {
     name: 'Embed Builder', emoji: '📦', description: 'Build and send rich embeds and containers',
     commands: [
-      { name: 'embed', usage: '.embed <#channel> <content>', description: 'Build and send an embed', perms: 'Manage Messages', cooldown: '5s' },
-      { name: 'container', usage: '.container <#channel> <content>', description: 'Build and send a container (Components v2)', perms: 'Manage Messages', cooldown: '5s' },
+      { name: 'embed', usage: '/embed <#channel> (modal opens)', description: 'Build and send an embed via modal', perms: 'Manage Messages', cooldown: '5s' },
+      { name: 'container', usage: '/container <#channel> (modal opens)', description: 'Build and send a container via modal', perms: 'Manage Messages', cooldown: '5s' },
     ],
   },
   {

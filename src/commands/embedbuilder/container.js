@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder, PermissionFlagsBits, MessageFlags } = require('discord.js');
+const { SlashCommandBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, ContainerBuilder, TextDisplayBuilder, SeparatorBuilder, PermissionFlagsBits, MessageFlags } = require('discord.js');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -6,8 +6,6 @@ module.exports = {
     .setDescription('Build and send a container (Components v2) to a channel')
     .addChannelOption(opt =>
       opt.setName('channel').setDescription('Target channel').setRequired(true))
-    .addStringOption(opt =>
-      opt.setName('content').setDescription('Container content (use --- for dividers)').setRequired(true))
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages),
   category: 'Embed Builder',
   usage: '.container <#channel> <content>',
@@ -16,14 +14,20 @@ module.exports = {
   cooldown: 5,
   async execute(interaction, client) {
     const channel = interaction.options.getChannel('channel');
-    const content = interaction.options.getString('content');
-    try {
-      const container = parseContainer(content);
-      await channel.send({ flags: MessageFlags.IsComponentsV2, components: [container] });
-      await interaction.reply({ content: `✅ Container sent to ${channel}.`, flags: MessageFlags.Ephemeral });
-    } catch (err) {
-      await interaction.reply({ content: `❌ ${err.message}`, flags: MessageFlags.Ephemeral });
-    }
+    const modal = new ModalBuilder()
+      .setCustomId(`container_builder_${channel.id}`)
+      .setTitle('Container Builder')
+      .addComponents(
+        new ActionRowBuilder().addComponents(
+          new TextInputBuilder()
+            .setCustomId('content')
+            .setLabel('Container content (use --- for dividers)')
+            .setStyle(TextInputStyle.Paragraph)
+            .setPlaceholder('Section 1 text...\n\n---\n\nSection 2 text...')
+            .setRequired(true)
+        )
+      );
+    await interaction.showModal(modal);
   },
   async prefixExecute(message, args, client) {
     if (!message.member.permissions.has(PermissionFlagsBits.ManageMessages)) {

@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits, MessageFlags } = require('discord.js');
+const { SlashCommandBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, PermissionFlagsBits, MessageFlags } = require('discord.js');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -6,8 +6,6 @@ module.exports = {
     .setDescription('Build and send an embed to a channel')
     .addChannelOption(opt =>
       opt.setName('channel').setDescription('Target channel').setRequired(true))
-    .addStringOption(opt =>
-      opt.setName('content').setDescription('Embed content (title:, description:, color:, field:Name|Val|inline)').setRequired(true))
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages),
   category: 'Embed Builder',
   usage: '.embed <#channel> <content>',
@@ -16,14 +14,20 @@ module.exports = {
   cooldown: 5,
   async execute(interaction, client) {
     const channel = interaction.options.getChannel('channel');
-    const content = interaction.options.getString('content');
-    try {
-      const embed = parseEmbed(content);
-      await channel.send({ embeds: [embed] });
-      await interaction.reply({ content: `✅ Embed sent to ${channel}.`, flags: MessageFlags.Ephemeral });
-    } catch (err) {
-      await interaction.reply({ content: `❌ ${err.message}`, flags: MessageFlags.Ephemeral });
-    }
+    const modal = new ModalBuilder()
+      .setCustomId(`embed_builder_${channel.id}`)
+      .setTitle('Embed Builder')
+      .addComponents(
+        new ActionRowBuilder().addComponents(
+          new TextInputBuilder()
+            .setCustomId('content')
+            .setLabel('Embed content (use Shift+Enter for newlines)')
+            .setStyle(TextInputStyle.Paragraph)
+            .setPlaceholder('title: My Title\ndescription: Hello\ncolor: #FF0000\nfield: Name|Value|inline')
+            .setRequired(true)
+        )
+      );
+    await interaction.showModal(modal);
   },
   async prefixExecute(message, args, client) {
     if (!message.member.permissions.has(PermissionFlagsBits.ManageMessages)) {
@@ -54,7 +58,7 @@ function extractChannelContent(message) {
 }
 
 function parseEmbed(text) {
-  const embed = new EmbedBuilder().setColor(0x5865F2);
+  const embed = new (require('discord.js').EmbedBuilder)().setColor(0x5865F2);
   const lines = text.split('\n');
   let descriptionLines = [];
 

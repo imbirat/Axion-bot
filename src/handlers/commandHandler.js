@@ -15,6 +15,8 @@ async function loadCommands(client) {
   console.log(`[CMD] Loaded ${client.commands.size} commands`);
 }
 
+const PRIORITY_CATEGORIES = ['Moderation', 'Config', 'Ticket', 'Utilities', 'Leveling', 'Economy', 'Starboard', 'Verification', 'Auto Role', 'Reaction Role'];
+
 async function registerSlashCommands(client, guildId) {
   const rest = new REST().setToken(process.env.DISCORD_TOKEN);
   const COMMAND_LIMIT = 100;
@@ -24,7 +26,16 @@ async function registerSlashCommands(client, guildId) {
   commands = commands.filter((c, i) => names.indexOf(c.name) === i);
 
   if (commands.length > COMMAND_LIMIT) {
-    console.warn(`[CMD] Truncating to ${COMMAND_LIMIT} commands (Discord limit)`);
+    console.warn(`[CMD] Truncating ${commands.length} to ${COMMAND_LIMIT} by priority`);
+    const cmdMap = new Map(client.commands.map(c => [c.data.name, c]));
+    commands.sort((a, b) => {
+      const catA = PRIORITY_CATEGORIES.indexOf(cmdMap.get(a.name)?.category);
+      const catB = PRIORITY_CATEGORIES.indexOf(cmdMap.get(b.name)?.category);
+      if (catA !== -1 && catB === -1) return -1;
+      if (catA === -1 && catB !== -1) return 1;
+      if (catA !== -1 && catB !== -1) return catA - catB;
+      return 0;
+    });
     commands.length = COMMAND_LIMIT;
   }
 

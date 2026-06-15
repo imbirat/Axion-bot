@@ -13,8 +13,8 @@ module.exports = {
     await interaction.deferReply();
     try {
       const guild = interaction.guild;
-      await guild.members.fetch();
-      await guild.channels.fetch();
+      try { await guild.members.fetch(); } catch { /* use cache */ }
+      try { await guild.channels.fetch(); } catch { /* use cache */ }
       const owner = await guild.fetchOwner();
       const members = guild.members.cache;
       const channels = guild.channels.cache;
@@ -70,8 +70,8 @@ module.exports = {
   async prefixExecute(message, args, client) {
     try {
       const guild = message.guild;
-      await guild.members.fetch();
-      await guild.channels.fetch();
+      try { await guild.members.fetch(); } catch { /* use cache */ }
+      try { await guild.channels.fetch(); } catch { /* use cache */ }
       const owner = await guild.fetchOwner();
       const members = guild.members.cache;
       const channels = guild.channels.cache;

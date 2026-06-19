@@ -6,6 +6,7 @@ import './globals.css';
 export const metadata: Metadata = {
   title: 'Axion Bot Dashboard',
   description: 'Manage your Axion Discord bot settings',
+  icons: [{ rel: 'icon', url: '/logo.png' }],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

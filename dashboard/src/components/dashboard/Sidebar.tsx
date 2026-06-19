@@ -36,7 +36,7 @@ interface SidebarProps {
   guildName?: string;
   guildIcon?: string | null;
   memberCount?: number;
-  userName?: string;
+  userName?: string | null;
   userImage?: string | null;
 }
 

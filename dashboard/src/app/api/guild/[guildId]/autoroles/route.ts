@@ -7,7 +7,7 @@ export const GET = auth(async (req, { params }: { params: Promise<{ guildId: str
   if (!req.auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   const { guildId } = await params;
   await dbConnect();
-  const config = await GuildConfig.findOne({ guildId }).select('autoRoles').lean();
+  const config = await GuildConfig.findOne({ guildId }).select('autoRoles').lean() as { autoRoles?: string[] } | null;
   return NextResponse.json(config?.autoRoles || []);
 });
 
@@ -21,7 +21,7 @@ export const POST = auth(async (req, { params }: { params: Promise<{ guildId: st
     { guildId },
     { $addToSet: { autoRoles: roleId } },
     { upsert: true, new: true }
-  ).select('autoRoles').lean();
+  ).select('autoRoles').lean() as { autoRoles?: string[] } | null;
   return NextResponse.json(config?.autoRoles || []);
 });
 
@@ -36,6 +36,6 @@ export const DELETE = auth(async (req, { params }: { params: Promise<{ guildId: 
     { guildId },
     { $pull: { autoRoles: roleId } },
     { new: true }
-  ).select('autoRoles').lean();
+  ).select('autoRoles').lean() as { autoRoles?: string[] } | null;
   return NextResponse.json(config?.autoRoles || []);
 });

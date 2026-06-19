@@ -62,7 +62,7 @@ export default function EmbedBuilderPage() {
               <h3 className="font-semibold">Content</h3>
               <div>
                 <Label>Target Channel</Label>
-                <ChannelSelect guildId={guildId} value={channelId} onChange={setChannelId} />
+                <ChannelSelect guildId={guildId} value={channelId} onChange={(v) => setChannelId(v || '')} />
               </div>
               <div>
                 <Label>Normal Text (above embed)</Label>

@@ -1,6 +1,7 @@
-import { ReactNode } from 'react';
+import { ReactNode, use } from 'react';
 import DashboardShell from './DashboardShell';
 
-export default function GuildDashboardLayout({ children, params }: { children: ReactNode; params: { guildId: string } }) {
-  return <DashboardShell guildId={params.guildId}>{children}</DashboardShell>;
+export default function GuildDashboardLayout({ children, params }: { children: ReactNode; params: Promise<{ guildId: string }> }) {
+  const { guildId } = use(params);
+  return <DashboardShell guildId={guildId}>{children}</DashboardShell>;
 }

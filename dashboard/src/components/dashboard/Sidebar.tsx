@@ -68,7 +68,7 @@ export default function Sidebar({ guildName, guildIcon, memberCount, userName, u
         </div>
       </div>
 
-      <nav className="flex-1 overflow-y-auto p-3 space-y-1">
+      <nav className="flex-1 overflow-y-auto p-3 space-y-1 scroll-smooth">
         {navItems.map((item, i) => {
           if ('section' in item) {
             return (
